@@ -2,7 +2,7 @@
 
 Evaluate Google's Gemma 4 E4B through a running llama.cpp server using three 720×480 kitchen images. Every scene receives the same goal: **“Face the fridge and take one step toward it. What tool calls would you run?”**
 
-**Checkpoint:** native tool calling works in these tests, but the three-image studies do not establish reliable visual control. See [NEXT_EXPERIMENT.md](NEXT_EXPERIMENT.md) for the retrospective, evaluation flaws, and proposed single-step diagnostic. That proposal has not been implemented or run.
+**Checkpoint:** native tool calling works in these tests, but the three-image studies do not establish reliable visual control. The current direction is complete drink-fetching autonomy using short, revisable skill plans: [TASK_CHUNK_PROPOSAL.md](TASK_CHUNK_PROPOSAL.md). The earlier [retrospective](NEXT_EXPERIMENT.md) remains useful; its single-frame test is now an optional diagnostic. The new architecture proposal has not been implemented or run.
 
 The runner asks for a complete, ordered plan in **one model response**, with at most four actions and no ordinary answer prose. Thinking is configurable. It validates and records the calls, then stops: no tool-feedback request or final acknowledgement is generated. There is no robot SDK, hardware connection, motion, or simulated camera update.
 

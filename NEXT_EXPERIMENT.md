@@ -1,5 +1,7 @@
 # Checkpoint and proposed next experiment
 
+**Superseded as the main direction:** the user's objective is complete drink-fetching autonomy with short action chunks. See [TASK_CHUNK_PROPOSAL.md](TASK_CHUNK_PROPOSAL.md). The retrospective below remains valid; the single-frame alignment experiment is now an optional diagnostic for a specific failure, not the next project milestone.
+
 Status: proposal for review. No new inference, dataset collection, controller implementation, or hardware actuation has been performed for this proposal.
 
 ## Recommendation
