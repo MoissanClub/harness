@@ -1,0 +1,6 @@
+{
+  "tool_choice": "auto",
+  "parallel_tool_calls": true,
+  "min_p": 0.0,
+  "stream": false
+}

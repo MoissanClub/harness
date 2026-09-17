@@ -1,0 +1,758 @@
+{
+  "cold": {
+    "combined": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 5,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 1
+        },
+        "left": {
+          "n": 6,
+          "successes": 2
+        },
+        "right": {
+          "n": 6,
+          "successes": 2
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 1.1583459999999963,
+          "mean": 1.2332309723333321,
+          "min": 1.1331572910000034,
+          "max": 1.4299387920000015
+        },
+        "prompt_tokens": {
+          "median": 359.0,
+          "mean": 359,
+          "min": 359,
+          "max": 359
+        },
+        "completion_tokens": {
+          "median": 13.0,
+          "mean": 17.666666666666668,
+          "min": 13,
+          "max": 27
+        },
+        "cached_tokens": {
+          "median": 0.0,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "evaluated_prompt_tokens": {
+          "median": 359.0,
+          "mean": 359,
+          "min": 359,
+          "max": 359
+        },
+        "prefill_ms": {
+          "median": 891.9825000000001,
+          "mean": 893.2623888888888,
+          "min": 887.965,
+          "max": 902.591
+        },
+        "decode_ms": {
+          "median": 207.1095,
+          "mean": 290.9608333333333,
+          "min": 197.448,
+          "max": 487.768
+        },
+        "decode_tokens_s": {
+          "median": 58.108656777315254,
+          "mean": 58.06154479161974,
+          "min": 53.304029784651725,
+          "max": 60.77549532028685
+        }
+      }
+    },
+    "split": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 8,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 0
+        },
+        "left": {
+          "n": 6,
+          "successes": 3
+        },
+        "right": {
+          "n": 6,
+          "successes": 5
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 1.4305267500000012,
+          "mean": 1.3882368286111118,
+          "min": 1.1696036660000004,
+          "max": 1.456109583
+        },
+        "prompt_tokens": {
+          "median": 389.0,
+          "mean": 389,
+          "min": 389,
+          "max": 389
+        },
+        "completion_tokens": {
+          "median": 25.0,
+          "mean": 23,
+          "min": 13,
+          "max": 25
+        },
+        "cached_tokens": {
+          "median": 0.0,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "evaluated_prompt_tokens": {
+          "median": 389.0,
+          "mean": 389,
+          "min": 389,
+          "max": 389
+        },
+        "prefill_ms": {
+          "median": 948.422,
+          "mean": 950.8928888888889,
+          "min": 937.527,
+          "max": 977.016
+        },
+        "decode_ms": {
+          "median": 427.94849999999997,
+          "mean": 387.7992777777778,
+          "min": 197.868,
+          "max": 442.733
+        },
+        "decode_tokens_s": {
+          "median": 56.08156785779813,
+          "mean": 57.08928606996069,
+          "min": 54.2087443221987,
+          "max": 60.64649160046092
+        }
+      }
+    },
+    "atomic": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 3,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 0
+        },
+        "left": {
+          "n": 6,
+          "successes": 1
+        },
+        "right": {
+          "n": 6,
+          "successes": 2
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 1.2438071045000028,
+          "mean": 1.2419348102222219,
+          "min": 1.1435862499999985,
+          "max": 1.323908166999999
+        },
+        "prompt_tokens": {
+          "median": 425.0,
+          "mean": 425,
+          "min": 425,
+          "max": 425
+        },
+        "completion_tokens": {
+          "median": 13.0,
+          "mean": 13,
+          "min": 9,
+          "max": 17
+        },
+        "cached_tokens": {
+          "median": 0.0,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "evaluated_prompt_tokens": {
+          "median": 425.0,
+          "mean": 425,
+          "min": 425,
+          "max": 425
+        },
+        "prefill_ms": {
+          "median": 994.3534999999999,
+          "mean": 994.6157777777778,
+          "min": 983.315,
+          "max": 1014.637
+        },
+        "decode_ms": {
+          "median": 199.684,
+          "mean": 199.966,
+          "min": 132.265,
+          "max": 270.803
+        },
+        "decode_tokens_s": {
+          "median": 59.998894143874864,
+          "mean": 59.99049150802435,
+          "min": 58.76864986373019,
+          "max": 60.78080542164785
+        }
+      }
+    },
+    "plan": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 7,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 3
+        },
+        "left": {
+          "n": 6,
+          "successes": 1
+        },
+        "right": {
+          "n": 6,
+          "successes": 3
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 1.2082047709999983,
+          "mean": 1.2052502408888892,
+          "min": 1.1386002909999995,
+          "max": 1.302354667000003
+        },
+        "prompt_tokens": {
+          "median": 367.0,
+          "mean": 367,
+          "min": 367,
+          "max": 367
+        },
+        "completion_tokens": {
+          "median": 17.0,
+          "mean": 16.22222222222222,
+          "min": 13,
+          "max": 19
+        },
+        "cached_tokens": {
+          "median": 0.0,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "evaluated_prompt_tokens": {
+          "median": 367.0,
+          "mean": 367,
+          "min": 367,
+          "max": 367
+        },
+        "prefill_ms": {
+          "median": 894.5215000000001,
+          "mean": 897.0245555555556,
+          "min": 889.826,
+          "max": 912.016
+        },
+        "decode_ms": {
+          "median": 265.5155,
+          "mean": 259.1068333333333,
+          "min": 196.984,
+          "max": 327.448
+        },
+        "decode_tokens_s": {
+          "median": 59.97083918178932,
+          "mean": 58.97984370682713,
+          "min": 53.31325200841017,
+          "max": 60.918653291637895
+        }
+      }
+    }
+  },
+  "warm": {
+    "combined": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 5,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 1
+        },
+        "left": {
+          "n": 6,
+          "successes": 2
+        },
+        "right": {
+          "n": 6,
+          "successes": 2
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 0.3191145624999976,
+          "mean": 0.39316175694444316,
+          "min": 0.2923271249999999,
+          "max": 0.5670381669999998
+        },
+        "prompt_tokens": {
+          "median": 359.0,
+          "mean": 359,
+          "min": 359,
+          "max": 359
+        },
+        "completion_tokens": {
+          "median": 13.0,
+          "mean": 17.666666666666668,
+          "min": 13,
+          "max": 27
+        },
+        "cached_tokens": {
+          "median": 354.0,
+          "mean": 354,
+          "min": 354,
+          "max": 354
+        },
+        "evaluated_prompt_tokens": {
+          "median": 5.0,
+          "mean": 5,
+          "min": 5,
+          "max": 5
+        },
+        "prefill_ms": {
+          "median": 69.2515,
+          "mean": 69.34727777777778,
+          "min": 67.369,
+          "max": 71.448
+        },
+        "decode_ms": {
+          "median": 223.389,
+          "mean": 292.6326666666667,
+          "min": 199.432,
+          "max": 462.774
+        },
+        "decode_tokens_s": {
+          "median": 56.209126975549026,
+          "mean": 57.00716656843233,
+          "min": 52.93946372323248,
+          "max": 60.29125313050737
+        }
+      }
+    },
+    "split": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 8,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 0
+        },
+        "left": {
+          "n": 6,
+          "successes": 3
+        },
+        "right": {
+          "n": 6,
+          "successes": 5
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 0.5094508544999972,
+          "mean": 0.4788163797222214,
+          "min": 0.3114494999999948,
+          "max": 0.5333387080000023
+        },
+        "prompt_tokens": {
+          "median": 389.0,
+          "mean": 389,
+          "min": 389,
+          "max": 389
+        },
+        "completion_tokens": {
+          "median": 25.0,
+          "mean": 23,
+          "min": 13,
+          "max": 25
+        },
+        "cached_tokens": {
+          "median": 384.0,
+          "mean": 384,
+          "min": 384,
+          "max": 384
+        },
+        "evaluated_prompt_tokens": {
+          "median": 5.0,
+          "mean": 5,
+          "min": 5,
+          "max": 5
+        },
+        "prefill_ms": {
+          "median": 69.8885,
+          "mean": 70.01994444444445,
+          "min": 68.463,
+          "max": 72.423
+        },
+        "decode_ms": {
+          "median": 401.2845,
+          "mean": 371.08594444444446,
+          "min": 202.519,
+          "max": 427.809
+        },
+        "decode_tokens_s": {
+          "median": 59.61563047487549,
+          "mean": 59.222790558956206,
+          "min": 56.09980154695202,
+          "max": 60.27424782761565
+        }
+      }
+    },
+    "atomic": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 3,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 0
+        },
+        "left": {
+          "n": 6,
+          "successes": 1
+        },
+        "right": {
+          "n": 6,
+          "successes": 2
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 0.30598202050000367,
+          "mean": 0.30717721288888855,
+          "min": 0.22440374999999335,
+          "max": 0.3952062079999994
+        },
+        "prompt_tokens": {
+          "median": 425.0,
+          "mean": 425,
+          "min": 425,
+          "max": 425
+        },
+        "completion_tokens": {
+          "median": 13.0,
+          "mean": 13,
+          "min": 9,
+          "max": 17
+        },
+        "cached_tokens": {
+          "median": 420.0,
+          "mean": 420,
+          "min": 420,
+          "max": 420
+        },
+        "evaluated_prompt_tokens": {
+          "median": 5.0,
+          "mean": 5,
+          "min": 5,
+          "max": 5
+        },
+        "prefill_ms": {
+          "median": 70.394,
+          "mean": 70.20722222222223,
+          "min": 68.372,
+          "max": 72.325
+        },
+        "decode_ms": {
+          "median": 201.224,
+          "mean": 205.25455555555556,
+          "min": 132.42,
+          "max": 302.216
+        },
+        "decode_tokens_s": {
+          "median": 59.56600034257704,
+          "mean": 58.896937719604345,
+          "min": 52.942266458427085,
+          "max": 60.41383476816191
+        }
+      }
+    },
+    "plan": {
+      "n": 18,
+      "protocol_ok": 18,
+      "only_tool_output": 18,
+      "successes": 7,
+      "scenes": {
+        "center": {
+          "n": 6,
+          "successes": 3
+        },
+        "left": {
+          "n": 6,
+          "successes": 1
+        },
+        "right": {
+          "n": 6,
+          "successes": 3
+        }
+      },
+      "metrics": {
+        "wall_s": {
+          "median": 0.3857484790000001,
+          "mean": 0.37290699999999943,
+          "min": 0.31109429099999986,
+          "max": 0.4361110830000001
+        },
+        "prompt_tokens": {
+          "median": 367.0,
+          "mean": 367,
+          "min": 367,
+          "max": 367
+        },
+        "completion_tokens": {
+          "median": 17.0,
+          "mean": 16.22222222222222,
+          "min": 13,
+          "max": 19
+        },
+        "cached_tokens": {
+          "median": 362.0,
+          "mean": 362,
+          "min": 362,
+          "max": 362
+        },
+        "evaluated_prompt_tokens": {
+          "median": 5.0,
+          "mean": 5,
+          "min": 5,
+          "max": 5
+        },
+        "prefill_ms": {
+          "median": 70.39699999999999,
+          "mean": 70.75788888888889,
+          "min": 68.32,
+          "max": 74.029
+        },
+        "decode_ms": {
+          "median": 269.728,
+          "mean": 262.2241666666667,
+          "min": 201.79,
+          "max": 318.687
+        },
+        "decode_tokens_s": {
+          "median": 59.09003771987681,
+          "mean": 58.02091637209514,
+          "min": 50.91952169595954,
+          "max": 60.07348990264758
+        }
+      }
+    }
+  },
+  "same_plan": {
+    "cold:turn_right,forward": {
+      "split": {
+        "n": 10,
+        "median_wall_s": 1.4341677504999994,
+        "median_completion_tokens": 25.0
+      },
+      "atomic": {
+        "n": 6,
+        "median_wall_s": 1.3093859795,
+        "median_completion_tokens": 17.0
+      },
+      "plan": {
+        "n": 4,
+        "median_wall_s": 1.2532177920000027,
+        "median_completion_tokens": 19.0
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 1.4028684379999952,
+        "median_completion_tokens": 27.0
+      }
+    },
+    "warm:turn_right,forward": {
+      "split": {
+        "n": 10,
+        "median_wall_s": 0.5113128959999997,
+        "median_completion_tokens": 25.0
+      },
+      "atomic": {
+        "n": 6,
+        "median_wall_s": 0.3877028755000014,
+        "median_completion_tokens": 17.0
+      },
+      "plan": {
+        "n": 4,
+        "median_wall_s": 0.41340589600000044,
+        "median_completion_tokens": 19.0
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 0.5463861459999997,
+        "median_completion_tokens": 27.0
+      }
+    },
+    "cold:turn_right": {
+      "atomic": {
+        "n": 9,
+        "median_wall_s": 1.181774125000004,
+        "median_completion_tokens": 9
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 1.1888400629999945,
+        "median_completion_tokens": 15.0
+      },
+      "split": {
+        "n": 2,
+        "median_wall_s": 1.1934187079999994,
+        "median_completion_tokens": 13.0
+      }
+    },
+    "warm:turn_right": {
+      "atomic": {
+        "n": 9,
+        "median_wall_s": 0.22549737499998912,
+        "median_completion_tokens": 9
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 0.34609860399999626,
+        "median_completion_tokens": 15.0
+      },
+      "split": {
+        "n": 2,
+        "median_wall_s": 0.3116829999999968,
+        "median_completion_tokens": 13.0
+      }
+    },
+    "cold:right,forward": {
+      "plan": {
+        "n": 6,
+        "median_wall_s": 1.2130115005000022,
+        "median_completion_tokens": 17.0
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 1.3810460209999977,
+        "median_completion_tokens": 25.0
+      },
+      "atomic": {
+        "n": 1,
+        "median_wall_s": 1.293115874999998,
+        "median_completion_tokens": 17
+      }
+    },
+    "warm:right,forward": {
+      "plan": {
+        "n": 6,
+        "median_wall_s": 0.3883263334999967,
+        "median_completion_tokens": 17.0
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 0.5585265420000045,
+        "median_completion_tokens": 25.0
+      },
+      "atomic": {
+        "n": 1,
+        "median_wall_s": 0.38962462499999617,
+        "median_completion_tokens": 17
+      }
+    },
+    "cold:forward": {
+      "plan": {
+        "n": 6,
+        "median_wall_s": 1.1411032709999973,
+        "median_completion_tokens": 13.0
+      },
+      "combined": {
+        "n": 3,
+        "median_wall_s": 1.1408427500000045,
+        "median_completion_tokens": 13
+      },
+      "split": {
+        "n": 1,
+        "median_wall_s": 1.1696036660000004,
+        "median_completion_tokens": 13
+      }
+    },
+    "warm:forward": {
+      "plan": {
+        "n": 6,
+        "median_wall_s": 0.31178662499999765,
+        "median_completion_tokens": 13.0
+      },
+      "combined": {
+        "n": 3,
+        "median_wall_s": 0.3047859579999965,
+        "median_completion_tokens": 13
+      },
+      "split": {
+        "n": 1,
+        "median_wall_s": 0.3114853340000039,
+        "median_completion_tokens": 13
+      }
+    },
+    "cold:turn_left,forward": {
+      "split": {
+        "n": 5,
+        "median_wall_s": 1.441980375,
+        "median_completion_tokens": 25
+      },
+      "atomic": {
+        "n": 2,
+        "median_wall_s": 1.3041535414999998,
+        "median_completion_tokens": 17.0
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 1.4139872920000016,
+        "median_completion_tokens": 27.0
+      },
+      "plan": {
+        "n": 1,
+        "median_wall_s": 1.302354667000003,
+        "median_completion_tokens": 19
+      }
+    },
+    "warm:turn_left,forward": {
+      "split": {
+        "n": 5,
+        "median_wall_s": 0.5086646249999944,
+        "median_completion_tokens": 25
+      },
+      "atomic": {
+        "n": 2,
+        "median_wall_s": 0.38654783300000517,
+        "median_completion_tokens": 17.0
+      },
+      "combined": {
+        "n": 2,
+        "median_wall_s": 0.5551847499999987,
+        "median_completion_tokens": 27.0
+      },
+      "plan": {
+        "n": 1,
+        "median_wall_s": 0.4361110830000001,
+        "median_completion_tokens": 19
+      }
+    }
+  }
+}

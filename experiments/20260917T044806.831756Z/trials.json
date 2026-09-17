@@ -1,0 +1,3794 @@
+[
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 825,
+    "total_request_seconds": 5.185133,
+    "usage": {
+      "completion_tokens": 240,
+      "prompt_tokens": 405,
+      "total_tokens": 645,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1047.538,
+      "prompt_per_token_ms": 2.5865135802469137,
+      "prompt_per_second": 386.6208194833982,
+      "predicted_n": 240,
+      "predicted_ms": 4102.074,
+      "predicted_per_token_ms": 17.16348953974895,
+      "predicted_per_second": 58.26321026875674
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "split",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 211,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/001-right-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 604,
+    "total_request_seconds": 4.025224207999999,
+    "usage": {
+      "completion_tokens": 172,
+      "prompt_tokens": 441,
+      "total_tokens": 613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1071.804,
+      "prompt_per_token_ms": 2.4303945578231296,
+      "prompt_per_second": 411.4558258786121,
+      "predicted_n": 172,
+      "predicted_ms": 2912.394,
+      "predicted_per_token_ms": 17.031543859649123,
+      "predicted_per_second": 58.7145832603693
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "atomic",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 151,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/002-right-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 776,
+    "total_request_seconds": 4.673689749999999,
+    "usage": {
+      "completion_tokens": 216,
+      "prompt_tokens": 383,
+      "total_tokens": 599,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 968.55,
+      "prompt_per_token_ms": 2.5288511749347258,
+      "prompt_per_second": 395.43647720819786,
+      "predicted_n": 216,
+      "predicted_ms": 3659.454,
+      "predicted_per_token_ms": 17.020716279069767,
+      "predicted_per_second": 58.751934031688876
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "plan",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 193,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/003-right-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1452,
+    "total_request_seconds": 7.707060416999999,
+    "usage": {
+      "completion_tokens": 394,
+      "prompt_tokens": 375,
+      "total_tokens": 769,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 975.04,
+      "prompt_per_token_ms": 2.6001066666666666,
+      "prompt_per_second": 384.5996061700033,
+      "predicted_n": 394,
+      "predicted_ms": 6698.476,
+      "predicted_per_token_ms": 17.044468193384223,
+      "predicted_per_second": 58.67006166775846
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "combined",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 363,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/004-right-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2145,
+    "total_request_seconds": 10.561756042000003,
+    "usage": {
+      "completion_tokens": 558,
+      "prompt_tokens": 383,
+      "total_tokens": 941,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 969.331,
+      "prompt_per_token_ms": 2.5308903394255875,
+      "prompt_per_second": 395.11786995360717,
+      "predicted_n": 558,
+      "predicted_ms": 9551.275,
+      "predicted_per_token_ms": 17.147710951526033,
+      "predicted_per_second": 58.316821576177
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "plan",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 535,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/005-center-plan-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1948,
+    "total_request_seconds": 9.456688584000005,
+    "usage": {
+      "completion_tokens": 476,
+      "prompt_tokens": 405,
+      "total_tokens": 881,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1046.404,
+      "prompt_per_token_ms": 2.5837135802469136,
+      "prompt_per_second": 387.0398048937122,
+      "predicted_n": 476,
+      "predicted_ms": 8371.866,
+      "predicted_per_token_ms": 17.62498105263158,
+      "predicted_per_second": 56.73764964704404
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "split",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 459,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/006-center-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1564,
+    "total_request_seconds": 8.462825000000002,
+    "usage": {
+      "completion_tokens": 431,
+      "prompt_tokens": 375,
+      "total_tokens": 806,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1020.949,
+      "prompt_per_token_ms": 2.7225306666666667,
+      "prompt_per_second": 367.3053208338517,
+      "predicted_n": 431,
+      "predicted_ms": 7405.687,
+      "predicted_per_token_ms": 17.222527906976744,
+      "predicted_per_second": 58.063485534832886
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "combined",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 412,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/007-center-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1278,
+    "total_request_seconds": 8.428762083000002,
+    "usage": {
+      "completion_tokens": 347,
+      "prompt_tokens": 441,
+      "total_tokens": 788,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1119.859,
+      "prompt_per_token_ms": 2.539362811791383,
+      "prompt_per_second": 393.7995765538341,
+      "predicted_n": 347,
+      "predicted_ms": 7255.859,
+      "predicted_per_token_ms": 20.970690751445087,
+      "predicted_per_second": 47.685601387788815
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "atomic",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 326,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/008-center-atomic-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2678,
+    "total_request_seconds": 15.479340666999995,
+    "usage": {
+      "completion_tokens": 627,
+      "prompt_tokens": 441,
+      "total_tokens": 1068,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1421.169,
+      "prompt_per_token_ms": 3.222605442176871,
+      "prompt_per_second": 310.3079225623413,
+      "predicted_n": 627,
+      "predicted_ms": 14025.977,
+      "predicted_per_token_ms": 22.40571405750799,
+      "predicted_per_second": 44.6314720179564
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "atomic",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 614,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/009-center-atomic-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1033,
+    "total_request_seconds": 5.474457415999993,
+    "usage": {
+      "completion_tokens": 257,
+      "prompt_tokens": 383,
+      "total_tokens": 640,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 968.146,
+      "prompt_per_token_ms": 2.5277963446475193,
+      "prompt_per_second": 395.60148985793467,
+      "predicted_n": 257,
+      "predicted_ms": 4431.214,
+      "predicted_per_token_ms": 17.3094296875,
+      "predicted_per_second": 57.77197851424012
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "plan",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 240,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/010-center-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 3349,
+    "total_request_seconds": 15.619694999999993,
+    "usage": {
+      "completion_tokens": 804,
+      "prompt_tokens": 405,
+      "total_tokens": 1209,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1015.569,
+      "prompt_per_token_ms": 2.5075777777777777,
+      "prompt_per_second": 398.79121950354926,
+      "predicted_n": 804,
+      "predicted_ms": 14552.339,
+      "predicted_per_token_ms": 18.122464508094644,
+      "predicted_per_second": 55.18013289822344
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "split",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 787,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/011-center-split-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 413,
+    "total_request_seconds": 3.0085398330000004,
+    "usage": {
+      "completion_tokens": 123,
+      "prompt_tokens": 375,
+      "total_tokens": 498,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 948.002,
+      "prompt_per_token_ms": 2.528005333333333,
+      "prompt_per_second": 395.56878571986135,
+      "predicted_n": 123,
+      "predicted_ms": 2019.838,
+      "predicted_per_token_ms": 16.556049180327868,
+      "predicted_per_second": 60.400883635222236
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "combined",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 106,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/012-center-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1344,
+    "total_request_seconds": 7.2818029999999965,
+    "usage": {
+      "completion_tokens": 381,
+      "prompt_tokens": 383,
+      "total_tokens": 764,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 939.099,
+      "prompt_per_token_ms": 2.4519556135770237,
+      "prompt_per_second": 407.8377253090462,
+      "predicted_n": 381,
+      "predicted_ms": 6302.593,
+      "predicted_per_token_ms": 16.58577105263158,
+      "predicted_per_second": 60.292644630551266
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "plan",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 358,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/013-right-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1266,
+    "total_request_seconds": 6.569617500000007,
+    "usage": {
+      "completion_tokens": 333,
+      "prompt_tokens": 375,
+      "total_tokens": 708,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1037.25,
+      "prompt_per_token_ms": 2.766,
+      "prompt_per_second": 361.53289949385396,
+      "predicted_n": 333,
+      "predicted_ms": 5492.299,
+      "predicted_per_token_ms": 16.543069277108433,
+      "predicted_per_second": 60.448274939146614
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "combined",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 314,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/014-right-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 803,
+    "total_request_seconds": 4.858661208000001,
+    "usage": {
+      "completion_tokens": 227,
+      "prompt_tokens": 405,
+      "total_tokens": 632,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1027.269,
+      "prompt_per_token_ms": 2.5364666666666666,
+      "prompt_per_second": 394.24921807238417,
+      "predicted_n": 227,
+      "predicted_ms": 3796.166,
+      "predicted_per_token_ms": 16.79719469026549,
+      "predicted_per_second": 59.533750631558256
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "split",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 210,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/015-right-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2115,
+    "total_request_seconds": 10.8011075,
+    "usage": {
+      "completion_tokens": 543,
+      "prompt_tokens": 441,
+      "total_tokens": 984,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1084.885,
+      "prompt_per_token_ms": 2.4600566893424034,
+      "prompt_per_second": 406.4946975946759,
+      "predicted_n": 543,
+      "predicted_ms": 9677.699,
+      "predicted_per_token_ms": 17.855533210332105,
+      "predicted_per_second": 56.00504830745407
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "atomic",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 530,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/016-right-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1552,
+    "total_request_seconds": 8.370212124999995,
+    "usage": {
+      "completion_tokens": 414,
+      "prompt_tokens": 375,
+      "total_tokens": 789,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1216.637,
+      "prompt_per_token_ms": 3.244365333333333,
+      "prompt_per_second": 308.22669374677906,
+      "predicted_n": 414,
+      "predicted_ms": 7090.464,
+      "predicted_per_token_ms": 17.168193704600483,
+      "predicted_per_second": 58.24724587840796
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "combined",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 383,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/017-left-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "turn_left",
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 4,
+    "content": "",
+    "reasoning_characters": 1599,
+    "total_request_seconds": 9.449911999999983,
+    "usage": {
+      "completion_tokens": 489,
+      "prompt_tokens": 441,
+      "total_tokens": 930,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1121.131,
+      "prompt_per_token_ms": 2.54224716553288,
+      "prompt_per_second": 393.35278392979944,
+      "predicted_n": 489,
+      "predicted_ms": 8278.262,
+      "predicted_per_token_ms": 16.963651639344263,
+      "predicted_per_second": 58.949571782096285
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "atomic",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 452,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/018-left-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1281,
+    "total_request_seconds": 6.956656124999995,
+    "usage": {
+      "completion_tokens": 354,
+      "prompt_tokens": 383,
+      "total_tokens": 737,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 974.882,
+      "prompt_per_token_ms": 2.545383812010444,
+      "prompt_per_second": 392.8680599293043,
+      "predicted_n": 354,
+      "predicted_ms": 5932.061,
+      "predicted_per_token_ms": 16.80470538243626,
+      "predicted_per_second": 59.507142627157755
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "plan",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 331,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/019-left-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1073,
+    "total_request_seconds": 5.865153582999994,
+    "usage": {
+      "completion_tokens": 287,
+      "prompt_tokens": 405,
+      "total_tokens": 692,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1018.094,
+      "prompt_per_token_ms": 2.5138123456790127,
+      "prompt_per_second": 397.8021675798109,
+      "predicted_n": 287,
+      "predicted_ms": 4801.562,
+      "predicted_per_token_ms": 16.788678321678322,
+      "predicted_per_second": 59.5639502311956
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "split",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 270,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/020-left-split-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 942,
+    "total_request_seconds": 5.4391678339999885,
+    "usage": {
+      "completion_tokens": 257,
+      "prompt_tokens": 441,
+      "total_tokens": 698,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1065.438,
+      "prompt_per_token_ms": 2.4159591836734697,
+      "prompt_per_second": 413.91427750840495,
+      "predicted_n": 257,
+      "predicted_ms": 4324.722,
+      "predicted_per_token_ms": 16.8934453125,
+      "predicted_per_second": 59.19455632061437
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "atomic",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 236,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/021-left-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 721,
+    "total_request_seconds": 4.356835832999991,
+    "usage": {
+      "completion_tokens": 201,
+      "prompt_tokens": 383,
+      "total_tokens": 584,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 959.098,
+      "prompt_per_token_ms": 2.504172323759791,
+      "prompt_per_second": 399.3335404724022,
+      "predicted_n": 201,
+      "predicted_ms": 3353.131,
+      "predicted_per_token_ms": 16.765655,
+      "predicted_per_second": 59.645746020659494
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "plan",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 178,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/022-left-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1214,
+    "total_request_seconds": 6.685574500000001,
+    "usage": {
+      "completion_tokens": 337,
+      "prompt_tokens": 375,
+      "total_tokens": 712,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 973.352,
+      "prompt_per_token_ms": 2.5956053333333333,
+      "prompt_per_second": 385.2665839285274,
+      "predicted_n": 337,
+      "predicted_ms": 5649.291,
+      "predicted_per_token_ms": 16.81336607142857,
+      "predicted_per_second": 59.476490058664
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "combined",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 306,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/023-left-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 954,
+    "total_request_seconds": 5.874987792000013,
+    "usage": {
+      "completion_tokens": 285,
+      "prompt_tokens": 405,
+      "total_tokens": 690,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1023.63,
+      "prompt_per_token_ms": 2.5274814814814817,
+      "prompt_per_second": 395.6507722516925,
+      "predicted_n": 285,
+      "predicted_ms": 4788.26,
+      "predicted_per_token_ms": 16.860070422535212,
+      "predicted_per_second": 59.31173328098306
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "split",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 256,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/024-left-split-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1942,
+    "total_request_seconds": 9.271742499999988,
+    "usage": {
+      "completion_tokens": 481,
+      "prompt_tokens": 441,
+      "total_tokens": 922,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1074.314,
+      "prompt_per_token_ms": 2.4360861678004535,
+      "prompt_per_second": 410.494510915803,
+      "predicted_n": 481,
+      "predicted_ms": 8152.91,
+      "predicted_per_token_ms": 16.985229166666667,
+      "predicted_per_second": 58.87468400853193
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "atomic",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 468,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/025-left-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1640,
+    "total_request_seconds": 8.22673691700001,
+    "usage": {
+      "completion_tokens": 427,
+      "prompt_tokens": 383,
+      "total_tokens": 810,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 985.029,
+      "prompt_per_token_ms": 2.5718772845953004,
+      "prompt_per_second": 388.8210397866459,
+      "predicted_n": 427,
+      "predicted_ms": 7196.514,
+      "predicted_per_token_ms": 16.893225352112676,
+      "predicted_per_second": 59.195327070856806
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "plan",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 404,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/026-left-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1534,
+    "total_request_seconds": 8.242930624999985,
+    "usage": {
+      "completion_tokens": 425,
+      "prompt_tokens": 375,
+      "total_tokens": 800,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 996.958,
+      "prompt_per_token_ms": 2.6585546666666664,
+      "prompt_per_second": 376.14423074994136,
+      "predicted_n": 425,
+      "predicted_ms": 7201.761,
+      "predicted_per_token_ms": 16.98528537735849,
+      "predicted_per_second": 58.874489170079364
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "combined",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 406,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/027-left-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 801,
+    "total_request_seconds": 4.681417083000014,
+    "usage": {
+      "completion_tokens": 214,
+      "prompt_tokens": 405,
+      "total_tokens": 619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1033.452,
+      "prompt_per_token_ms": 2.5517333333333334,
+      "prompt_per_second": 391.8904796739471,
+      "predicted_n": 214,
+      "predicted_ms": 3591.677,
+      "predicted_per_token_ms": 16.862333333333336,
+      "predicted_per_second": 59.303773696799574
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "split",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 197,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/028-left-split-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 486,
+    "total_request_seconds": 3.3381961670000067,
+    "usage": {
+      "completion_tokens": 136,
+      "prompt_tokens": 405,
+      "total_tokens": 541,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1029.486,
+      "prompt_per_token_ms": 2.541940740740741,
+      "prompt_per_second": 393.4002016540293,
+      "predicted_n": 136,
+      "predicted_ms": 2273.685,
+      "predicted_per_token_ms": 16.842111111111112,
+      "predicted_per_second": 59.374979383687716
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "split",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 119,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/029-left-split-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1592,
+    "total_request_seconds": 8.683489624999993,
+    "usage": {
+      "completion_tokens": 451,
+      "prompt_tokens": 375,
+      "total_tokens": 826,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 966.159,
+      "prompt_per_token_ms": 2.576424,
+      "prompt_per_second": 388.13487221047467,
+      "predicted_n": 451,
+      "predicted_ms": 7663.977,
+      "predicted_per_token_ms": 17.03106,
+      "predicted_per_second": 58.716251366620746
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "combined",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 420,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/030-left-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "turn_left",
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2220,
+    "total_request_seconds": 11.648200374999988,
+    "usage": {
+      "completion_tokens": 625,
+      "prompt_tokens": 383,
+      "total_tokens": 1008,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 997.091,
+      "prompt_per_token_ms": 2.6033707571801568,
+      "prompt_per_second": 384.1173975093547,
+      "predicted_n": 625,
+      "predicted_ms": 10606.283,
+      "predicted_per_token_ms": 16.997248397435897,
+      "predicted_per_second": 58.833052069231044
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "plan",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 590,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/031-left-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1310,
+    "total_request_seconds": 6.896665709000018,
+    "usage": {
+      "completion_tokens": 340,
+      "prompt_tokens": 441,
+      "total_tokens": 781,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1100.201,
+      "prompt_per_token_ms": 2.4947868480725623,
+      "prompt_per_second": 400.8358472679083,
+      "predicted_n": 340,
+      "predicted_ms": 5732.609,
+      "predicted_per_token_ms": 16.91035103244838,
+      "predicted_per_second": 59.13537797536863
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "atomic",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 327,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/032-left-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 787,
+    "total_request_seconds": 5.013954165999991,
+    "usage": {
+      "completion_tokens": 230,
+      "prompt_tokens": 405,
+      "total_tokens": 635,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1081.184,
+      "prompt_per_token_ms": 2.66959012345679,
+      "prompt_per_second": 374.58933909491816,
+      "predicted_n": 230,
+      "predicted_ms": 3889.368,
+      "predicted_per_token_ms": 16.984139737991267,
+      "predicted_per_second": 58.87846045938569
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "split",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 201,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/033-left-split-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 836,
+    "total_request_seconds": 4.996815666000003,
+    "usage": {
+      "completion_tokens": 229,
+      "prompt_tokens": 441,
+      "total_tokens": 670,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1096.31,
+      "prompt_per_token_ms": 2.4859637188208614,
+      "prompt_per_second": 402.2584852824475,
+      "predicted_n": 229,
+      "predicted_ms": 3857.518,
+      "predicted_per_token_ms": 16.918938596491227,
+      "predicted_per_second": 59.105362567329564
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "atomic",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 216,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/034-left-atomic-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1281,
+    "total_request_seconds": 6.896414999999962,
+    "usage": {
+      "completion_tokens": 344,
+      "prompt_tokens": 375,
+      "total_tokens": 719,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 995.1,
+      "prompt_per_token_ms": 2.6536,
+      "prompt_per_second": 376.84654808561953,
+      "predicted_n": 344,
+      "predicted_ms": 5853.692,
+      "predicted_per_token_ms": 17.06615743440233,
+      "predicted_per_second": 58.595498362401024
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "combined",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 327,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/035-left-combined-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 307,
+    "total_request_seconds": 2.696800833999987,
+    "usage": {
+      "completion_tokens": 93,
+      "prompt_tokens": 383,
+      "total_tokens": 476,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1058.574,
+      "prompt_per_token_ms": 2.7639007832898175,
+      "prompt_per_second": 361.80748818693826,
+      "predicted_n": 93,
+      "predicted_ms": 1583.579,
+      "predicted_per_token_ms": 17.212815217391302,
+      "predicted_per_second": 58.09624906619752
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "plan",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 76,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/036-left-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 672,
+    "total_request_seconds": 4.520367125000007,
+    "usage": {
+      "completion_tokens": 199,
+      "prompt_tokens": 441,
+      "total_tokens": 640,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1111.73,
+      "prompt_per_token_ms": 2.5209297052154196,
+      "prompt_per_second": 396.6790497692785,
+      "predicted_n": 199,
+      "predicted_ms": 3365.13,
+      "predicted_per_token_ms": 16.99560606060606,
+      "predicted_per_second": 58.83873728503802
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "atomic",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 178,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/037-right-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "turn_right",
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2242,
+    "total_request_seconds": 12.011388375000024,
+    "usage": {
+      "completion_tokens": 638,
+      "prompt_tokens": 383,
+      "total_tokens": 1021,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1001.263,
+      "prompt_per_token_ms": 2.614263707571802,
+      "prompt_per_second": 382.5168811790708,
+      "predicted_n": 638,
+      "predicted_ms": 10963.292,
+      "predicted_per_token_ms": 17.210819466248036,
+      "predicted_per_second": 58.1029858549786
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "plan",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 603,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/038-right-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 865,
+    "total_request_seconds": 5.320198915999981,
+    "usage": {
+      "completion_tokens": 247,
+      "prompt_tokens": 405,
+      "total_tokens": 652,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1072.348,
+      "prompt_per_token_ms": 2.647772839506173,
+      "prompt_per_second": 377.67590371782296,
+      "predicted_n": 247,
+      "predicted_ms": 4197.085,
+      "predicted_per_token_ms": 17.061321138211383,
+      "predicted_per_second": 58.612108165548236
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "split",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 230,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/039-right-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 990,
+    "total_request_seconds": 5.819509249999953,
+    "usage": {
+      "completion_tokens": 281,
+      "prompt_tokens": 375,
+      "total_tokens": 656,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1029.05,
+      "prompt_per_token_ms": 2.744133333333333,
+      "prompt_per_second": 364.4137796997231,
+      "predicted_n": 281,
+      "predicted_ms": 4746.637,
+      "predicted_per_token_ms": 16.952275,
+      "predicted_per_second": 58.98913272702337
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "combined",
+    "seed": 405,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 250,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/040-right-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1882,
+    "total_request_seconds": 9.251390416999982,
+    "usage": {
+      "completion_tokens": 476,
+      "prompt_tokens": 405,
+      "total_tokens": 881,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1084.199,
+      "prompt_per_token_ms": 2.677034567901235,
+      "prompt_per_second": 373.54766053095415,
+      "predicted_n": 476,
+      "predicted_ms": 8118.593,
+      "predicted_per_token_ms": 17.091774736842105,
+      "predicted_per_second": 58.507674913621116
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "split",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 459,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/041-right-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 804,
+    "total_request_seconds": 4.954723875000013,
+    "usage": {
+      "completion_tokens": 229,
+      "prompt_tokens": 383,
+      "total_tokens": 612,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1039.771,
+      "prompt_per_token_ms": 2.714806788511749,
+      "prompt_per_second": 368.35033868034407,
+      "predicted_n": 229,
+      "predicted_ms": 3858.949,
+      "predicted_per_token_ms": 16.9252149122807,
+      "predicted_per_second": 59.083444741042186
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "plan",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 206,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/042-right-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1970,
+    "total_request_seconds": 10.034801625,
+    "usage": {
+      "completion_tokens": 526,
+      "prompt_tokens": 375,
+      "total_tokens": 901,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1028.506,
+      "prompt_per_token_ms": 2.742682666666667,
+      "prompt_per_second": 364.6065263595934,
+      "predicted_n": 526,
+      "predicted_ms": 8959.76,
+      "predicted_per_token_ms": 17.066209523809523,
+      "predicted_per_second": 58.59531951748708
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "combined",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 495,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/043-right-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1255,
+    "total_request_seconds": 7.643348875000015,
+    "usage": {
+      "completion_tokens": 360,
+      "prompt_tokens": 441,
+      "total_tokens": 801,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1168.929,
+      "prompt_per_token_ms": 2.6506326530612245,
+      "prompt_per_second": 377.2684226330256,
+      "predicted_n": 360,
+      "predicted_ms": 6427.48,
+      "predicted_per_token_ms": 17.90384401114206,
+      "predicted_per_second": 55.85392720008464
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "atomic",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 339,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/044-right-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 826,
+    "total_request_seconds": 6.791128458000003,
+    "usage": {
+      "completion_tokens": 227,
+      "prompt_tokens": 441,
+      "total_tokens": 668,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1438.105,
+      "prompt_per_token_ms": 3.2610090702947847,
+      "prompt_per_second": 306.6535475504222,
+      "predicted_n": 227,
+      "predicted_ms": 5323.215,
+      "predicted_per_token_ms": 23.554048672566374,
+      "predicted_per_second": 42.45554613142622
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "atomic",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 206,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/045-right-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 2066,
+    "total_request_seconds": 14.452830165999956,
+    "usage": {
+      "completion_tokens": 544,
+      "prompt_tokens": 375,
+      "total_tokens": 919,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1560.306,
+      "prompt_per_token_ms": 4.1608160000000005,
+      "prompt_per_second": 240.3374722650557,
+      "predicted_n": 544,
+      "predicted_ms": 12852.695,
+      "predicted_per_token_ms": 23.669788213627992,
+      "predicted_per_second": 42.24794877650174
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "combined",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 513,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/046-right-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 830,
+    "total_request_seconds": 6.841957291999961,
+    "usage": {
+      "completion_tokens": 228,
+      "prompt_tokens": 405,
+      "total_tokens": 633,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1591.1,
+      "prompt_per_token_ms": 3.9286419753086417,
+      "prompt_per_second": 254.54088366538872,
+      "predicted_n": 228,
+      "predicted_ms": 5214.676,
+      "predicted_per_token_ms": 22.972140969162997,
+      "predicted_per_second": 43.530988310683156
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "split",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 211,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/047-right-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 505,
+    "total_request_seconds": 5.391085541999985,
+    "usage": {
+      "completion_tokens": 168,
+      "prompt_tokens": 383,
+      "total_tokens": 551,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1551.805,
+      "prompt_per_token_ms": 4.051710182767624,
+      "prompt_per_second": 246.8093607122029,
+      "predicted_n": 168,
+      "predicted_ms": 3772.584,
+      "predicted_per_token_ms": 22.590323353293414,
+      "predicted_per_second": 44.26674131046519
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "plan",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 145,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/048-right-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2465,
+    "total_request_seconds": 16.178212459000008,
+    "usage": {
+      "completion_tokens": 626,
+      "prompt_tokens": 383,
+      "total_tokens": 1009,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1539.577,
+      "prompt_per_token_ms": 4.019783289817233,
+      "prompt_per_second": 248.76962958007294,
+      "predicted_n": 626,
+      "predicted_ms": 14608.147,
+      "predicted_per_token_ms": 23.3730352,
+      "predicted_per_second": 42.784344927525716
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "plan",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 603,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/049-center-plan-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1064,
+    "total_request_seconds": 7.818842915999994,
+    "usage": {
+      "completion_tokens": 271,
+      "prompt_tokens": 405,
+      "total_tokens": 676,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1517.338,
+      "prompt_per_token_ms": 3.7465135802469134,
+      "prompt_per_second": 266.91482056074517,
+      "predicted_n": 271,
+      "predicted_ms": 6245.228,
+      "predicted_per_token_ms": 23.130474074074073,
+      "predicted_per_second": 43.233009267235715
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "split",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 254,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/050-center-split-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2347,
+    "total_request_seconds": 14.720474416999991,
+    "usage": {
+      "completion_tokens": 570,
+      "prompt_tokens": 375,
+      "total_tokens": 945,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1460.725,
+      "prompt_per_token_ms": 3.895266666666666,
+      "prompt_per_second": 256.72183333618585,
+      "predicted_n": 570,
+      "predicted_ms": 13210.45,
+      "predicted_per_token_ms": 23.216959578207383,
+      "predicted_per_second": 43.071961969501416
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "combined",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 553,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/051-center-combined-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1079,
+    "total_request_seconds": 7.570320917000004,
+    "usage": {
+      "completion_tokens": 260,
+      "prompt_tokens": 441,
+      "total_tokens": 701,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1599.458,
+      "prompt_per_token_ms": 3.6268888888888893,
+      "prompt_per_second": 275.7183996078672,
+      "predicted_n": 260,
+      "predicted_ms": 5918.671,
+      "predicted_per_token_ms": 22.852011583011585,
+      "predicted_per_second": 43.75982378476519
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "atomic",
+    "seed": 401,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 247,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/052-center-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 754,
+    "total_request_seconds": 6.371296833000031,
+    "usage": {
+      "completion_tokens": 212,
+      "prompt_tokens": 405,
+      "total_tokens": 617,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1493.573,
+      "prompt_per_token_ms": 3.687834567901235,
+      "prompt_per_second": 271.1618380889317,
+      "predicted_n": 212,
+      "predicted_ms": 4826.132,
+      "predicted_per_token_ms": 22.872663507109003,
+      "predicted_per_second": 43.72031266446919
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "split",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 183,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/053-center-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1284,
+    "total_request_seconds": 8.720649125000023,
+    "usage": {
+      "completion_tokens": 311,
+      "prompt_tokens": 441,
+      "total_tokens": 752,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1588.943,
+      "prompt_per_token_ms": 3.6030453514739227,
+      "prompt_per_second": 277.5429955637175,
+      "predicted_n": 311,
+      "predicted_ms": 7084.838,
+      "predicted_per_token_ms": 22.854316129032256,
+      "predicted_per_second": 43.75541120347424
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "atomic",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 298,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/054-center-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 2527,
+    "total_request_seconds": 15.780600666999987,
+    "usage": {
+      "completion_tokens": 653,
+      "prompt_tokens": 375,
+      "total_tokens": 1028,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1405.964,
+      "prompt_per_token_ms": 3.7492373333333333,
+      "prompt_per_second": 266.72091177298995,
+      "predicted_n": 653,
+      "predicted_ms": 14329.976,
+      "predicted_per_token_ms": 21.978490797546012,
+      "predicted_per_second": 45.49902944708351
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "combined",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 622,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/055-center-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1018,
+    "total_request_seconds": 8.144894334000014,
+    "usage": {
+      "completion_tokens": 283,
+      "prompt_tokens": 383,
+      "total_tokens": 666,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1443.581,
+      "prompt_per_token_ms": 3.7691409921671015,
+      "prompt_per_second": 265.31244176807536,
+      "predicted_n": 283,
+      "predicted_ms": 6631.701,
+      "predicted_per_token_ms": 23.51667021276596,
+      "predicted_per_second": 42.52302689762401
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "plan",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 260,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/056-center-plan-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 2300,
+    "total_request_seconds": 12.515151082999978,
+    "usage": {
+      "completion_tokens": 541,
+      "prompt_tokens": 441,
+      "total_tokens": 982,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1603.117,
+      "prompt_per_token_ms": 3.635185941043084,
+      "prompt_per_second": 275.0890920625257,
+      "predicted_n": 541,
+      "predicted_ms": 10837.891,
+      "predicted_per_token_ms": 20.070168518518518,
+      "predicted_per_second": 49.8251920046068
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "atomic",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 528,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/057-center-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1910,
+    "total_request_seconds": 11.12651175000002,
+    "usage": {
+      "completion_tokens": 502,
+      "prompt_tokens": 375,
+      "total_tokens": 877,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1376.503,
+      "prompt_per_token_ms": 3.6706746666666663,
+      "prompt_per_second": 272.42948253654373,
+      "predicted_n": 502,
+      "predicted_ms": 9681.316,
+      "predicted_per_token_ms": 19.323984031936128,
+      "predicted_per_second": 51.74916302700996
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "combined",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 471,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/058-center-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1109,
+    "total_request_seconds": 6.432096666999996,
+    "usage": {
+      "completion_tokens": 306,
+      "prompt_tokens": 383,
+      "total_tokens": 689,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1095.566,
+      "prompt_per_token_ms": 2.8604856396866842,
+      "prompt_per_second": 349.59098767212566,
+      "predicted_n": 306,
+      "predicted_ms": 5278.312,
+      "predicted_per_token_ms": 17.305940983606558,
+      "predicted_per_second": 57.78362476488696
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "plan",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 283,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/059-center-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 728,
+    "total_request_seconds": 5.582286250000038,
+    "usage": {
+      "completion_tokens": 215,
+      "prompt_tokens": 405,
+      "total_tokens": 620,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1252.855,
+      "prompt_per_token_ms": 3.093469135802469,
+      "prompt_per_second": 323.26167034493216,
+      "predicted_n": 215,
+      "predicted_ms": 4287.288,
+      "predicted_per_token_ms": 20.034056074766355,
+      "predicted_per_second": 49.91500454366491
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "split",
+    "seed": 406,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 186,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/060-center-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 543,
+    "total_request_seconds": 5.2949818330000085,
+    "usage": {
+      "completion_tokens": 162,
+      "prompt_tokens": 405,
+      "total_tokens": 567,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1548.534,
+      "prompt_per_token_ms": 3.823540740740741,
+      "prompt_per_second": 261.5376866119827,
+      "predicted_n": 162,
+      "predicted_ms": 3698.386,
+      "predicted_per_token_ms": 22.971341614906834,
+      "predicted_per_second": 43.53250309729704
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "split",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 145,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/061-right-split-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 526,
+    "total_request_seconds": 5.134010708999995,
+    "usage": {
+      "completion_tokens": 159,
+      "prompt_tokens": 383,
+      "total_tokens": 542,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1503.543,
+      "prompt_per_token_ms": 3.925699738903394,
+      "prompt_per_second": 254.7316571591235,
+      "predicted_n": 159,
+      "predicted_ms": 3580.014,
+      "predicted_per_token_ms": 22.658316455696202,
+      "predicted_per_second": 44.13390562159813
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "plan",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 136,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/062-right-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 633,
+    "total_request_seconds": 5.762008832999982,
+    "usage": {
+      "completion_tokens": 180,
+      "prompt_tokens": 441,
+      "total_tokens": 621,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1660.33,
+      "prompt_per_token_ms": 3.764920634920635,
+      "prompt_per_second": 265.6098486445466,
+      "predicted_n": 180,
+      "predicted_ms": 4069.398,
+      "predicted_per_token_ms": 22.734067039106147,
+      "predicted_per_second": 43.98685014343645
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "atomic",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 159,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/063-right-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 1068,
+    "total_request_seconds": 8.382532916999992,
+    "usage": {
+      "completion_tokens": 298,
+      "prompt_tokens": 375,
+      "total_tokens": 673,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1478.984,
+      "prompt_per_token_ms": 3.943957333333333,
+      "prompt_per_second": 253.55243870116243,
+      "predicted_n": 298,
+      "predicted_ms": 6862.758,
+      "predicted_per_token_ms": 23.10692929292929,
+      "predicted_per_second": 43.27706149626725
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "right",
+    "format": "combined",
+    "seed": 403,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 267,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_right",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/064-right-combined-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 225,
+    "total_request_seconds": 3.00781708400001,
+    "usage": {
+      "completion_tokens": 70,
+      "prompt_tokens": 383,
+      "total_tokens": 453,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1409.969,
+      "prompt_per_token_ms": 3.6813812010443865,
+      "prompt_per_second": 271.63717783866167,
+      "predicted_n": 70,
+      "predicted_ms": 1545.751,
+      "predicted_per_token_ms": 22.4021884057971,
+      "predicted_per_second": 44.63849610965803
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "plan",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 53,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/065-center-plan-cold"
+  },
+  {
+    "actions": [
+      "turn_right",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 2,
+    "content": "",
+    "reasoning_characters": 2551,
+    "total_request_seconds": 16.413143541999943,
+    "usage": {
+      "completion_tokens": 619,
+      "prompt_tokens": 441,
+      "total_tokens": 1060,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1615.184,
+      "prompt_per_token_ms": 3.662548752834467,
+      "prompt_per_second": 273.0339082110769,
+      "predicted_n": 619,
+      "predicted_ms": 14765.337,
+      "predicted_per_token_ms": 23.892131067961163,
+      "predicted_per_second": 41.854784621576876
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "atomic",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 598,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/066-center-atomic-cold"
+  },
+  {
+    "actions": [
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 1158,
+    "total_request_seconds": 8.479299459000003,
+    "usage": {
+      "completion_tokens": 305,
+      "prompt_tokens": 375,
+      "total_tokens": 680,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1429.719,
+      "prompt_per_token_ms": 3.812584,
+      "prompt_per_second": 262.2893030028978,
+      "predicted_n": 305,
+      "predicted_ms": 6991.283,
+      "predicted_per_token_ms": 22.997641447368423,
+      "predicted_per_second": 43.48271983840448
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "combined",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 288,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/067-center-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_right"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 974,
+    "total_request_seconds": 7.0914532920000966,
+    "usage": {
+      "completion_tokens": 244,
+      "prompt_tokens": 405,
+      "total_tokens": 649,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1485.708,
+      "prompt_per_token_ms": 3.668414814814815,
+      "prompt_per_second": 272.5973071424533,
+      "predicted_n": 244,
+      "predicted_ms": 5558.248,
+      "predicted_per_token_ms": 22.87344855967078,
+      "predicted_per_second": 43.71881211489664
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "center",
+    "format": "split",
+    "seed": 404,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 227,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": null,
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/068-center-split-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 759,
+    "total_request_seconds": 6.602796083000044,
+    "usage": {
+      "completion_tokens": 221,
+      "prompt_tokens": 375,
+      "total_tokens": 596,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 375,
+      "prompt_ms": 1457.62,
+      "prompt_per_token_ms": 3.8869866666666666,
+      "prompt_per_second": 257.2686982889917,
+      "predicted_n": 221,
+      "predicted_ms": 5103.219,
+      "predicted_per_token_ms": 23.19645,
+      "predicted_per_second": 43.11004485600167
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "combined",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 202,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/069-left-combined-cold"
+  },
+  {
+    "actions": [
+      "turn_left"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 708,
+    "total_request_seconds": 5.758332375000009,
+    "usage": {
+      "completion_tokens": 185,
+      "prompt_tokens": 405,
+      "total_tokens": 590,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 405,
+      "prompt_ms": 1549.195,
+      "prompt_per_token_ms": 3.825172839506173,
+      "prompt_per_second": 261.426095488302,
+      "predicted_n": 185,
+      "predicted_ms": 4158.374,
+      "predicted_per_token_ms": 22.599858695652173,
+      "predicted_per_second": 44.24806426742761
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "split",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 168,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": false,
+      "one_forward_step": false,
+      "no_extra_translation": true,
+      "forward_is_last_action": false,
+      "qualitative_goal_match": false,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/070-left-split-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "turn_left",
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 4,
+    "content": "",
+    "reasoning_characters": 1829,
+    "total_request_seconds": 14.487504999999942,
+    "usage": {
+      "completion_tokens": 544,
+      "prompt_tokens": 441,
+      "total_tokens": 985,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 441,
+      "prompt_ms": 1635.616,
+      "prompt_per_token_ms": 3.708879818594104,
+      "prompt_per_second": 269.62318783871035,
+      "predicted_n": 544,
+      "predicted_ms": 12815.068,
+      "predicted_per_token_ms": 23.60049355432781,
+      "predicted_per_second": 42.37199521688063
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "atomic",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 507,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/071-left-atomic-cold"
+  },
+  {
+    "actions": [
+      "turn_left",
+      "forward"
+    ],
+    "protocol_ok": true,
+    "hardware_executed": false,
+    "finish_reason": "tool_calls",
+    "call_count": 1,
+    "content": "",
+    "reasoning_characters": 905,
+    "total_request_seconds": 7.600638792000041,
+    "usage": {
+      "completion_tokens": 266,
+      "prompt_tokens": 383,
+      "total_tokens": 649,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 383,
+      "prompt_ms": 1405.767,
+      "prompt_per_token_ms": 3.6704099216710184,
+      "prompt_per_second": 272.44913275101777,
+      "predicted_n": 266,
+      "predicted_ms": 6142.1,
+      "predicted_per_token_ms": 23.177735849056607,
+      "predicted_per_second": 43.14485273766301
+    },
+    "outcome": "recorded_plan",
+    "tool_only_answer": true,
+    "only_tool_output": false,
+    "case": "left",
+    "format": "plan",
+    "seed": 402,
+    "cache_prompt": false,
+    "thinking": "brief",
+    "reasoning_text_tokens": 243,
+    "thinking_compliant": true,
+    "assessment": {
+      "expected_turn": "turn_left",
+      "correct_turn_before_forward": true,
+      "one_forward_step": true,
+      "no_extra_translation": true,
+      "forward_is_last_action": true,
+      "qualitative_goal_match": true,
+      "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+    },
+    "cache_mode": "cold",
+    "run_dir": "/Users/junda/robot/harness/experiments/20260917T044806.831756Z/072-left-plan-cold"
+  }
+]

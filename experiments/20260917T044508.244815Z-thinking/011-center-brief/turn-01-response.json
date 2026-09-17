@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants the robot to face the fridge and take one step toward it.\n\n1.  **Analyze the image and target:** The fridge is centered in the image (or slightly right/center, but it's the dominant feature in the center).\n2.  **Determine heading:** The robot is currently facing generally toward the camera/center of the kitchen, which means it is facing the fridge (or close to it). Assuming the current heading is suitable for facing the fridge directly.\n3.  **Determine action:** \"One step toward it\" translates to a `forward` movement.\n4.  **Determine parameters:** One step is the default translation (0.25 m).\n5.  **Check constraints:** The user asked for tool calls.\n\nLooking at the image, the fridge is straight ahead if the robot is positioned where the image starts (from the kitchen entrance).\nAction: `forward`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"forward\"]}"
+            },
+            "id": "La9wncb8n1CKwnj0JNLBLXjZrOSYNDup"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620380,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 207,
+    "prompt_tokens": 383,
+    "total_tokens": 590,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-J6AGLBshkecYievhvQhOgh3sFtTjBkmz",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 942.323,
+    "prompt_per_token_ms": 2.460373368146214,
+    "prompt_per_second": 406.44237697689647,
+    "predicted_n": 207,
+    "predicted_ms": 3451.33,
+    "predicted_per_token_ms": 16.75402912621359,
+    "predicted_per_second": 59.687135104438006
+  }
+}

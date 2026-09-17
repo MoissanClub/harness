@@ -1,0 +1,35 @@
+{
+  "arguments": {
+    "base_url": "http://127.0.0.1:8080/v1",
+    "model": "gemma4-e4b"
+  },
+  "prompt": "Rotate left in place, then translate forward one step. Include both actions in this response.",
+  "expected_actions": [
+    "turn_left",
+    "forward"
+  ],
+  "max_actions": 4,
+  "sampling": {
+    "temperature": 1.0,
+    "top_k": 64,
+    "top_p": 0.95,
+    "min_p": 0.0
+  },
+  "seeds": [
+    201,
+    202,
+    203
+  ],
+  "scheduler_seed": 20260917,
+  "source_sha256": {
+    "serialize_formats.py": "08f4686b4fcc6360867febc9f08acb15a13a20d5ebec803e1468910263aa9b88",
+    "run.py": "272638da3db67a2bf7e58bbb4098eb6e723021b3122b3aabec941688e6a9c20b",
+    "tools.py": "ec3af1ea3846ec0452fbf7088835989ab2c5738291b9de5e6fc33e481f15b59a",
+    "request-defaults.json": "b623d0ae8f7e67ed6bf0ca04a0a01e48f416f3788f423e29755694ab10fb426a",
+    "prompts/system.txt": "8d72008696ed871a724d2935e7d2be0a1c783d6746f296d0c1ec0f19c488ab60",
+    "prompts/user.txt": "2eb7e6e706a3082d2a5649ff017e5915bd8ca6e8bb7163bf099a11aeea784395",
+    "cases.json": "d2a8121ffbf68caa8e40f6fd36579e95970a53b9762895aa11f1d7da3563012e"
+  },
+  "design": "Text-only explicit sequence; each shuffled format/seed pair is cold then identical warm.",
+  "cache_note": "Cold disables prompt KV reuse, not all runtime caches."
+}

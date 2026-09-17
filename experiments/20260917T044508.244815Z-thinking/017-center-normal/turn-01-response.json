@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a sequence of robotic actions to face the refrigerator and take one step toward it.\n\n1.  **Analyze the current scene and target:**\n    *   The target is the large, silver refrigerator in the center-right of the image.\n    *   The robot is currently facing generally forward, towards the kitchen counter/fridge area.\n2.  **Determine the required actions:**\n    *   **Face the fridge:** The fridge is slightly to the right of the center. The robot needs to turn right.\n    *   **Take one step toward it:** After turning, the robot needs to translate forward.\n3.  **Translate actions into tool calls (using the available `plan` tool):**\n\n    *   *Step 1: Face the fridge.* The fridge is to the right of straight ahead. I need a `turn_right`.\n    *   *Step 2: Take one step toward it.* After turning, the fridge will be in front. I need a `forward` translation step.\n\n4.  **Construct the final plan:**\n    *   Action 1: `turn_right`\n    *   Action 2: `forward`\n\n5.  **Format the output:** Use the `plan` tool call.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"forward\"]}"
+            },
+            "id": "Z1n7PvxiGkg3hlUSTj6jv2YeJpOh2sfm"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620408,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 293,
+    "prompt_tokens": 370,
+    "total_tokens": 663,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-N9xwasPHisAiwNN1Mz69xkok7yxV5qGf",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 370,
+    "prompt_ms": 940.639,
+    "prompt_per_token_ms": 2.5422675675675674,
+    "prompt_per_second": 393.3496272214952,
+    "predicted_n": 293,
+    "predicted_ms": 4921.614,
+    "predicted_per_token_ms": 16.854842465753425,
+    "predicted_per_second": 59.33013031903762
+  }
+}

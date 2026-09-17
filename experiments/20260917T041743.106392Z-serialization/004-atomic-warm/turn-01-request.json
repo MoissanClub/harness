@@ -1,0 +1,105 @@
+{
+  "tool_choice": "auto",
+  "parallel_tool_calls": true,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "min_p": 0.0,
+  "stream": false,
+  "model": "gemma4-e4b",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Plan from the robot's forward-facing camera: image left/right are robot left/right; centered is straight ahead. Translation steps are 0.25 m; turns are 30 degrees in place. Later actions use the heading after earlier turns. Return the complete ordered plan using at most 4 actions, only tool calls, no explanation. Use as few actions as needed. This is an unexecuted mock plan."
+    },
+    {
+      "role": "user",
+      "content": "Rotate left in place, then translate forward one step. Include both actions in this response."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "move_left",
+        "description": "Strafe left without turning.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "move_right",
+        "description": "Strafe right without turning.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "move_forward",
+        "description": "Translate forward.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "move_backward",
+        "description": "Translate backward.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "turn_left",
+        "description": "Rotate left in place.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "turn_right",
+        "description": "Rotate right in place.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "seed": 202,
+  "cache_prompt": true,
+  "temperature": 1.0,
+  "top_k": 64,
+  "top_p": 0.95
+}

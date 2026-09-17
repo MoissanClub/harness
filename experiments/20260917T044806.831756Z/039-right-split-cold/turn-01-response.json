@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a sequence of tool calls to perform two actions:\n1. Face the fridge.\n2. Take one step toward it.\n\nFirst, I need to determine the current orientation of the robot relative to the fridge.\nLooking at the image, the fridge is on the right side of the image. Assuming the robot is facing forward (straight ahead) when the image was taken, it needs to turn right to face the fridge.\n\nThe available tools are `move` and `turn`.\n*   **Turn:** `turn(direction)` rotates in place.\n*   **Move:** `move(direction)` translates.\n\n1.  **Face the fridge:** The fridge is to the robot's right. I need to use `turn(right)`.\n2.  **Take one step toward it:** After turning right, the fridge is now directly ahead. I need to use `move(forward)`. The default translation is 0.25m, which constitutes \"one step\".\n\nSequence:\n1. `turn(right)`\n2. `move(forward)`",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn",
+              "arguments": "{\"direction\":\"right\"}"
+            },
+            "id": "rwgIrMKm17zd6P1OnY5rwvBtOWIX82YF"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620770,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 247,
+    "prompt_tokens": 405,
+    "total_tokens": 652,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-KT0bCxuYZ9cjGgQ2c1iwOTOGwaFLXcoH",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1072.348,
+    "prompt_per_token_ms": 2.647772839506173,
+    "prompt_per_second": 377.67590371782296,
+    "predicted_n": 247,
+    "predicted_ms": 4197.085,
+    "predicted_per_token_ms": 17.061321138211383,
+    "predicted_per_second": 58.612108165548236
+  }
+}

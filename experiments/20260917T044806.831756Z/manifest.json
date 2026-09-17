@@ -1,0 +1,35 @@
+{
+  "arguments": {
+    "base_url": "http://127.0.0.1:8080/v1",
+    "model": "gemma4-e4b",
+    "prompt_file": "/Users/junda/robot/harness/prompts/user.txt",
+    "max_actions": 4,
+    "thinking": "brief",
+    "repeats": 6,
+    "start_seed": 401,
+    "cache_modes": "cold"
+  },
+  "source_sha256": {
+    "run.py": "477a46ec042dc1f58647e327a75569aaec2226064109133c17a47768c3d5a834",
+    "tools.py": "ec3af1ea3846ec0452fbf7088835989ab2c5738291b9de5e6fc33e481f15b59a",
+    "evaluate_formats.py": "9fd18b17e0bc0dddf9a7c2122fc27f1010379475a4d0d54feb94f68d8d7c874f",
+    "request-defaults.json": "7e1164e16a53b8b4ebfc2da1cc0c36b69273898c0798a1978a1cb7e6f94fc6d1",
+    "cases.json": "d2a8121ffbf68caa8e40f6fd36579e95970a53b9762895aa11f1d7da3563012e",
+    "FORMAT_HYPOTHESIS.md": "7528aea7dfac5a650e4582e8f0aaccf0ac0162bee77b6d5b98557d58207b1291",
+    "THINKING_HYPOTHESIS.md": "9e53917f240631f6f209767c169d78386ac179f893d3458cb5f5c01049723272",
+    "runner-defaults.json": "3f2d1640dcc467a49b18a983afd9240f6206a4344769e4aa13e4f34a4eb063de",
+    "evaluation-sampling.json": "7b66d9720f12a6d0bc741ec26352338a731937043395fcac37608456e403e58b",
+    "prompts/system.txt": "f727aaf56b9815c4cb6e5fc850805e850128f827fe55ea5d64d7f087448f2b4b",
+    "prompts/user.txt": "2eb7e6e706a3082d2a5649ff017e5915bd8ca6e8bb7163bf099a11aeea784395",
+    "prompts/brief-thinking.txt": "cc85d7d9b47c0e1fccbc9020729a46b58deaf0bb35f85ad5720f00bdc3a4912b"
+  },
+  "template_sha256": "603a42db292c25278e9b23d94c7abbe77453f13e26a053c43c5c2f900b4136f7",
+  "scheduler_seed": 20260917,
+  "sampling": {
+    "temperature": 1.0,
+    "top_k": 64,
+    "top_p": 0.95,
+    "min_p": 0.0
+  },
+  "design": "Randomized format order; cold-only or paired cold/warm as specified; one model response each."
+}

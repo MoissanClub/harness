@@ -1,0 +1,40 @@
+{
+  "actions": [
+    "turn_left",
+    "forward"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 2,
+  "content": "",
+  "reasoning_characters": 0,
+  "total_request_seconds": 1.1159043750000004,
+  "usage": {
+    "completion_tokens": 27,
+    "prompt_tokens": 208,
+    "total_tokens": 235,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 208,
+    "prompt_ms": 543.231,
+    "prompt_per_token_ms": 2.6116875,
+    "prompt_per_second": 382.89420154593535,
+    "predicted_n": 27,
+    "predicted_ms": 560.008,
+    "predicted_per_token_ms": 21.538769230769233,
+    "predicted_per_second": 46.42790817274039
+  },
+  "outcome": "recorded_plan",
+  "only_tool_output": true,
+  "exact_plan_match": true,
+  "success": true,
+  "seed": 203,
+  "format": "combined",
+  "cache_mode": "cold",
+  "run_dir": "/Users/junda/robot/harness/experiments/20260917T041743.106392Z-serialization/007-combined-cold"
+}

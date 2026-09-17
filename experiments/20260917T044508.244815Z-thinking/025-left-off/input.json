@@ -1,0 +1,15 @@
+{
+  "image": "/Users/junda/robot/harness/assets/kitchen-left-720x480.png",
+  "width": 720,
+  "height": 480,
+  "sha256": "a9e6dd73c7bad20041607bc76740ad43fb531e598bb9e45bc42ff9146e39f765",
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e4b",
+  "format": "plan",
+  "thinking": "off",
+  "max_actions": 4,
+  "rubric": {
+    "expected_turn": "turn_left"
+  },
+  "case": "left"
+}

@@ -1,0 +1,126 @@
+{
+  "combined": {
+    "text_prompt_tokens": 222,
+    "tool_declaration_increment_tokens": 88,
+    "reference_outputs": {
+      "one": {
+        "actions": [
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_response>",
+        "tokens": 13
+      },
+      "two": {
+        "actions": [
+          "turn_left",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:move{direction:<|\"|>turn_left<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_response>",
+        "tokens": 27
+      },
+      "four": {
+        "actions": [
+          "turn_left",
+          "forward",
+          "turn_right",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:move{direction:<|\"|>turn_left<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>turn_right<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_response>",
+        "tokens": 53
+      }
+    }
+  },
+  "split": {
+    "text_prompt_tokens": 252,
+    "tool_declaration_increment_tokens": 118,
+    "reference_outputs": {
+      "one": {
+        "actions": [
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_response>",
+        "tokens": 13
+      },
+      "two": {
+        "actions": [
+          "turn_left",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:turn{direction:<|\"|>left<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_response>",
+        "tokens": 25
+      },
+      "four": {
+        "actions": [
+          "turn_left",
+          "forward",
+          "turn_right",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:turn{direction:<|\"|>left<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_call>call:turn{direction:<|\"|>right<|\"|>}<tool_call|><|tool_call>call:move{direction:<|\"|>forward<|\"|>}<tool_call|><|tool_response>",
+        "tokens": 49
+      }
+    }
+  },
+  "atomic": {
+    "text_prompt_tokens": 288,
+    "tool_declaration_increment_tokens": 154,
+    "reference_outputs": {
+      "one": {
+        "actions": [
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:move_forward{}<tool_call|><|tool_response>",
+        "tokens": 9
+      },
+      "two": {
+        "actions": [
+          "turn_left",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:turn_left{}<tool_call|><|tool_call>call:move_forward{}<tool_call|><|tool_response>",
+        "tokens": 17
+      },
+      "four": {
+        "actions": [
+          "turn_left",
+          "forward",
+          "turn_right",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:turn_left{}<tool_call|><|tool_call>call:move_forward{}<tool_call|><|tool_call>call:turn_right{}<tool_call|><|tool_call>call:move_forward{}<tool_call|><|tool_response>",
+        "tokens": 33
+      }
+    }
+  },
+  "plan": {
+    "text_prompt_tokens": 230,
+    "tool_declaration_increment_tokens": 96,
+    "reference_outputs": {
+      "one": {
+        "actions": [
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:plan{actions:[<|\"|>forward<|\"|>]}<tool_call|><|tool_response>",
+        "tokens": 13
+      },
+      "two": {
+        "actions": [
+          "turn_left",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:plan{actions:[<|\"|>turn_left<|\"|>,<|\"|>forward<|\"|>]}<tool_call|><|tool_response>",
+        "tokens": 19
+      },
+      "four": {
+        "actions": [
+          "turn_left",
+          "forward",
+          "turn_right",
+          "forward"
+        ],
+        "native_text": "<|tool_call>call:plan{actions:[<|\"|>turn_left<|\"|>,<|\"|>forward<|\"|>,<|\"|>turn_right<|\"|>,<|\"|>forward<|\"|>]}<tool_call|><|tool_response>",
+        "tokens": 29
+      }
+    }
+  }
+}

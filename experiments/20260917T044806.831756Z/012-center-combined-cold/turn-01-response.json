@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a sequence of actions (tool calls) to achieve two goals:\n1. Face the fridge.\n2. Take one step toward it.\n\nThe image shows the fridge is straight ahead (centered).\n\"Face the fridge\" requires looking straight ahead, which is the current default heading (0 degrees).\n\"Take one step toward it\" requires a forward translation of 0.25m.\n\nAction sequence:\n1. Move forward (translate 0.25m).",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "K7mzppp9i24NKIrRdzcOss0ybrxlqXA4"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620585,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 123,
+    "prompt_tokens": 375,
+    "total_tokens": 498,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-EX11zUeuaSRo6oJGu74MImIKFi8chDZH",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 375,
+    "prompt_ms": 948.002,
+    "prompt_per_token_ms": 2.528005333333333,
+    "prompt_per_second": 395.56878571986135,
+    "predicted_n": 123,
+    "predicted_ms": 2019.838,
+    "predicted_per_token_ms": 16.556049180327868,
+    "predicted_per_second": 60.400883635222236
+  }
+}

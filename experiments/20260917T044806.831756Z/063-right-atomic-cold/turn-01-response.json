@@ -1,0 +1,55 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan to face the refrigerator and take one step toward it.\n\n1.  **Analyze the starting position:** The robot is currently facing forward (straight ahead) in the kitchen.\n2.  **Locate the refrigerator:** The refrigerator is visible on the right side of the image.\n3.  **Determine the required rotation:** To face the fridge, the robot needs to turn right.\n4.  **Determine the step:** After turning, the robot needs to take one step forward.\n\n*   **Step 1: Turn Right.**\n*   **Step 2: Move Forward (1 step).**\n\nThe action for turning is `turn_right()`.\nThe action for moving forward is `move_forward()`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn_right",
+              "arguments": "{}"
+            },
+            "id": "seSIAP5KlBPpDAbrxQAq08uON0nu6VHN"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "move_forward",
+              "arguments": "{}"
+            },
+            "id": "6CDiJd2L34sKPNlZJ4yteAdMCIC8zFzP"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620979,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 180,
+    "prompt_tokens": 441,
+    "total_tokens": 621,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-rBIJF969tCUyDvHQp2pSjICV5B9hP7EM",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 441,
+    "prompt_ms": 1660.33,
+    "prompt_per_token_ms": 3.764920634920635,
+    "prompt_per_second": 265.6098486445466,
+    "predicted_n": 180,
+    "predicted_ms": 4069.398,
+    "predicted_per_token_ms": 22.734067039106147,
+    "predicted_per_second": 43.98685014343645
+  }
+}

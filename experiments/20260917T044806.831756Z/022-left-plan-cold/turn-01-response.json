@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants the robot to face the refrigerator and then take one step toward it.\n\n1.  **Locate the refrigerator:** It is prominently featured in the center-left of the image.\n2.  **Determine the required action (Facing):** The robot needs to rotate to face the fridge. The fridge is to the left of the current forward orientation.\n3.  **Determine the required action (Movement):** The robot needs to take one step forward. A \"forward\" translation of 0.25m.\n\nThe plan should execute these two steps sequentially.\n\n*   Step 1: `turn_left` (to face the fridge).\n*   Step 2: `forward` (to move one step toward the fridge).\n\nThe prompt asks for the complete ordered plan using at most 4 actions. Two actions are sufficient.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_left\",\"forward\"]}"
+            },
+            "id": "k28UGhSNaw48ohSEnzWm0WVSAqByQAx1"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620655,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 201,
+    "prompt_tokens": 383,
+    "total_tokens": 584,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-LuFK8r8AyIkSahbd2zQr4lREWJIerJH4",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 959.098,
+    "prompt_per_token_ms": 2.504172323759791,
+    "prompt_per_second": 399.3335404724022,
+    "predicted_n": 201,
+    "predicted_ms": 3353.131,
+    "predicted_per_token_ms": 16.765655,
+    "predicted_per_second": 59.645746020659494
+  }
+}

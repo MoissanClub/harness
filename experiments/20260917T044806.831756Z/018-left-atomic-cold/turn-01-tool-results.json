@@ -1,0 +1,44 @@
+[
+  {
+    "direction": "turn_left",
+    "executed": false,
+    "plan_index": 1,
+    "planned_actions": [
+      "turn_left"
+    ],
+    "requested_turn_degrees": 30
+  },
+  {
+    "direction": "turn_left",
+    "executed": false,
+    "plan_index": 2,
+    "planned_actions": [
+      "turn_left",
+      "turn_left"
+    ],
+    "requested_turn_degrees": 30
+  },
+  {
+    "direction": "turn_left",
+    "executed": false,
+    "plan_index": 3,
+    "planned_actions": [
+      "turn_left",
+      "turn_left",
+      "turn_left"
+    ],
+    "requested_turn_degrees": 30
+  },
+  {
+    "direction": "forward",
+    "executed": false,
+    "plan_index": 4,
+    "planned_actions": [
+      "turn_left",
+      "turn_left",
+      "turn_left",
+      "forward"
+    ],
+    "requested_step_m": 0.25
+  }
+]

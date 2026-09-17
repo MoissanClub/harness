@@ -1,0 +1,39 @@
+{
+  "actions": [
+    "turn_left"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 1,
+  "content": "",
+  "reasoning_characters": 0,
+  "total_request_seconds": 0.8562048749999998,
+  "usage": {
+    "completion_tokens": 9,
+    "prompt_tokens": 274,
+    "total_tokens": 283,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 274,
+    "prompt_ms": 662.186,
+    "prompt_per_token_ms": 2.4167372262773723,
+    "prompt_per_second": 413.7810222505459,
+    "predicted_n": 9,
+    "predicted_ms": 174.686,
+    "predicted_per_token_ms": 21.83575,
+    "predicted_per_second": 45.79645764400124
+  },
+  "outcome": "recorded_plan",
+  "only_tool_output": true,
+  "exact_plan_match": false,
+  "success": false,
+  "seed": 202,
+  "format": "atomic",
+  "cache_mode": "cold",
+  "run_dir": "/Users/junda/robot/harness/experiments/20260917T041743.106392Z-serialization/003-atomic-cold"
+}

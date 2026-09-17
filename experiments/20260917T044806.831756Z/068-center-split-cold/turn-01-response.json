@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants the robot to face the refrigerator and take one step towards it.\n1.  **Analyze the image:** The refrigerator is centrally located relative to the kitchen area, slightly to the right of the main cabinets, and is the largest object in the center-right of the image.\n2.  **Determine current heading:** Assuming the robot is facing forward (straight ahead) as per standard setup, it is facing generally toward the countertop/cabinets.\n3.  **Determine required orientation:** To face the fridge, the robot needs to turn right. Looking at the image, the fridge is to the right of the current forward-facing direction. A 30-degree turn right should get it much closer to facing the fridge.\n4.  **Determine movement:** One step towards the fridge. This means moving forward once oriented towards it.\n\n**Plan:**\n1.  `turn(direction=\"right\")` to face the fridge.\n2.  `move(direction=\"forward\")` to take one step towards it.\n\nLet's execute the first step: turning right.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn",
+              "arguments": "{\"direction\":\"right\"}"
+            },
+            "id": "Yrt2SJuYoAusUDBCTNK8u2PrymLRZf0x"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789621022,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 244,
+    "prompt_tokens": 405,
+    "total_tokens": 649,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-XbY1jBBJky6n6p6Ceh8AB7RFqy6orYaI",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1485.708,
+    "prompt_per_token_ms": 3.668414814814815,
+    "prompt_per_second": 272.5973071424533,
+    "predicted_n": 244,
+    "predicted_ms": 5558.248,
+    "predicted_per_token_ms": 22.87344855967078,
+    "predicted_per_second": 43.71881211489664
+  }
+}

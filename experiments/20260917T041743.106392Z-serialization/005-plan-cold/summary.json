@@ -1,0 +1,40 @@
+{
+  "actions": [
+    "turn_left",
+    "forward"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 1,
+  "content": "",
+  "reasoning_characters": 0,
+  "total_request_seconds": 0.9240370000000002,
+  "usage": {
+    "completion_tokens": 19,
+    "prompt_tokens": 216,
+    "total_tokens": 235,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 216,
+    "prompt_ms": 537.899,
+    "prompt_per_token_ms": 2.490273148148148,
+    "prompt_per_second": 401.5623750927218,
+    "predicted_n": 19,
+    "predicted_ms": 373.568,
+    "predicted_per_token_ms": 20.753777777777778,
+    "predicted_per_second": 48.18399862943293
+  },
+  "outcome": "recorded_plan",
+  "only_tool_output": true,
+  "exact_plan_match": true,
+  "success": true,
+  "seed": 202,
+  "format": "plan",
+  "cache_mode": "cold",
+  "run_dir": "/Users/junda/robot/harness/experiments/20260917T041743.106392Z-serialization/005-plan-cold"
+}

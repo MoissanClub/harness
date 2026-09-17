@@ -1,0 +1,59 @@
+{
+  "tool_choice": "auto",
+  "parallel_tool_calls": true,
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "min_p": 0.0,
+  "stream": false,
+  "model": "gemma4-e4b",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Plan from the robot's forward-facing camera: image left/right are robot left/right; centered is straight ahead. Translation steps are 0.25 m; turns are 30 degrees in place. Later actions use the heading after earlier turns. Return the complete ordered plan using at most 4 actions, only tool calls, no explanation. Use as few actions as needed. This is an unexecuted mock plan."
+    },
+    {
+      "role": "user",
+      "content": "Rotate left in place, then translate forward one step. Include both actions in this response."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "plan",
+        "description": "Ordered actions: left/right strafe; forward/backward translate; turn_left/turn_right rotate.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "right",
+                  "forward",
+                  "backward",
+                  "turn_left",
+                  "turn_right"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 4
+            }
+          },
+          "required": [
+            "actions"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "seed": 202,
+  "cache_prompt": false,
+  "temperature": 1.0,
+  "top_k": 64,
+  "top_p": 0.95
+}

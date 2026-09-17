@@ -1,0 +1,11 @@
+{
+  "seed": 203,
+  "format": "split",
+  "cache_mode": "cold",
+  "prompt": "Rotate left in place, then translate forward one step. Include both actions in this response.",
+  "expected_actions": [
+    "turn_left",
+    "forward"
+  ],
+  "max_actions": 4
+}

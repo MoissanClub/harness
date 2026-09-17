@@ -1,0 +1,7 @@
+{
+  "tool_choice": "auto",
+  "parallel_tool_calls": true,
+  "chat_template_kwargs": {"enable_thinking": false},
+  "min_p": 0.0,
+  "stream": false
+}

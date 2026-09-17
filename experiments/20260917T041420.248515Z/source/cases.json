@@ -1,0 +1,14 @@
+{
+  "center": {
+    "image": "assets/kitchen-720x480.png",
+    "expected_turn": null
+  },
+  "left": {
+    "image": "assets/kitchen-left-720x480.png",
+    "expected_turn": "turn_left"
+  },
+  "right": {
+    "image": "assets/kitchen-right-720x480.png",
+    "expected_turn": "turn_right"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a sequence of tool calls to face the refrigerator and then take one step towards it.\n\n1.  **Identify the target:** The refrigerator is on the right side of the image.\n2.  **Determine the current heading:** The robot is facing forward (straight ahead).\n3.  **Calculate the required turn:** To face the fridge, the robot needs to turn right.\n4.  **Determine the required movement:** After turning, the robot needs to move forward by one step. The plan specifies that translation steps are 0.25 m. So, `move_forward` is needed.\n\n*   `turn_right` (to face the fridge)\n*   `move_forward` (to take one step)\n\nPlan:\n1. `turn_right`\n2. `move_forward`",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn_right",
+              "arguments": "{}"
+            },
+            "id": "sw1x8oWtEzsD6XzM8mHFvjaMTeQjc0Cr"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "move_forward",
+              "arguments": "{}"
+            },
+            "id": "Rq2zvIW7nkhKgiQJwxtOJKqmzPh5mA92"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620753,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 199,
+    "prompt_tokens": 441,
+    "total_tokens": 640,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-sGDIYVJiz8QFflhY1MSn3fK5PV5yDvEJ",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 441,
+    "prompt_ms": 1111.73,
+    "prompt_per_token_ms": 2.5209297052154196,
+    "prompt_per_second": 396.6790497692785,
+    "predicted_n": 199,
+    "predicted_ms": 3365.13,
+    "predicted_per_token_ms": 16.99560606060606,
+    "predicted_per_second": 58.83873728503802
+  }
+}

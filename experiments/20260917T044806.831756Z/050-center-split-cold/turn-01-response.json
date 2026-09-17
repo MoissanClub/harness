@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan based on an image.\nThe goal is: \"Face the fridge and take one step toward it.\"\nThe robot's forward-facing camera is positioned somewhere in the kitchen.\nThe fridge is centrally located in the background.\n\n1.  **Determine current heading/position relative to the fridge:** The robot seems to be facing roughly forward/straight ahead relative to the fridge.\n2.  **Identify the action \"Face the fridge\":**\n    *   If the robot is already facing the fridge, no turn is needed.\n    *   If it's not facing the fridge, I need to calculate the required turn.\n3.  **Identify the action \"take one step toward it\":**\n    *   This is a `move` action in the `forward` direction.\n\nLooking at the image, the robot's implied starting orientation is facing the general direction of the kitchen counter/fridge. The fridge is mostly centered in the field of view. I will assume the robot is already facing the general direction of the fridge (straight ahead).\n\n*Action 1: Move forward.* (One step towards the fridge).\n\nI will use the `move` tool.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "xG0uylY7EhZUZUYELpwc7MSajVPZPrGW"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620865,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 271,
+    "prompt_tokens": 405,
+    "total_tokens": 676,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-Z0NOOe324Yc2I8SGlxIAqU8B2ZRLmlhh",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1517.338,
+    "prompt_per_token_ms": 3.7465135802469134,
+    "prompt_per_second": 266.91482056074517,
+    "predicted_n": 271,
+    "predicted_ms": 6245.228,
+    "predicted_per_token_ms": 23.130474074074073,
+    "predicted_per_second": 43.233009267235715
+  }
+}

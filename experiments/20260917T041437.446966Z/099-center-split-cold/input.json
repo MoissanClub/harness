@@ -1,0 +1,14 @@
+{
+  "image": "/Users/junda/robot/harness/assets/kitchen-720x480.png",
+  "width": 720,
+  "height": 480,
+  "sha256": "7c76c663167cbba2e12cb2f97ccc8bf2c170792801fef816a362731cbc4c7386",
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e4b",
+  "format": "split",
+  "max_actions": 4,
+  "rubric": {
+    "expected_turn": null
+  },
+  "case": "center"
+}

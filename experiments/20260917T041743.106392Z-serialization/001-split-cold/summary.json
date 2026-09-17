@@ -1,0 +1,40 @@
+{
+  "actions": [
+    "turn_left",
+    "forward"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 2,
+  "content": "",
+  "reasoning_characters": 0,
+  "total_request_seconds": 1.166998666,
+  "usage": {
+    "completion_tokens": 25,
+    "prompt_tokens": 238,
+    "total_tokens": 263,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 238,
+    "prompt_ms": 626.704,
+    "prompt_per_token_ms": 2.6332100840336135,
+    "prompt_per_second": 379.76460976792873,
+    "predicted_n": 25,
+    "predicted_ms": 493.768,
+    "predicted_per_token_ms": 20.573666666666664,
+    "predicted_per_second": 48.60582297759272
+  },
+  "outcome": "recorded_plan",
+  "only_tool_output": true,
+  "exact_plan_match": true,
+  "success": true,
+  "seed": 202,
+  "format": "split",
+  "cache_mode": "cold",
+  "run_dir": "/Users/junda/robot/harness/experiments/20260917T041743.106392Z-serialization/001-split-cold"
+}

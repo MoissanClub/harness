@@ -1,0 +1,1 @@
+<|tool_call>call:plan{actions:[<|"|>turn_right<|"|>,<|"|>forward<|"|>]}<tool_call|><|tool_response>

@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants the robot to face the fridge and take one step toward it.\n\n1.  **Analyze the image and target:** The fridge is on the right side of the image. The robot is centered, facing forward.\n2.  **Determine the action sequence:**\n    *   The robot needs to turn right to face the fridge.\n    *   The turn angle needed is approximately 90 degrees. The available turn step is 30 degrees.\n    *   $90 / 30 = 3$ turns.\n    *   Action 1: `turn_right`\n    *   Action 2: `turn_right`\n    *   Action 3: `turn_right`\n    *   The robot is now facing the fridge.\n    *   Next, it needs to take one step (translation) forward. The step size is 0.25 m.\n    *   Action 4: `forward`\n\n3.  **Formulate the plan:** `[\"turn_right\", \"turn_right\", \"turn_right\", \"forward\"]`",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"turn_right\",\"turn_right\",\"forward\"]}"
+            },
+            "id": "LydvRXt9FKApPLgCVDwQT32ywsScQjV8"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620323,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 268,
+    "prompt_tokens": 383,
+    "total_tokens": 651,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-L56lrgeeUlVeGicxIfYDoKnb2RN2BITy",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 942.368,
+    "prompt_per_token_ms": 2.460490861618799,
+    "prompt_per_second": 406.4229685218513,
+    "predicted_n": 268,
+    "predicted_ms": 4478.684,
+    "predicted_per_token_ms": 16.774097378277155,
+    "predicted_per_second": 59.61572640534585
+  }
+}

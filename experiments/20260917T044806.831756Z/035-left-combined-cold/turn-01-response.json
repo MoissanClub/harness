@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants to perform two actions:\n1. Face the fridge.\n2. Take one step (0.25 m) toward the fridge.\n\nFirst, I need to locate the fridge relative to the robot's current heading (which is facing the camera/viewer, based on the image perspective).\nThe fridge is centered in the image, slightly to the left of the absolute center, but generally in front of the robot's initial view.\n\nThe robot needs to face the fridge. Since the fridge is generally in front of the robot, the orientation might already be close, but I should assume it needs to align perfectly with the fridge's position in the map/environment. Looking at the image, the fridge is almost directly in front of the robot.\n\nAction 1: Face the fridge (Assume minimal or zero rotation needed if it's directly ahead, but if a rotation is needed, I'd use `turn_left` or `turn_right`). Since it's centered, no turn is strictly necessary, but if I must execute a movement toward it, I'll move forward.\n\nAction 2: Take one step toward it. This is a forward translation of 0.25m.\n\nPlan:\n1. Move forward (translate 0.25m).\n\nLet's confirm the `move` tool usage. It takes a direction: `forward`, `backward`, `left`, `right`, `turn_left`, `turn_right`.\n\nSince the fridge is directly ahead, the robot just needs to move `forward`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "FXRlCkwtZUGP0lNszWL9HgTWDYqlZ6G3"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620745,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 344,
+    "prompt_tokens": 375,
+    "total_tokens": 719,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-tTTDrOloFHtASQCOE3tfUfnUE7C5xtvE",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 375,
+    "prompt_ms": 995.1,
+    "prompt_per_token_ms": 2.6536,
+    "prompt_per_second": 376.84654808561953,
+    "predicted_n": 344,
+    "predicted_ms": 5853.692,
+    "predicted_per_token_ms": 17.06615743440233,
+    "predicted_per_second": 58.595498362401024
+  }
+}

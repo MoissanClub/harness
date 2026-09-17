@@ -1,0 +1,55 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan based on an image of a kitchen.\nThe goal is: \"Face the fridge and take one step toward it.\"\n\n1.  **Identify the target:** The refrigerator is a large, silver appliance located on the left side of the image, slightly toward the back.\n2.  **Determine current orientation:** The robot is facing straight ahead (down the length of the kitchen island/counter).\n3.  **Action 1: Turn towards the fridge.** The fridge is on the left. The robot needs to turn left.\n    *   Turn: `turn_left`.\n    *   Since the fridge is not directly to the side but slightly into the corner area on the left, a 30-degree turn left should bring it close enough.\n4.  **Action 2: Move toward the fridge.** The fridge is now generally in the frontal direction relative to the robot's new orientation.\n    *   Translate: `forward`.\n    *   The prompt specifies \"one step,\" and the allowed translation step is 0.25m. So, one forward step.\n\n*Self-Correction/Refinement:* If the initial turn is 30 degrees left, the fridge will be somewhere in front of the robot. After turning, moving forward will take the robot one step toward the fridge.\n\nPlan:\n1.  Turn left to face the fridge.\n2.  Move forward (one step).",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"turn_left\"}"
+            },
+            "id": "ZBKcybAtqEo3Tmd6BTdAm2Iu5aM4gWYA"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "WFhTTHHJx5ADfkKgz1sxdJGr5U93BxQG"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620661,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 337,
+    "prompt_tokens": 375,
+    "total_tokens": 712,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-WLtOmXiZSjvYIx3TOmCJcdLV1Vh3PH5c",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 375,
+    "prompt_ms": 973.352,
+    "prompt_per_token_ms": 2.5956053333333333,
+    "prompt_per_second": 385.2665839285274,
+    "predicted_n": 337,
+    "predicted_ms": 5649.291,
+    "predicted_per_token_ms": 16.81336607142857,
+    "predicted_per_second": 59.476490058664
+  }
+}

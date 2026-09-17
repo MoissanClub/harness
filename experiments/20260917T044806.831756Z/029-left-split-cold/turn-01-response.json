@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a sequence of tool calls to move the robot towards the fridge.\n1.  **Identify the target:** The fridge is directly in front of the robot.\n2.  **Determine the action:** The instruction is \"Face the fridge and take one step toward it.\"\n3.  **Determine the tool:** The `move` tool is used for translation.\n4.  **Determine the direction:** Since the fridge is straight ahead, the direction is `forward`.\n5.  **Construct the call:** `move(direction=\"forward\")`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "XubYadUnaYD1wEzZIEpM8OkxjZ5LdbY9"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620701,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 136,
+    "prompt_tokens": 405,
+    "total_tokens": 541,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-2SsIwcx2znXls5eE8fAsda7Diaxr9pgK",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1029.486,
+    "prompt_per_token_ms": 2.541940740740741,
+    "prompt_per_second": 393.4002016540293,
+    "predicted_n": 136,
+    "predicted_ms": 2273.685,
+    "predicted_per_token_ms": 16.842111111111112,
+    "predicted_per_second": 59.374979383687716
+  }
+}

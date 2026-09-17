@@ -1,0 +1,8 @@
+{
+  "reasoning_text": 668,
+  "first_native_call": 14,
+  "reported_completion_tokens": 687,
+  "note": "Pieces retokenized separately; channel/stop tokens and boundaries can affect totals.",
+  "server_build": "b10909-a2878d30d",
+  "source_run": "/Users/junda/robot/harness/runs/20260917T005418.836090Z-right"
+}

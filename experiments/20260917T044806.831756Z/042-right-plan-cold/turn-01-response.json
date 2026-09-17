@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan to face the fridge and take one step toward it.\n1.  **Identify the fridge:** The fridge is on the right side of the image.\n2.  **Identify the current orientation:** The robot is facing forward (into the kitchen).\n3.  **Determine the required movement:** The robot needs to turn right to face the fridge and then move forward (one translation step).\n4.  **Calculate the turn:** The fridge is on the right. A turn_right action should align the robot with the fridge. The target is to \"face the fridge\".\n5.  **Calculate the translation:** \"take one step toward it\". The translation step size is 0.25 m.\n6.  **Formulate the plan:** Turn right, then forward.\n\n*   Turn right.\n*   Forward (0.25m step).\n\nThe maximum number of actions allowed is 4. This plan uses 2 actions.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"forward\"]}"
+            },
+            "id": "sdwOF2KPnPk4KStVfifsuWfvDmID4F0r"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620790,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 229,
+    "prompt_tokens": 383,
+    "total_tokens": 612,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-rLU8Mjpx5RsFnOOmJYmNdkqk7EtvNHOH",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 1039.771,
+    "prompt_per_token_ms": 2.714806788511749,
+    "prompt_per_second": 368.35033868034407,
+    "predicted_n": 229,
+    "predicted_ms": 3858.949,
+    "predicted_per_token_ms": 16.9252149122807,
+    "predicted_per_second": 59.083444741042186
+  }
+}

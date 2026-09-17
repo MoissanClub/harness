@@ -1,0 +1,191 @@
+[
+  {
+    "seed": 302,
+    "case": "right",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "right",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "right",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "left",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "left",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "left",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "left",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "left",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "left",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "center",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "center",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "center",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "center",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "center",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "center",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "center",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "center",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "center",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "right",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "right",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 303,
+    "case": "right",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "right",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "right",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 301,
+    "case": "right",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "left",
+    "thinking": "off",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "left",
+    "thinking": "normal",
+    "format": "plan",
+    "cache_mode": "cold"
+  },
+  {
+    "seed": 302,
+    "case": "left",
+    "thinking": "brief",
+    "format": "plan",
+    "cache_mode": "cold"
+  }
+]

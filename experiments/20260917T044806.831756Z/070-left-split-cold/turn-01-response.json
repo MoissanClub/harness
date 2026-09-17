@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a sequence of tool calls to make the robot face the refrigerator and take one step toward it.\n1.  **Analyze the image:** The refrigerator is clearly visible in the center-left part of the image.\n2.  **Determine the initial heading:** Assuming the robot is facing forward (straight ahead), the fridge is to the left.\n3.  **Determine the required rotation:** To face the fridge, the robot needs to turn left.\n4.  **Determine the required movement:** After facing the fridge, the robot needs to move one step forward.\n\n*   **Action 1: Turn left.**\n*   **Action 2: Move forward.**\n\nConstraint check: The plan must use at most 4 actions, as few as needed. Two actions are sufficient.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn",
+              "arguments": "{\"direction\":\"left\"}"
+            },
+            "id": "gQsj8woJTTaEApQFZSHX2fQLwQdLELSO"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789621035,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 185,
+    "prompt_tokens": 405,
+    "total_tokens": 590,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-tTIFgOHpML8QtDXhsyHPAkkWIBgSkgzn",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1549.195,
+    "prompt_per_token_ms": 3.825172839506173,
+    "prompt_per_second": 261.426095488302,
+    "predicted_n": 185,
+    "predicted_ms": 4158.374,
+    "predicted_per_token_ms": 22.599858695652173,
+    "predicted_per_second": 44.24806426742761
+  }
+}

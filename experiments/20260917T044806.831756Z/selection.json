@@ -1,0 +1,7 @@
+{
+  "format": "plan",
+  "thinking": "brief",
+  "rule": "Maximize qualitative successes, then minimize median request latency on successful plans.",
+  "template_unchanged": true,
+  "note": "Provisional selection for one-response planning on three synthetic scenes; not navigation reliability."
+}

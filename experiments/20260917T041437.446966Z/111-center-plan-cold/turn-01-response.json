@@ -1,0 +1,46 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"right\",\"forward\"]}"
+            },
+            "id": "R43XoBezM1qT9gFF1Cw8RsYiMfSCcceH"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789618570,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 17,
+    "prompt_tokens": 367,
+    "total_tokens": 384,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-BrSFJaDbCPw0sW0w4kizcCz5At0zEkMJ",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 367,
+    "prompt_ms": 900.573,
+    "prompt_per_token_ms": 2.4538773841961854,
+    "prompt_per_second": 407.5183244445481,
+    "predicted_n": 17,
+    "predicted_ms": 263.242,
+    "predicted_per_token_ms": 16.452625,
+    "predicted_per_second": 60.780574528380725
+  }
+}

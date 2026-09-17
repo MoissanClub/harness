@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants to execute a plan based on a visual input and a specific instruction.\nInstruction: \"Face the fridge and take one step toward it.\"\n\n1.  **Identify the target:** The refrigerator is located on the right side of the image.\n2.  **Determine the current heading:** The robot is facing straight ahead (centered).\n3.  **Determine the required rotation:** To face the fridge, the robot needs to turn right.\n4.  **Determine the rotation action:** The required rotation is 30 degrees (since the prompt limits turns to 30 degrees).\n5.  **Determine the translation action:** After facing the fridge, it needs to take one step (0.25 m) forward.\n\n*   Action 1: Turn right (to face the fridge).\n*   Action 2: Forward translation (to take one step).\n\nI will use the `plan` tool.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"forward\"]}"
+            },
+            "id": "JHN3iINEbZrcD8Mm4MfY5nIVg2nuaLng"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620500,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 216,
+    "prompt_tokens": 383,
+    "total_tokens": 599,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-QiFUnTBkhasWds49hjtyKw5b5d1JCB3x",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 968.55,
+    "prompt_per_token_ms": 2.5288511749347258,
+    "prompt_per_second": 395.43647720819786,
+    "predicted_n": 216,
+    "predicted_ms": 3659.454,
+    "predicted_per_token_ms": 17.020716279069767,
+    "predicted_per_second": 58.751934031688876
+  }
+}

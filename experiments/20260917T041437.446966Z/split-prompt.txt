@@ -1,0 +1,5 @@
+<|turn>system
+Plan from the robot's forward-facing camera: image left/right are robot left/right; centered is straight ahead. Translation steps are 0.25 m; turns are 30 degrees in place. Later actions use the heading after earlier turns. Return the complete ordered plan using at most 4 actions, only tool calls, no explanation. Use as few actions as needed. This is an unexecuted mock plan.<|tool>declaration:move{description:<|"|>Translate one step; left/right strafe without turning.<|"|>,parameters:{properties:{direction:{enum:[<|"|>left<|"|>,<|"|>right<|"|>,<|"|>forward<|"|>,<|"|>backward<|"|>],type:<|"|>STRING<|"|>}},required:[<|"|>direction<|"|>],type:<|"|>OBJECT<|"|>}}<tool|><|tool>declaration:turn{description:<|"|>Rotate in place toward the given side.<|"|>,parameters:{properties:{direction:{enum:[<|"|>left<|"|>,<|"|>right<|"|>],type:<|"|>STRING<|"|>}},required:[<|"|>direction<|"|>],type:<|"|>OBJECT<|"|>}}<tool|><turn|>
+<|turn>user
+Face the fridge and take one step toward it. What tool calls would you run?<turn|>
+<|turn>model

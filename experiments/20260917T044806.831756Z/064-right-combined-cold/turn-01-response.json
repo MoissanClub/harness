@@ -1,0 +1,55 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan to face the fridge and take one step toward it.\n\n1.  **Identify the fridge:** It is located on the right side of the image.\n2.  **Determine current orientation:** The robot is facing straight ahead (assuming a standard camera setup where 'centered' is forward).\n3.  **Determine target direction:** To face the fridge, the robot needs to turn right.\n4.  **Execute Turn:** The required turn is to face the fridge.\n5.  **Execute Step:** Once facing the fridge, the robot needs to move forward one step (0.25m).\n\nLet's estimate the angle needed.\nThe fridge is clearly on the right. A 30-degree turn right will bring it closer to facing the fridge. If one turn is not enough, another might be needed, but usually, a single turn of a significant amount (like 30 deg) is enough to get on target or close enough for the next step.\n\n*   **Action 1: Turn Right** (to face the general direction of the fridge).\n*   **Action 2: Move Forward** (to take one step toward the fridge).\n\nI will use the `move` tool for both rotation and translation.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"turn_right\"}"
+            },
+            "id": "TomWQz87LOaCeg5clfXFoc5G16BP1q9h"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "6pwGN9upYWCYXmNGSCs0uqcR4Sgwlp8m"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620987,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 298,
+    "prompt_tokens": 375,
+    "total_tokens": 673,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-kawKsq8N38H8aMsyq8MuMUneUpGCHLiS",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 375,
+    "prompt_ms": 1478.984,
+    "prompt_per_token_ms": 3.943957333333333,
+    "prompt_per_second": 253.55243870116243,
+    "predicted_n": 298,
+    "predicted_ms": 6862.758,
+    "predicted_per_token_ms": 23.10692929292929,
+    "predicted_per_second": 43.27706149626725
+  }
+}

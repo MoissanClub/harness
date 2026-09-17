@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan to face the refrigerator and take one step toward it.\n\n1.  **Analyze the scene:** The refrigerator is centered in the image, to the right of the main counter/kitchen area.\n2.  **Determine the current heading:** The robot appears to be facing generally toward the counter/kitchen workspace, slightly angled towards the fridge area, but mostly facing forward (into the image).\n3.  **Determine the target heading:** To face the fridge, the robot needs to rotate until the fridge is directly ahead.\n4.  **Determine the action:** After facing the fridge, the robot needs to take one step forward (translation).\n5.  **Plan execution:**\n    *   Step 1: Turn right (or left, depending on the current exact angle, but usually a slight turn right is needed to face a central object like the fridge if the kitchen is on the left). Looking at the image, the fridge is slightly to the right of the center of the room, but since it's the prominent object in the middle-right, facing it requires turning right.\n    *   Step 2: Move forward by one translation step (0.25 m).\n\nLet's assume the fridge needs a rotation. Based on the image, turning right seems necessary to align the fridge in the center.\n\nI will execute a `turn_right` followed by a `move_forward`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn_right",
+              "arguments": "{}"
+            },
+            "id": "mGKhMgO97NDUjfImdvsJJ60HkHyWqUNK"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620903,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 311,
+    "prompt_tokens": 441,
+    "total_tokens": 752,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-djQNCnSCcRTPjfl3gAcHYt0ETnOkI6Rg",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 441,
+    "prompt_ms": 1588.943,
+    "prompt_per_token_ms": 3.6030453514739227,
+    "prompt_per_second": 277.5429955637175,
+    "predicted_n": 311,
+    "predicted_ms": 7084.838,
+    "predicted_per_token_ms": 22.854316129032256,
+    "predicted_per_second": 43.75541120347424
+  }
+}

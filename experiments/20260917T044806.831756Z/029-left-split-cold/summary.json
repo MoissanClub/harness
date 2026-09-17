@@ -1,0 +1,50 @@
+{
+  "actions": [
+    "forward"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 1,
+  "content": "",
+  "reasoning_characters": 486,
+  "total_request_seconds": 3.3381961670000067,
+  "usage": {
+    "completion_tokens": 136,
+    "prompt_tokens": 405,
+    "total_tokens": 541,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1029.486,
+    "prompt_per_token_ms": 2.541940740740741,
+    "prompt_per_second": 393.4002016540293,
+    "predicted_n": 136,
+    "predicted_ms": 2273.685,
+    "predicted_per_token_ms": 16.842111111111112,
+    "predicted_per_second": 59.374979383687716
+  },
+  "outcome": "recorded_plan",
+  "tool_only_answer": true,
+  "only_tool_output": false,
+  "case": "left",
+  "format": "split",
+  "seed": 405,
+  "cache_prompt": false,
+  "thinking": "brief",
+  "reasoning_text_tokens": 119,
+  "thinking_compliant": true,
+  "assessment": {
+    "expected_turn": "turn_left",
+    "correct_turn_before_forward": false,
+    "one_forward_step": true,
+    "no_extra_translation": true,
+    "forward_is_last_action": true,
+    "qualitative_goal_match": false,
+    "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+  }
+}

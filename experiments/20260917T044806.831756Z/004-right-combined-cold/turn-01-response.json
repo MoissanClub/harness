@@ -1,0 +1,55 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants to perform two actions:\n1. Face the fridge.\n2. Take one step (0.25 m) toward the fridge.\n\nThe fridge is on the right side of the image, away from the robot's current facing direction (which seems to be towards the kitchen counter/sink area, or straight ahead relative to the robot's starting position).\n\nFirst, I need to determine the heading change. Looking at the image, the fridge is significantly to the right and slightly forward from the robot's assumed position. Since the camera indicates the center is straight ahead, and the fridge is on the right, a right turn is required. I need to turn until the fridge is directly ahead.\n\nThe fridge is near the right edge of the frame. I can use `turn_right`.\nSecond, move forward one step (0.25 m).\n\nPlan:\n1. Turn right (to face the fridge).\n2. Move forward (0.25m).\n\nSince the prompt asks for the tool calls, I will execute them. I need to assume how many turns are needed. Given it's a mock plan and the goal is to reach the fridge, a right turn is the first step. I will assume one turn is sufficient or the sequence will handle the navigation based on the state update.\n\nWait, the prompt asks to \"Face the fridge and take one step toward it.\"\n\n1.  Determine the direction to the fridge. It's to the right.\n2.  Turn right until it is facing the fridge.\n3.  Move forward.\n\nI will issue a `turn_right` command and then a `move(forward)`. I will use the available `move` tool directions.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"turn_right\"}"
+            },
+            "id": "V2N3Grx10Vs75zMz2I6NNPbpTWw8ewj4"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "dyQdOgOLgQz4PWWngI00kcbt4YunBFfP"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620508,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 394,
+    "prompt_tokens": 375,
+    "total_tokens": 769,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-uOytOqOCbORrTcSmdLnyoUzEsKBB7h96",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 375,
+    "prompt_ms": 975.04,
+    "prompt_per_token_ms": 2.6001066666666666,
+    "prompt_per_second": 384.5996061700033,
+    "predicted_n": 394,
+    "predicted_ms": 6698.476,
+    "predicted_per_token_ms": 17.044468193384223,
+    "predicted_per_second": 58.67006166775846
+  }
+}

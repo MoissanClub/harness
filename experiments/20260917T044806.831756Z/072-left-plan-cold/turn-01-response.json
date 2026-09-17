@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan to face the refrigerator and take one step toward it.\n\n1.  **Analyze the target:** The refrigerator is visible in the image, centered-left.\n2.  **Determine the current orientation:** The robot is facing forward (down the hallway).\n3.  **Determine the required movement (facing the fridge):** To face the fridge, the robot needs to turn left.\n4.  **Determine the required movement (one step toward it):** After turning, the robot needs to move forward (0.25 m).\n\n**Step 1: Turn to face the fridge.**\nThe fridge is to the left of the center. A turn left will bring the robot closer to facing the fridge.\nAction: `turn_left`\n\n**Step 2: Move toward the fridge.**\nThe robot needs to take one step forward (0.25 m).\nAction: `forward`\n\n**Plan construction:**\n1. `turn_left` (to face the fridge)\n2. `forward` (to take one step)\n\nThe plan should be: `[\"turn_left\", \"forward\"]`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_left\",\"forward\"]}"
+            },
+            "id": "HyA8lCvtn7H9IZfg5L3VML0Bn3RJfCju"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789621057,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 266,
+    "prompt_tokens": 383,
+    "total_tokens": 649,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-4euYlnCNWZDKx2LmoSAFto7pXIdlUYOb",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 1405.767,
+    "prompt_per_token_ms": 3.6704099216710184,
+    "prompt_per_second": 272.44913275101777,
+    "predicted_n": 266,
+    "predicted_ms": 6142.1,
+    "predicted_per_token_ms": 23.177735849056607,
+    "predicted_per_second": 43.14485273766301
+  }
+}

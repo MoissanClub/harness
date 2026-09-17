@@ -1,0 +1,21 @@
+[
+  {
+    "direction": "forward",
+    "executed": false,
+    "plan_index": 1,
+    "planned_actions": [
+      "forward"
+    ],
+    "requested_step_m": 0.25
+  },
+  {
+    "direction": "forward",
+    "executed": false,
+    "plan_index": 2,
+    "planned_actions": [
+      "forward",
+      "forward"
+    ],
+    "requested_step_m": 0.25
+  }
+]

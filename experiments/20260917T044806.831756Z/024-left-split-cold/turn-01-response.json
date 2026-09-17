@@ -1,0 +1,55 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan based on an image of a kitchen.\nThe goal is: \"Face the fridge and take one step toward it.\"\n\n1.  **Analyze the image:** The refrigerator is located near the center-left of the image.\n2.  **Determine current orientation:** Assuming the robot is facing the general direction of the viewer (straight ahead in the image frame).\n3.  **Determine required heading:** To face the fridge, the robot needs to rotate. The fridge is to the left of the center point.\n4.  **Calculate rotation:** The fridge is significantly to the left. Looking at the image, a turn to the left is needed.\n5.  **Plan the movement:**\n    *   Action 1: Turn left to face the fridge.\n    *   Action 2: Move forward one step (0.25 m).\n6.  **Tool Selection:** `turn` and `move`.\n\n*   Step 1: `turn(direction=\"left\")`\n*   Step 2: `move(direction=\"forward\")` (since the goal is to take a step *toward* the fridge after facing it).\n\nI will use two actions.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "turn",
+              "arguments": "{\"direction\":\"left\"}"
+            },
+            "id": "1TdoaR03AGz5yHmwxzeT0kZKWZpCHC3G"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "move",
+              "arguments": "{\"direction\":\"forward\"}"
+            },
+            "id": "KV75GDMWGa6UTNej09OdHsw79nwny1Su"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620667,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 285,
+    "prompt_tokens": 405,
+    "total_tokens": 690,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-CDcX5q8qELI8sclfmrGTfTz1wDwb07aU",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 405,
+    "prompt_ms": 1023.63,
+    "prompt_per_token_ms": 2.5274814814814817,
+    "prompt_per_second": 395.6507722516925,
+    "predicted_n": 285,
+    "predicted_ms": 4788.26,
+    "predicted_per_token_ms": 16.860070422535212,
+    "predicted_per_second": 59.31173328098306
+  }
+}

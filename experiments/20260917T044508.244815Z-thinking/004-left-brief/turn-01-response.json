@@ -1,0 +1,47 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan to face the refrigerator and take one step towards it.\n\n1.  **Analyze the image:** The refrigerator is prominent on the left side of the image.\n2.  **Determine current heading:** The robot is facing forward (straight ahead, as per the camera view).\n3.  **Determine target heading:** To face the fridge, the robot needs to turn left.\n4.  **Plan the actions:**\n    *   Action 1: Turn left until facing the fridge.\n    *   Action 2: Translate forward by one step (0.25m).\n\nI need to estimate the necessary turn. The fridge is significantly to the left. A 30-degree turn left should be a good start, and likely needs repetition until it is facing the fridge.\n\n*Assuming a single 30-degree turn is enough to orient towards the object or that subsequent turns will align it further.*\n\nLet's refine the sequence:\n1.  Turn left (to face the fridge).\n2.  Forward (one step).\n\nSince the prompt asks for the steps, I'll use `turn_left` and `forward`.\n\nLet's assume one turn left is sufficient to be generally facing the fridge and then take the step.\n\nSequence: [turn_left, forward]",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_left\",\"forward\"]}"
+            },
+            "id": "CSKFuISydtmUyWWX729Wp95TYt5aqi5W"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789620329,
+  "model": "gemma4-e4b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 304,
+    "prompt_tokens": 383,
+    "total_tokens": 687,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-IXHSyWHrO3ahl9hmD7m8IJtOn931cG00",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 943.813,
+    "prompt_per_token_ms": 2.4642637075718015,
+    "prompt_per_second": 405.8007253555524,
+    "predicted_n": 304,
+    "predicted_ms": 5123.709,
+    "predicted_per_token_ms": 16.909930693069306,
+    "predicted_per_second": 59.136847935743425
+  }
+}

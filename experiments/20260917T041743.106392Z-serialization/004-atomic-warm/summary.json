@@ -1,0 +1,39 @@
+{
+  "actions": [
+    "turn_left"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 1,
+  "content": "",
+  "reasoning_characters": 0,
+  "total_request_seconds": 0.2644916249999998,
+  "usage": {
+    "completion_tokens": 9,
+    "prompt_tokens": 274,
+    "total_tokens": 283,
+    "prompt_tokens_details": {
+      "cached_tokens": 269
+    }
+  },
+  "timings": {
+    "cache_n": 269,
+    "prompt_n": 5,
+    "prompt_ms": 85.442,
+    "prompt_per_token_ms": 17.0884,
+    "prompt_per_second": 58.51922941878702,
+    "predicted_n": 9,
+    "predicted_ms": 174.246,
+    "predicted_per_token_ms": 21.78075,
+    "predicted_per_second": 45.91210128209543
+  },
+  "outcome": "recorded_plan",
+  "only_tool_output": true,
+  "exact_plan_match": false,
+  "success": false,
+  "seed": 202,
+  "format": "atomic",
+  "cache_mode": "warm",
+  "run_dir": "/Users/junda/robot/harness/experiments/20260917T041743.106392Z-serialization/004-atomic-warm"
+}

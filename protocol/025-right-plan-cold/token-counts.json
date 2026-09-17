@@ -1,0 +1,8 @@
+{
+  "reasoning_text": 0,
+  "native_tool_output": 19,
+  "reported_completion_tokens": 19,
+  "note": "Pieces retokenized separately; channel/stop tokens and boundaries can affect totals.",
+  "server_build": "b10909-a2878d30d",
+  "source_run": "/Users/junda/robot/harness/experiments/20260917T041437.446966Z/025-right-plan-cold"
+}

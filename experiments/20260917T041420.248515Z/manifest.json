@@ -1,0 +1,28 @@
+{
+  "arguments": {
+    "base_url": "http://127.0.0.1:8080/v1",
+    "model": "gemma4-e4b",
+    "prompt_file": "/Users/junda/robot/harness/prompts/user.txt",
+    "max_actions": 4,
+    "repeats": 6,
+    "start_seed": 101
+  },
+  "source_sha256": {
+    "run.py": "272638da3db67a2bf7e58bbb4098eb6e723021b3122b3aabec941688e6a9c20b",
+    "tools.py": "ec3af1ea3846ec0452fbf7088835989ab2c5738291b9de5e6fc33e481f15b59a",
+    "evaluate_formats.py": "ce4ce24adcd11de1f7cc73d074730edc4eebf0decad3c4ae460d5cc91e0bbb6f",
+    "request-defaults.json": "b623d0ae8f7e67ed6bf0ca04a0a01e48f416f3788f423e29755694ab10fb426a",
+    "cases.json": "d2a8121ffbf68caa8e40f6fd36579e95970a53b9762895aa11f1d7da3563012e",
+    "FORMAT_HYPOTHESIS.md": "7528aea7dfac5a650e4582e8f0aaccf0ac0162bee77b6d5b98557d58207b1291",
+    "prompts/system.txt": "8d72008696ed871a724d2935e7d2be0a1c783d6746f296d0c1ec0f19c488ab60",
+    "prompts/user.txt": "2eb7e6e706a3082d2a5649ff017e5915bd8ca6e8bb7163bf099a11aeea784395"
+  },
+  "scheduler_seed": 20260917,
+  "sampling": {
+    "temperature": 1.0,
+    "top_k": 64,
+    "top_p": 0.95,
+    "min_p": 0.0
+  },
+  "design": "Each randomly ordered format: cold request then identical warm request; one model response each."
+}

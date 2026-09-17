@@ -1,0 +1,46 @@
+{
+  "actions": [
+    "forward"
+  ],
+  "protocol_ok": true,
+  "hardware_executed": false,
+  "finish_reason": "tool_calls",
+  "call_count": 1,
+  "content": "",
+  "reasoning_characters": 0,
+  "total_request_seconds": 1.1417836249999995,
+  "usage": {
+    "completion_tokens": 13,
+    "prompt_tokens": 367,
+    "total_tokens": 380,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 367,
+    "prompt_ms": 894.789,
+    "prompt_per_token_ms": 2.438117166212534,
+    "prompt_per_second": 410.1525611065849,
+    "predicted_n": 13,
+    "predicted_ms": 196.984,
+    "predicted_per_token_ms": 16.415333333333333,
+    "predicted_per_second": 60.918653291637895
+  },
+  "outcome": "recorded_plan",
+  "only_tool_output": true,
+  "case": "center",
+  "format": "plan",
+  "seed": 103,
+  "cache_prompt": false,
+  "assessment": {
+    "expected_turn": null,
+    "correct_turn_before_forward": true,
+    "one_forward_step": true,
+    "no_extra_translation": true,
+    "forward_is_last_action": true,
+    "qualitative_goal_match": true,
+    "scope": "Turn direction and action order only; no metric alignment or navigation claim."
+  }
+}
