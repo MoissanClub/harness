@@ -8,9 +8,27 @@ The runner asks for a complete, ordered plan in **one model response**, with at 
 
 The current thinking-mode and tool-interface results are in [THINKING_RESULTS.md](THINKING_RESULTS.md), with the predeclared design in [THINKING_HYPOTHESIS.md](THINKING_HYPOTHESIS.md). Earlier studies remain in [FORMAT_RESULTS.md](FORMAT_RESULTS.md) (thinking-off formats), [TURN_RESULTS.md](TURN_RESULTS.md) (thinking-on action sequences), and [RESULTS.md](RESULTS.md) (single-action baseline).
 
-## Run
+## Setup session
 
-Python 3.9+ standard library only; no dependencies to install. The server must report vision support at `/props`.
+Python 3.9+. `run.py` / eval scripts are stdlib-only. Inference packages are in [requirements.txt](requirements.txt). The llama.cpp server must report vision at `/props` before any Run command.
+
+```bash
+# Python packages: HF download, OpenAI /v1 client, Pillow, llama-cpp-python
+python3 -m pip install -r requirements.txt
+
+# Gemma 4 E4B QAT Q4_0 GGUF + mmproj (same snapshot as prior experiments)
+huggingface-cli download google/gemma-4-E4B-it-qat-q4_0-gguf
+
+# Confirm a vision-capable server is already up (default alias gemma4-e4b)
+curl -sS http://127.0.0.1:8080/props | python3 -c "import json,sys; p=json.load(sys.stdin); assert p.get('modalities',{}).get('vision'), p"
+
+# Optional: in-process GGUF instead of a standalone llama.cpp binary
+# Jetson/Orin: CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
+```
+
+Model file used in saved runs: `gemma-4-E4B_q4_0-it.gguf` from repo revision `4b4a2c1d584be7264f87aac328a1bc739ce81b6c`. Alias `gemma4-e4b`, port `8080`, context 131,072. Start your existing llama.cpp server with that GGUF and its multimodal projector, then continue below.
+
+## Run
 
 ```bash
 # All three scenes, three trials each

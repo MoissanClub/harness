@@ -1,0 +1,22 @@
+# Gemma 4 E4B QAT Q4_0 GGUF + llama.cpp OpenAI-compatible /v1
+# Harness scripts (run.py, evaluate_*.py) stay stdlib-only.
+# pip install -r requirements.txt
+
+# Download google/gemma-4-E4B-it-qat-q4_0-gguf and mmproj
+huggingface_hub>=0.25.0
+
+# llama.cpp /v1 chat.completions + native tool_calls
+openai>=1.50.0
+
+# 720x480 kitchen PNGs (load, resize, inspect)
+Pillow>=10.4.0
+
+# Token / latency aggregates in eval scripts
+numpy>=1.26.0
+
+# In-process GGUF runtime (optional vs standalone llama.cpp server)
+# Jetson/Orin: CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
+llama-cpp-python>=0.3.0
+
+# Progress bars for HF downloads
+tqdm>=4.66.0
