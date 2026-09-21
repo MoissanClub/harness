@@ -14,9 +14,5 @@ Pillow>=10.4.0
 # Token / latency aggregates in eval scripts
 numpy>=1.26.0
 
-# In-process GGUF runtime (optional vs standalone llama.cpp server)
-# Jetson/Orin: CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
-llama-cpp-python>=0.3.0
-
 # Progress bars for HF downloads
 tqdm>=4.66.0
