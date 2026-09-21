@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants a plan to move towards the refrigerator.\nThe robot is facing the front door/kitchen area. The refrigerator is on the left side of the kitchen.\nThe robot's heading is currently centered (straight ahead).\nThe required translation step is 0.25 m.\n\n1.  **Goal**: Move one step towards the fridge.\n2.  **Current Heading**: Straight ahead.\n3.  **Action**: Move forward.\n\nSince the fridge is to the left, moving forward will bring the robot closer to it, assuming the fridge is slightly to the left of the center axis. If the robot is perfectly centered, moving forward is the most direct way to approach objects in front of it or to shift its position relative to the room.\n\nThe user specified: \"Face the fridge and take one step toward it.\"\nThis implies a turn *first* to face the fridge, and *then* a step.\n\nThe fridge is visible on the left side of the image. To face it, the robot needs to turn left (assuming left is towards the fridge).\n\nStep 1: Turn left to face the fridge.\nStep 2: Move forward one step.\n\nLet's check the image orientation. The fridge is clearly on the left. If the robot is facing the door/right, it needs to turn left to face the fridge.\n\nThe plan must use at most 4 actions.\n\nAction 1: Turn left.\nAction 2: Forward.\n(This fulfills \"Face the fridge and take one step toward it.\")",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_left\",\"forward\"]}"
+            },
+            "id": "kMaQwZ0LGD5jGVDfRJGEycsBCgjluTaL"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800339,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 348,
+    "prompt_tokens": 383,
+    "total_tokens": 731,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-Q7lOS8NpnJ8rdTattiODin2jYmWyPR1a",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 547.81,
+    "prompt_per_token_ms": 1.4303133159268928,
+    "prompt_per_second": 699.1475146492398,
+    "predicted_n": 348,
+    "predicted_ms": 4113.739,
+    "predicted_per_token_ms": 11.855155619596541,
+    "predicted_per_second": 84.35148656732964,
+    "draft_n": 338,
+    "draft_n_accepted": 179
+  }
+}

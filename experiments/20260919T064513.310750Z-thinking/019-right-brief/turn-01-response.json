@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan for a robot to move from its current position to a position one step away from the fridge, facing the fridge.\n\n1.  **Analyze the current state and goal:**\n    *   Current view: A kitchen interior with cabinets and a refrigerator.\n    *   Goal: Face the fridge and take one step toward it.\n    *   Robot orientation: The prompt asks to \"Face the fridge\". I need to determine which direction the fridge is relative to the robot's current forward-facing camera.\n    *   Action requirement: \"Take one step toward it\".\n\n2.  **Determine the robot's current heading and the fridge's location:**\n    *   The image shows the fridge on the right side of the kitchen.\n    *   The robot's forward-facing camera is centered.\n\n3.  **Plan the sequence of actions:**\n    *   **Step 1: Turn to face the fridge.** Looking at the image, the fridge is to the right. A right turn is required.\n    *   **Step 2: Move forward one step.**\n\n4.  **Construct the tool calls based on the defined movements:**\n    *   Action 1: `turn_right` (30 degrees in place).\n    *   Action 2: `forward` (0.25 m).\n\n5.  **Review constraints:** Use at most 4 actions. The plan above uses 2 actions, which is efficient.\n\n6.  **Final Plan:**\n    1. Turn right to face the fridge.\n    2. Move forward one step.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"forward\"]}"
+            },
+            "id": "C7QZnAQw5UdONAnTgBrD2UzN2al2hwNw"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800386,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 366,
+    "prompt_tokens": 383,
+    "total_tokens": 749,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-MtWHmUtyN1sKAVpG9Fvgv1ttbzGC5ISt",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 552.224,
+    "prompt_per_token_ms": 1.4418381201044388,
+    "prompt_per_second": 693.5591354233064,
+    "predicted_n": 366,
+    "predicted_ms": 3830.137,
+    "predicted_per_token_ms": 10.49352602739726,
+    "predicted_per_second": 95.29685230580525,
+    "draft_n": 316,
+    "draft_n_accepted": 208
+  }
+}

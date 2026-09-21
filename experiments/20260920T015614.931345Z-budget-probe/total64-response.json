@@ -1,0 +1,39 @@
+{
+  "choices": [
+    {
+      "finish_reason": "length",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants to move the robot to face the fridge and take one step towards it.\n\n1.  **Analyze the current state:** The robot is in a kitchen, facing the camera direction (which we assume is the initial heading).\n2.  **Identify the target:** The refrigerator is on"
+      }
+    }
+  ],
+  "created": 1789869376,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 64,
+    "prompt_tokens": 370,
+    "total_tokens": 434,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-MoECg3cGE3sRDj1WZiYE6sxMCD227nwG",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 370,
+    "prompt_ms": 1014.213,
+    "prompt_per_token_ms": 2.741116216216216,
+    "prompt_per_second": 364.8148860249277,
+    "predicted_n": 64,
+    "predicted_ms": 744.202,
+    "predicted_per_token_ms": 11.812730158730158,
+    "predicted_per_second": 84.65443522054495,
+    "draft_n": 57,
+    "draft_n_accepted": 34
+  }
+}

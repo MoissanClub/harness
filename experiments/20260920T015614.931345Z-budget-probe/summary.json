@@ -1,0 +1,82 @@
+{
+  "source_request": "experiments/20260919T064513.310750Z-thinking/001-right-normal/turn-01-request.json",
+  "rows": [
+    {
+      "name": "total64",
+      "settings": {
+        "max_tokens": 64
+      },
+      "seconds": 1.8124067499999998,
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 64,
+        "prompt_tokens": 370,
+        "total_tokens": 434,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 370,
+        "prompt_ms": 1014.213,
+        "prompt_per_token_ms": 2.741116216216216,
+        "prompt_per_second": 364.8148860249277,
+        "predicted_n": 64,
+        "predicted_ms": 744.202,
+        "predicted_per_token_ms": 11.812730158730158,
+        "predicted_per_second": 84.65443522054495,
+        "draft_n": 57,
+        "draft_n_accepted": 34
+      },
+      "reasoning_text_tokens": 61,
+      "tool_calls": [],
+      "content": "",
+      "reasoning_text": "The user wants to move the robot to face the fridge and take one step towards it.\n\n1.  **Analyze the current state:** The robot is in a kitchen, facing the camera direction (which we assume is the initial heading).\n2.  **Identify the target:** The refrigerator is on"
+    },
+    {
+      "name": "reasoning64_total128",
+      "settings": {
+        "reasoning_budget_tokens": 64,
+        "max_tokens": 128
+      },
+      "seconds": 1.6155837910000002,
+      "finish_reason": "tool_calls",
+      "usage": {
+        "completion_tokens": 88,
+        "prompt_tokens": 370,
+        "total_tokens": 458,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 370,
+        "prompt_ms": 587.588,
+        "prompt_per_token_ms": 1.5880756756756755,
+        "prompt_per_second": 629.6929140826566,
+        "predicted_n": 88,
+        "predicted_ms": 1006.329,
+        "predicted_per_token_ms": 11.567,
+        "predicted_per_second": 86.45283997579321,
+        "draft_n": 78,
+        "draft_n_accepted": 49
+      },
+      "reasoning_text_tokens": 63,
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "plan",
+            "arguments": "{\"actions\":[\"right\",\"right\",\"forward\"]}"
+          },
+          "id": "KQSsUK42k5ZF53grCcFaUuG8J1w5XbFm"
+        }
+      ],
+      "content": "",
+      "reasoning_text": "The user wants to move the robot to face the fridge and take one step towards it.\n\n1.  **Analyze the current state:** The robot is in a kitchen, facing the camera direction (which we assume is the initial heading).\n2.  **Identify the target:** The refrigerator is on the right"
+    }
+  ],
+  "scope": "Two behavior probes, not an accuracy benchmark. No server defaults changed."
+}

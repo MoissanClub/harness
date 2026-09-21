@@ -1,0 +1,10 @@
+{
+  "model_alias": "gemma4-e2b",
+  "api_base_url": "http://127.0.0.1:8080/v1",
+  "process_command": "llama serve -hf unsloth/gemma-4-E2B-it-qat-GGUF:UD-Q4_K_XL --alias gemma4-e2b --gpu-layers all --jinja --spec-type draft-mtp --spec-draft-n-max 2",
+  "process_command_source": "Read-only process listing captured after this evaluation",
+  "speculative_decoding_evidence": "Launch command uses draft-mtp with max 2 draft tokens; every response contains nonzero draft_n and draft_n_accepted. Saved server-props defaults nevertheless report speculative type none.",
+  "comparison_scope": "Observed serving setups, not isolated model-size or MTP effects; E4B baseline used a different quantized model package without recorded drafting.",
+  "projector_path": "Not captured",
+  "host_load": "Not controlled; another Llama app server process on port 9931 was present, activity unknown."
+}

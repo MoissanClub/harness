@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants to move the robot one step towards the fridge, which is directly in front of it (straight ahead).\nThe robot's current orientation is assumed to be facing the center.\nThe robot needs to translate forward by 0.25 m.\n\nPlan:\n1. Move forward.\n\nTool call: `plan` with action `forward`.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"forward\"]}"
+            },
+            "id": "BkHphUJnmOTzYCjWFFroQH2ZqyiOMaCm"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800411,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 92,
+    "prompt_tokens": 383,
+    "total_tokens": 475,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-StMrdHTiUA8eLZiB2VcL7J9IXkVYstjs",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 543.459,
+    "prompt_per_token_ms": 1.418953002610966,
+    "prompt_per_second": 704.7449761619553,
+    "predicted_n": 92,
+    "predicted_ms": 1038.565,
+    "predicted_per_token_ms": 11.412802197802199,
+    "predicted_per_second": 87.62089999181562,
+    "draft_n": 86,
+    "draft_n_accepted": 49
+  }
+}

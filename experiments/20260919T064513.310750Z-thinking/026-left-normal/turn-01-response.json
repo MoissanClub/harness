@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants a plan to move from the current position to take one step toward the fridge, which is on the left side of the image (from the robot's forward-facing camera, the left image is the robot's left).\n\n1.  **Analyze the starting position**: The robot is facing forward (straight ahead).\n2.  **Identify the target**: The fridge is on the left side of the image.\n3.  **Determine the required action**: The instruction is to \"Face the fridge and take one step toward it.\"\n\n*   To face the fridge, the robot needs to turn to the left (if the fridge is on the robot's left).\n*   Then, it needs to take a step forward.\n\nThe tool `plan` can be used to define a sequence of actions.\n\n**Plan steps:**\n1. Turn left to face the fridge.\n2. Move forward one step.\n\nSince the tool definition doesn't explicitly handle \"one step\" (it handles translation by `forward` with a distance of 0.25m), I'll assume one step is equivalent to a single `forward` action, which moves 0.25m. If I need to be very precise about \"one step,\" I should check if the context allows for that. Given the constraints, a sequence of turn and forward is the standard approach.\n\nLet's define the sequence:\n1. `turn_left` (to face the fridge)\n2. `forward` (to take a step)\n\nI will use the `plan` tool to generate this.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_left\",\"forward\"]}"
+            },
+            "id": "pqMhJEig7Gp4wWTjYVSDUH0dyobmFAyS"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800410,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 358,
+    "prompt_tokens": 370,
+    "total_tokens": 728,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-nGTNpfHkRzuCiItCyzA7YzZGM9FfFJmX",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 370,
+    "prompt_ms": 548.728,
+    "prompt_per_token_ms": 1.4830486486486485,
+    "prompt_per_second": 674.2867140003791,
+    "predicted_n": 358,
+    "predicted_ms": 4039.46,
+    "predicted_per_token_ms": 11.31501400560224,
+    "predicted_per_second": 88.37814955464344,
+    "draft_n": 334,
+    "draft_n_accepted": 190
+  }
+}

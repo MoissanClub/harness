@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants a plan to face the fridge and take one step toward it.\n\n1.  **Analyze the image:** The fridge is on the left side of the image (from the robot's perspective, it's generally on the left).\n2.  **Analyze the instruction:** \"Face the fridge and take one step toward it.\"\n3.  **Determine the starting state:** The robot is looking straight ahead (centered). The fridge is to the robot's left.\n4.  **Determine the required actions:**\n    *   To face the fridge (which is on the left), the robot needs to turn right.\n    *   To take one step toward it (forward translation).\n\n*   **Action 1:** Turn right (to face the fridge).\n*   **Action 2:** Move forward one step (to move towards the fridge).\n\nThe tool call format requires a single JSON object containing the `plan` and the `actions` array.\nI need to call the `plan` tool.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"forward\"]}"
+            },
+            "id": "DdA100sT54MOTlCAfux6qxFATwwzoQhn"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800323,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 237,
+    "prompt_tokens": 383,
+    "total_tokens": 620,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-r0oo7bvtCQQqYkPSGJuSGPijWzwAfY7G",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 543.851,
+    "prompt_per_token_ms": 1.419976501305483,
+    "prompt_per_second": 704.237006091742,
+    "predicted_n": 237,
+    "predicted_ms": 2469.976,
+    "predicted_per_token_ms": 10.466000000000001,
+    "predicted_per_second": 95.54748710108925,
+    "draft_n": 204,
+    "draft_n_accepted": 135
+  }
+}

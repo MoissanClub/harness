@@ -1,0 +1,323 @@
+{
+  "source_request": "experiments/20260919T064513.310750Z-thinking/002-right-off/turn-01-request.json",
+  "model": "gemma4-e2b",
+  "build": "b10909-a2878d30d",
+  "template_sha256": "74a88f94c57c14e22dcdbe08e94127f42b87c6f584cb73838e73e32126f3f6b3",
+  "counts": {
+    "original": {
+      "input_tokens": 368,
+      "object": "response.input_tokens"
+    },
+    "no_image": {
+      "input_tokens": 216,
+      "object": "response.input_tokens"
+    },
+    "prefix_text_with_bos": 194,
+    "suffix_text": 22,
+    "image_boundary_tokens": 2,
+    "system_text": 89,
+    "user_text": 17,
+    "text_template_without_bos": 215
+  },
+  "variants": {
+    "shorter_user": {
+      "input_tokens": {
+        "input_tokens": 361,
+        "object": "response.input_tokens"
+      },
+      "system": "Plan from the robot's forward-facing camera: image left/right are robot left/right; centered is straight ahead. Translation steps are 0.25 m; turns are 30 degrees in place. Later actions use the heading after earlier turns. Return the complete ordered plan using at most 4 actions, as few as needed. Outside the thought channel, output only tool calls. This is an unexecuted mock plan.",
+      "user": "Face the fridge and take one step toward it.",
+      "tool": {
+        "type": "function",
+        "function": {
+          "name": "plan",
+          "description": "Ordered actions: left/right strafe; forward/backward translate; turn_left/turn_right rotate.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right",
+                    "forward",
+                    "backward",
+                    "turn_left",
+                    "turn_right"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 4
+              }
+            },
+            "required": [
+              "actions"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "omit_tool_description": {
+      "input_tokens": {
+        "input_tokens": 345,
+        "object": "response.input_tokens"
+      },
+      "system": "Plan from the robot's forward-facing camera: image left/right are robot left/right; centered is straight ahead. Translation steps are 0.25 m; turns are 30 degrees in place. Later actions use the heading after earlier turns. Return the complete ordered plan using at most 4 actions, as few as needed. Outside the thought channel, output only tool calls. This is an unexecuted mock plan.",
+      "user": "Face the fridge and take one step toward it. What tool calls would you run?",
+      "tool": {
+        "type": "function",
+        "function": {
+          "name": "plan",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right",
+                    "forward",
+                    "backward",
+                    "turn_left",
+                    "turn_right"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 4
+              }
+            },
+            "required": [
+              "actions"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "shorter_system": {
+      "input_tokens": {
+        "input_tokens": 337,
+        "object": "response.input_tokens"
+      },
+      "system": "Robot forward camera; image left/right match robot left/right. Steps: 0.25 m; turns: 30 degrees in place. Later actions follow the new heading. Return the fewest ordered actions (max 4). Tool calls only outside thought; mock execution.",
+      "user": "Face the fridge and take one step toward it. What tool calls would you run?",
+      "tool": {
+        "type": "function",
+        "function": {
+          "name": "plan",
+          "description": "Ordered actions: left/right strafe; forward/backward translate; turn_left/turn_right rotate.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right",
+                    "forward",
+                    "backward",
+                    "turn_left",
+                    "turn_right"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 4
+              }
+            },
+            "required": [
+              "actions"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "combined_shortening": {
+      "input_tokens": {
+        "input_tokens": 307,
+        "object": "response.input_tokens"
+      },
+      "system": "Robot forward camera; image left/right match robot left/right. Steps: 0.25 m; turns: 30 degrees in place. Later actions follow the new heading. Return the fewest ordered actions (max 4). Tool calls only outside thought; mock execution.",
+      "user": "Face the fridge and take one step toward it.",
+      "tool": {
+        "type": "function",
+        "function": {
+          "name": "plan",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right",
+                    "forward",
+                    "backward",
+                    "turn_left",
+                    "turn_right"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 4
+              }
+            },
+            "required": [
+              "actions"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  "native_outputs": {
+    "one": {
+      "native": "<|tool_call>call:plan{actions:[<|\"|>forward<|\"|>]}<tool_call|><|tool_response>",
+      "tokens": [
+        {
+          "id": 48,
+          "piece": "<|tool_call>"
+        },
+        {
+          "id": 6639,
+          "piece": "call"
+        },
+        {
+          "id": 236787,
+          "piece": ":"
+        },
+        {
+          "id": 15081,
+          "piece": "plan"
+        },
+        {
+          "id": 236782,
+          "piece": "{"
+        },
+        {
+          "id": 4636,
+          "piece": "actions"
+        },
+        {
+          "id": 24845,
+          "piece": ":["
+        },
+        {
+          "id": 52,
+          "piece": "<|\"|>"
+        },
+        {
+          "id": 13883,
+          "piece": "forward"
+        },
+        {
+          "id": 52,
+          "piece": "<|\"|>"
+        },
+        {
+          "id": 21111,
+          "piece": "]}"
+        },
+        {
+          "id": 49,
+          "piece": "<tool_call|>"
+        },
+        {
+          "id": 50,
+          "piece": "<|tool_response>"
+        }
+      ]
+    },
+    "two": {
+      "native": "<|tool_call>call:plan{actions:[<|\"|>turn_left<|\"|>,<|\"|>forward<|\"|>]}<tool_call|><|tool_response>",
+      "tokens": [
+        {
+          "id": 48,
+          "piece": "<|tool_call>"
+        },
+        {
+          "id": 6639,
+          "piece": "call"
+        },
+        {
+          "id": 236787,
+          "piece": ":"
+        },
+        {
+          "id": 15081,
+          "piece": "plan"
+        },
+        {
+          "id": 236782,
+          "piece": "{"
+        },
+        {
+          "id": 4636,
+          "piece": "actions"
+        },
+        {
+          "id": 24845,
+          "piece": ":["
+        },
+        {
+          "id": 52,
+          "piece": "<|\"|>"
+        },
+        {
+          "id": 887,
+          "piece": "turn"
+        },
+        {
+          "id": 236779,
+          "piece": "_"
+        },
+        {
+          "id": 989,
+          "piece": "left"
+        },
+        {
+          "id": 52,
+          "piece": "<|\"|>"
+        },
+        {
+          "id": 236764,
+          "piece": ","
+        },
+        {
+          "id": 52,
+          "piece": "<|\"|>"
+        },
+        {
+          "id": 13883,
+          "piece": "forward"
+        },
+        {
+          "id": 52,
+          "piece": "<|\"|>"
+        },
+        {
+          "id": 21111,
+          "piece": "]}"
+        },
+        {
+          "id": 49,
+          "piece": "<tool_call|>"
+        },
+        {
+          "id": 50,
+          "piece": "<|tool_response>"
+        }
+      ]
+    }
+  },
+  "method": "Template and token-count endpoints only; no inference or accuracy test of shorter prompts."
+}

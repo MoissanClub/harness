@@ -1,0 +1,236 @@
+{
+  "off": {
+    "n": 9,
+    "protocol_ok": 9,
+    "only_tool_output": 9,
+    "tool_only_answer": 9,
+    "successes": 3,
+    "scenes": {
+      "center": {
+        "n": 3,
+        "successes": 3
+      },
+      "left": {
+        "n": 3,
+        "successes": 0
+      },
+      "right": {
+        "n": 3,
+        "successes": 0
+      }
+    },
+    "metrics": {
+      "wall_s": {
+        "median": 0.6652728749999994,
+        "mean": 0.6667028749999986,
+        "min": 0.6621687499999922,
+        "max": 0.6772781669999972
+      },
+      "prompt_tokens": {
+        "median": 368,
+        "mean": 368,
+        "min": 368,
+        "max": 368
+      },
+      "completion_tokens": {
+        "median": 13,
+        "mean": 13,
+        "min": 13,
+        "max": 13
+      },
+      "cached_tokens": {
+        "median": 0,
+        "mean": 0,
+        "min": 0,
+        "max": 0
+      },
+      "evaluated_prompt_tokens": {
+        "median": 368,
+        "mean": 368,
+        "min": 368,
+        "max": 368
+      },
+      "prefill_ms": {
+        "median": 520.572,
+        "mean": 521.2154444444444,
+        "min": 516.951,
+        "max": 530.506
+      },
+      "decode_ms": {
+        "median": 120.271,
+        "mean": 120.31066666666666,
+        "min": 118.928,
+        "max": 121.45
+      },
+      "decode_tokens_s": {
+        "median": 99.77467552444064,
+        "mean": 99.74627938438081,
+        "min": 98.80609304240429,
+        "max": 100.90138571236378
+      },
+      "reasoning_text_tokens": {
+        "median": 0,
+        "mean": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "successful_plan_median_s": 0.6693434170000074
+  },
+  "normal": {
+    "n": 9,
+    "protocol_ok": 9,
+    "only_tool_output": 0,
+    "tool_only_answer": 9,
+    "successes": 5,
+    "scenes": {
+      "center": {
+        "n": 3,
+        "successes": 1
+      },
+      "left": {
+        "n": 3,
+        "successes": 1
+      },
+      "right": {
+        "n": 3,
+        "successes": 3
+      }
+    },
+    "metrics": {
+      "wall_s": {
+        "median": 5.2040420830000045,
+        "mean": 5.725566180555555,
+        "min": 4.338800666999999,
+        "max": 8.378041749999998
+      },
+      "prompt_tokens": {
+        "median": 370,
+        "mean": 370,
+        "min": 370,
+        "max": 370
+      },
+      "completion_tokens": {
+        "median": 422,
+        "mean": 444.6666666666667,
+        "min": 342,
+        "max": 639
+      },
+      "cached_tokens": {
+        "median": 0,
+        "mean": 0,
+        "min": 0,
+        "max": 0
+      },
+      "evaluated_prompt_tokens": {
+        "median": 370,
+        "mean": 370,
+        "min": 370,
+        "max": 370
+      },
+      "prefill_ms": {
+        "median": 548.617,
+        "mean": 575.2612222222222,
+        "min": 541.481,
+        "max": 783.078
+      },
+      "decode_ms": {
+        "median": 4635.826,
+        "mean": 5123.358444444444,
+        "min": 3758.226,
+        "max": 7802.599
+      },
+      "decode_tokens_s": {
+        "median": 87.42885829192214,
+        "mean": 87.25119519412156,
+        "min": 81.76762640243334,
+        "max": 92.59687948516135
+      },
+      "reasoning_text_tokens": {
+        "median": 399,
+        "mean": 422.3333333333333,
+        "min": 319,
+        "max": 616
+      }
+    },
+    "successful_plan_median_s": 5.2040420830000045
+  },
+  "brief": {
+    "n": 9,
+    "protocol_ok": 9,
+    "only_tool_output": 0,
+    "tool_only_answer": 9,
+    "successes": 5,
+    "scenes": {
+      "center": {
+        "n": 3,
+        "successes": 2
+      },
+      "left": {
+        "n": 3,
+        "successes": 1
+      },
+      "right": {
+        "n": 3,
+        "successes": 2
+      }
+    },
+    "metrics": {
+      "wall_s": {
+        "median": 4.408677957999998,
+        "mean": 4.516457874777778,
+        "min": 1.6075386659999964,
+        "max": 9.196245583
+      },
+      "prompt_tokens": {
+        "median": 383,
+        "mean": 383,
+        "min": 383,
+        "max": 383
+      },
+      "completion_tokens": {
+        "median": 348,
+        "mean": 343,
+        "min": 92,
+        "max": 744
+      },
+      "cached_tokens": {
+        "median": 0,
+        "mean": 0,
+        "min": 0,
+        "max": 0
+      },
+      "evaluated_prompt_tokens": {
+        "median": 383,
+        "mean": 383,
+        "min": 383,
+        "max": 383
+      },
+      "prefill_ms": {
+        "median": 547.81,
+        "mean": 547.2568888888889,
+        "min": 539.819,
+        "max": 553.161
+      },
+      "decode_ms": {
+        "median": 3830.137,
+        "mean": 3943.0982222222224,
+        "min": 1038.565,
+        "max": 8626.127
+      },
+      "decode_tokens_s": {
+        "median": 87.62089999181562,
+        "mean": 88.327398469353,
+        "min": 79.65628241060665,
+        "max": 95.54748710108925
+      },
+      "reasoning_text_tokens": {
+        "median": 325,
+        "mean": 322.6666666666667,
+        "min": 75,
+        "max": 721
+      }
+    },
+    "successful_plan_median_s": 4.691857958
+  }
+}

@@ -1,0 +1,5 @@
+<|turn>system
+Plan from the robot's forward-facing camera: image left/right are robot left/right; centered is straight ahead. Translation steps are 0.25 m; turns are 30 degrees in place. Later actions use the heading after earlier turns. Return the complete ordered plan using at most 4 actions, as few as needed. Outside the thought channel, output only tool calls. This is an unexecuted mock plan.<|tool>declaration:plan{description:<|"|>Ordered actions: left/right strafe; forward/backward translate; turn_left/turn_right rotate.<|"|>,parameters:{properties:{actions:{items:{enum:[<|"|>left<|"|>,<|"|>right<|"|>,<|"|>forward<|"|>,<|"|>backward<|"|>,<|"|>turn_left<|"|>,<|"|>turn_right<|"|>],type:<|"|>STRING<|"|>},type:<|"|>ARRAY<|"|>}},required:[<|"|>actions<|"|>],type:<|"|>OBJECT<|"|>}}<tool|><turn|>
+<|turn>user
+<__media_Tnxb8uojQR1QcEfj4RfAwlTBOpnj8uo1__>Face the fridge and take one step toward it. What tool calls would you run?<turn|>
+<|turn>model

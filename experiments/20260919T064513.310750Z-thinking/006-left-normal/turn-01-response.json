@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants me to generate a plan for a robot to move from its current position to a position one step closer to the fridge, based on the provided image and constraints.\n\n1.  **Analyze the image:** The image shows a kitchen. The fridge is a large stainless steel appliance located on the left side of the frame (when viewed from the robot's forward-facing camera, the fridge is on the robot's left).\n2.  **Analyze the robot's current state (implied):** The robot's camera is forward-facing.\n3.  **Goal:** \"Face the fridge and take one step toward it.\"\n4.  **Robot movement constraints:**\n    *   Translation steps are 0.25 m. (A single step is 0.25 m).\n    *   Turns are 30 degrees in place.\n    *   Later actions use the heading after earlier turns.\n5.  **Determine the required sequence of actions:**\n    *   The robot needs to turn to face the fridge. Since the fridge is on the robot's left, it needs to turn right.\n    *   Then, it needs to take a step forward (translation).\n\nSince the request asks for \"What tool calls would you run?\", I need to use the `plan` tool with the appropriate sequence of actions.\n\n**Action plan:**\n1.  Turn right (to face the fridge).\n2.  Forward (take one step towards the fridge).\n\nI will construct the tool call with these two actions.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"turn_right\",\"forward\"]}"
+            },
+            "id": "iTTfTPqGevTAAzzm09oWpJ3fkWMwL2QR"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800329,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 349,
+    "prompt_tokens": 370,
+    "total_tokens": 719,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-Lmq7IRcGxkWprGyYntTpNKtOqcQIG0v5",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 370,
+    "prompt_ms": 556.209,
+    "prompt_per_token_ms": 1.5032675675675675,
+    "prompt_per_second": 665.2175710928806,
+    "predicted_n": 349,
+    "predicted_ms": 3758.226,
+    "predicted_per_token_ms": 10.7995,
+    "predicted_per_second": 92.59687948516135,
+    "draft_n": 310,
+    "draft_n_accepted": 193
+  }
+}

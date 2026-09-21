@@ -1,0 +1,49 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "The user wants to move one step toward the fridge.\nThe robot's forward-facing camera provides:\n- image left/right are robot left/right; centered is straight ahead.\n- Translation steps are 0.25 m.\n\nThe fridge is on the right side of the image.\nThe current state is assumed to be at some initial position, looking at the image.\nTo move towards the fridge, I need to move forward.\n\nAction: forward (translation step of 0.25m).\n\nPlan:\n1. Move forward one step.\n\nTool call:\nplan(actions=[\"forward\"])",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "plan",
+              "arguments": "{\"actions\":[\"forward\"]}"
+            },
+            "id": "T7s74DpkSu90Gj41vYezafzVEz7pFjrD"
+          }
+        ]
+      }
+    }
+  ],
+  "created": 1789800320,
+  "model": "gemma4-e2b",
+  "system_fingerprint": "b10909-a2878d30d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 148,
+    "prompt_tokens": 383,
+    "total_tokens": 531,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-qUc2xiyGCSfCatdXJC9atHpgWUOXSHTi",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 383,
+    "prompt_ms": 549.233,
+    "prompt_per_token_ms": 1.4340287206266318,
+    "prompt_per_second": 697.3361032567235,
+    "predicted_n": 148,
+    "predicted_ms": 1614.823,
+    "predicted_per_token_ms": 10.985190476190477,
+    "predicted_per_second": 91.0316486698542,
+    "draft_n": 134,
+    "draft_n_accepted": 80
+  }
+}
