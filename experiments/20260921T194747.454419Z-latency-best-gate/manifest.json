@@ -1,0 +1,17 @@
+{
+  "variants": [
+    "present-only-480x336",
+    "gate-where-480x336"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "dataset": "both",
+  "tag": "best-gate",
+  "list": false,
+  "images": 92,
+  "build": "b10909-a2878d30d"
+}

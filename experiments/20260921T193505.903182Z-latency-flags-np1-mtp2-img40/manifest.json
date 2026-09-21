@@ -1,0 +1,18 @@
+{
+  "variants": [
+    "where-grammar-off-384x240",
+    "face-tool-384x240",
+    "box-prefill-384x240"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": 40,
+  "dataset": "present",
+  "tag": "flags-np1-mtp2-img40",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}

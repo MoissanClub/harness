@@ -1,0 +1,20 @@
+{
+  "variants": [
+    "box-prefill-480x336",
+    "face-tool-480x336",
+    "x-grammar-off-480x336",
+    "where-free-off-480x336"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "eval",
+  "cache": "on",
+  "passes": 2,
+  "limit": null,
+  "dataset": "present",
+  "tag": "final-sampling",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d",
+  "server_launch": "final: llama serve -hf unsloth/gemma-4-E2B-it-qat-GGUF:UD-Q4_K_XL --alias gemma4-e2b --gpu-layers all --jinja -np 1 --cache-ram 0 -c 4096 --swa-full"
+}

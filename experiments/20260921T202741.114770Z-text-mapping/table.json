@@ -1,0 +1,149 @@
+[
+  {
+    "system": "codex",
+    "user": "face+step",
+    "correct": 1,
+    "outputs": {
+      "left": [
+        "left",
+        "forward"
+      ],
+      "center": [
+        "forward"
+      ],
+      "right": [
+        "right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "codex",
+    "user": "turn-then-step",
+    "correct": 2,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "turn_left",
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "locate",
+    "user": "face+step",
+    "correct": 3,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "locate",
+    "user": "turn-then-step",
+    "correct": 3,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "rule",
+    "user": "face+step",
+    "correct": 3,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "rule",
+    "user": "turn-then-step",
+    "correct": 3,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "none",
+    "user": "face+step",
+    "correct": 2,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "turn_left",
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  },
+  {
+    "system": "none",
+    "user": "turn-then-step",
+    "correct": 2,
+    "outputs": {
+      "left": [
+        "turn_left",
+        "forward"
+      ],
+      "center": [
+        "turn_left",
+        "forward"
+      ],
+      "right": [
+        "turn_right",
+        "forward"
+      ]
+    }
+  }
+]

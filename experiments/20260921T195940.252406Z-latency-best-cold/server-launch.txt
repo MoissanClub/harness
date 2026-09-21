@@ -1,0 +1,2 @@
+llama serve -hf unsloth/gemma-4-E2B-it-qat-GGUF:UD-Q4_K_XL --alias gemma4-e2b --gpu-layers all --jinja --offline -np 1 --cache-ram 0 -c 4096 --swa-full
+(backfilled from the session's bench/serve.sh launch log; logging flags omitted)

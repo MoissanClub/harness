@@ -1,0 +1,21 @@
+{
+  "variants": [
+    "codex-brief",
+    "codex-brief-budget16",
+    "codex-brief-budget32",
+    "codex-brief-budget64",
+    "codex-brief-budget128",
+    "act-target-brief",
+    "act-target-budget32"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "tag": "mtp2-np1-thinking",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}

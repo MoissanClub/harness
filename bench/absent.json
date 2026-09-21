@@ -1,0 +1,72 @@
+[
+  {
+    "image": "bench/images/absent-center-0.png",
+    "source": "center",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-center-0-m.png",
+    "source": "center",
+    "mirrored": true
+  },
+  {
+    "image": "bench/images/absent-center-1.png",
+    "source": "center",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-center-1-m.png",
+    "source": "center",
+    "mirrored": true
+  },
+  {
+    "image": "bench/images/absent-left-2.png",
+    "source": "left",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-left-2-m.png",
+    "source": "left",
+    "mirrored": true
+  },
+  {
+    "image": "bench/images/absent-left-3.png",
+    "source": "left",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-left-3-m.png",
+    "source": "left",
+    "mirrored": true
+  },
+  {
+    "image": "bench/images/absent-right-4.png",
+    "source": "right",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-right-4-m.png",
+    "source": "right",
+    "mirrored": true
+  },
+  {
+    "image": "bench/images/absent-right-5.png",
+    "source": "right",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-right-5-m.png",
+    "source": "right",
+    "mirrored": true
+  },
+  {
+    "image": "bench/images/absent-right-6.png",
+    "source": "right",
+    "mirrored": false
+  },
+  {
+    "image": "bench/images/absent-right-6-m.png",
+    "source": "right",
+    "mirrored": true
+  }
+]

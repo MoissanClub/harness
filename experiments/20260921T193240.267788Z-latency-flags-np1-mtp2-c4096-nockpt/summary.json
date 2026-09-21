@@ -1,0 +1,134 @@
+[
+  {
+    "variant": "codex-off",
+    "n": 40,
+    "strict": 9,
+    "strict_rate": 0.225,
+    "strict_ci95": [
+      0.123,
+      0.375
+    ],
+    "permissive": 9,
+    "by_class": {
+      "left": "0/17",
+      "center": "9/9",
+      "right": "0/14",
+      "none": "0/0"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 630.8,
+      "p90": 634.8,
+      "max": 641.5
+    },
+    "first_call_ms_p50": 559.9,
+    "prompt_n": 368.0,
+    "cache_n": 0.0,
+    "prompt_ms": 494.3,
+    "predicted_n": 13.0,
+    "predicted_ms": 119.2,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "box-prefill-480x336",
+    "n": 40,
+    "strict": 40,
+    "strict_rate": 1.0,
+    "strict_ci95": [
+      0.912,
+      1.0
+    ],
+    "permissive": 40,
+    "by_class": {
+      "left": "17/17",
+      "center": "9/9",
+      "right": "14/14",
+      "none": "0/0"
+    },
+    "position_ok": "40/40",
+    "x_mae": 0.016,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 448.6,
+      "p90": 472.0,
+      "max": 495.9
+    },
+    "first_call_ms_p50": 262.7,
+    "prompt_n": 144.0,
+    "cache_n": 0.0,
+    "prompt_ms": 255.0,
+    "predicted_n": 17.0,
+    "predicted_ms": 186.3,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "face-tool-480x336",
+    "n": 40,
+    "strict": 40,
+    "strict_rate": 1.0,
+    "strict_ci95": [
+      0.912,
+      1.0
+    ],
+    "permissive": 40,
+    "by_class": {
+      "left": "17/17",
+      "center": "9/9",
+      "right": "14/14",
+      "none": "0/0"
+    },
+    "position_ok": "40/40",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 416.0,
+      "p90": 418.0,
+      "max": 419.4
+    },
+    "first_call_ms_p50": 345.9,
+    "prompt_n": 208.0,
+    "cache_n": 0.0,
+    "prompt_ms": 289.0,
+    "predicted_n": 15.0,
+    "predicted_ms": 117.7,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "where-grammar-off-480x336",
+    "n": 40,
+    "strict": 39,
+    "strict_rate": 0.975,
+    "strict_ci95": [
+      0.871,
+      0.996
+    ],
+    "permissive": 39,
+    "by_class": {
+      "left": "16/17",
+      "center": "9/9",
+      "right": "14/14",
+      "none": "0/0"
+    },
+    "position_ok": "39/40",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 294.3,
+      "p90": 301.2,
+      "max": 301.7
+    },
+    "first_call_ms_p50": 254.7,
+    "prompt_n": 135.0,
+    "cache_n": 0.0,
+    "prompt_ms": 246.7,
+    "predicted_n": 2.0,
+    "predicted_ms": 40.3,
+    "under_1s": 1.0
+  }
+]

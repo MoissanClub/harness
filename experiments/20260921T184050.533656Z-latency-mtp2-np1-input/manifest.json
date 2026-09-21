@@ -1,0 +1,27 @@
+{
+  "variants": [
+    "approach-x-off-textfirst",
+    "where-grammar-off-textfirst",
+    "x-grammar-off-textfirst",
+    "json-x-schema-off-textfirst",
+    "box-off-textfirst",
+    "approach-x-off-w480",
+    "approach-x-off-w360",
+    "where-grammar-off-w480",
+    "where-grammar-off-w360",
+    "x-grammar-off-w480",
+    "x-grammar-off-w360",
+    "box-off-w480",
+    "box-off-w360"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "tag": "mtp2-np1-input",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}

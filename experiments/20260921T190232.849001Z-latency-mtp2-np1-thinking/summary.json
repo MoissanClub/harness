@@ -1,0 +1,226 @@
+[
+  {
+    "variant": "codex-brief",
+    "n": 78,
+    "strict": 49,
+    "strict_rate": 0.628,
+    "strict_ci95": [
+      0.517,
+      0.727
+    ],
+    "permissive": 49,
+    "by_class": {
+      "left": "10/30",
+      "center": "16/18",
+      "right": "23/30"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 2563.5,
+      "p90": 3962.2,
+      "max": 5887.7
+    },
+    "first_call_ms_p50": 2457.2,
+    "prompt_n": 178.0,
+    "cache_n": 205.0,
+    "prompt_ms": 373.6,
+    "predicted_n": 204.5,
+    "predicted_ms": 2172.1,
+    "under_1s": 0.0
+  },
+  {
+    "variant": "codex-brief-budget16",
+    "n": 78,
+    "strict": 18,
+    "strict_rate": 0.231,
+    "strict_ci95": [
+      0.151,
+      0.336
+    ],
+    "permissive": 18,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "0/30"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 738.6,
+      "p90": 758.8,
+      "max": 765.0
+    },
+    "first_call_ms_p50": 663.4,
+    "prompt_n": 178.0,
+    "cache_n": 205.0,
+    "prompt_ms": 374.6,
+    "predicted_n": 32.0,
+    "predicted_ms": 340.4,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "codex-brief-budget32",
+    "n": 78,
+    "strict": 18,
+    "strict_rate": 0.231,
+    "strict_ci95": [
+      0.151,
+      0.336
+    ],
+    "permissive": 18,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "0/30"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 908.0,
+      "p90": 937.3,
+      "max": 987.8
+    },
+    "first_call_ms_p50": 835.8,
+    "prompt_n": 178.0,
+    "cache_n": 205.0,
+    "prompt_ms": 370.8,
+    "predicted_n": 48.0,
+    "predicted_ms": 521.6,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "codex-brief-budget64",
+    "n": 78,
+    "strict": 19,
+    "strict_rate": 0.244,
+    "strict_ci95": [
+      0.162,
+      0.349
+    ],
+    "permissive": 19,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "1/30"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 1221.0,
+      "p90": 1311.5,
+      "max": 1337.5
+    },
+    "first_call_ms_p50": 1144.2,
+    "prompt_n": 178.0,
+    "cache_n": 205.0,
+    "prompt_ms": 371.9,
+    "predicted_n": 80.0,
+    "predicted_ms": 832.2,
+    "under_1s": 0.0
+  },
+  {
+    "variant": "codex-brief-budget128",
+    "n": 78,
+    "strict": 38,
+    "strict_rate": 0.487,
+    "strict_ci95": [
+      0.379,
+      0.596
+    ],
+    "permissive": 38,
+    "by_class": {
+      "left": "8/30",
+      "center": "16/18",
+      "right": "14/30"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 1894.8,
+      "p90": 1978.9,
+      "max": 2152.5
+    },
+    "first_call_ms_p50": 1791.1,
+    "prompt_n": 178.0,
+    "cache_n": 205.0,
+    "prompt_ms": 374.8,
+    "predicted_n": 144.0,
+    "predicted_ms": 1496.8,
+    "under_1s": 0.0
+  },
+  {
+    "variant": "act-target-brief",
+    "n": 78,
+    "strict": 70,
+    "strict_rate": 0.897,
+    "strict_ci95": [
+      0.81,
+      0.947
+    ],
+    "permissive": 70,
+    "by_class": {
+      "left": "25/30",
+      "center": "15/18",
+      "right": "30/30"
+    },
+    "position_ok": "70/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 3531.0,
+      "p90": 6251.0,
+      "max": 11234.9
+    },
+    "first_call_ms_p50": 3346.1,
+    "prompt_n": 171.0,
+    "cache_n": 267.0,
+    "prompt_ms": 373.0,
+    "predicted_n": 309.5,
+    "predicted_ms": 3136.3,
+    "under_1s": 0.0
+  },
+  {
+    "variant": "act-target-budget32",
+    "n": 78,
+    "strict": 18,
+    "strict_rate": 0.231,
+    "strict_ci95": [
+      0.151,
+      0.336
+    ],
+    "permissive": 18,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "0/30"
+    },
+    "position_ok": "48/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 914.0,
+      "p90": 942.8,
+      "max": 972.5
+    },
+    "first_call_ms_p50": 787.5,
+    "prompt_n": 171.0,
+    "cache_n": 267.0,
+    "prompt_ms": 372.7,
+    "predicted_n": 54.0,
+    "predicted_ms": 525.9,
+    "under_1s": 1.0
+  }
+]

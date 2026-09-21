@@ -1,0 +1,27 @@
+{
+  "variants": [
+    "codex-off",
+    "where-free-off",
+    "face-tool",
+    "box-prefill-480x336",
+    "face-tool-480x336",
+    "approach-x-ask-480x336",
+    "where-grammar-off-480x336",
+    "x-grammar-off-480x336",
+    "where-free-off-480x336",
+    "where-grammar-off-480x336-jpeg",
+    "face-tool-480x336-jpeg",
+    "box-prefill-480x336-jpeg"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "dataset": "present",
+  "tag": "best-final",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}

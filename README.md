@@ -1,5 +1,7 @@
 # Gemma 4 vision and mock action plans
 
+> **2026-09-21:** start with [CLAUDE.md](CLAUDE.md). The sub-second latency study, the recommended request and the new `run_llama.sh` flags are in [LATENCY_RESULTS.md](LATENCY_RESULTS.md); the text below describes the original one-response harness and its defaults.
+
 Evaluate Google's Gemma 4 E4B through a running llama.cpp server using three 720×480 kitchen images. Every scene receives the same goal: **“Face the fridge and take one step toward it. What tool calls would you run?”**
 
 **Checkpoint:** native tool calling works in these tests, but the three-image studies do not establish reliable visual control. The current direction is complete drink-fetching autonomy using short, revisable skill plans: [TASK_CHUNK_PROPOSAL.md](TASK_CHUNK_PROPOSAL.md). The earlier [retrospective](NEXT_EXPERIMENT.md) remains useful; its single-frame test is now an optional diagnostic. The new architecture proposal has not been implemented or run.
@@ -7,6 +9,8 @@ Evaluate Google's Gemma 4 E4B through a running llama.cpp server using three 720
 The runner asks for a complete, ordered plan in **one model response**, with at most four actions and no ordinary answer prose. Thinking is configurable. It validates and records the calls, then stops: no tool-feedback request or final acknowledgement is generated. There is no robot SDK, hardware connection, motion, or simulated camera update.
 
 The current thinking-mode and tool-interface results are in [THINKING_RESULTS.md](THINKING_RESULTS.md), with the predeclared design in [THINKING_HYPOTHESIS.md](THINKING_HYPOTHESIS.md). Earlier studies remain in [FORMAT_RESULTS.md](FORMAT_RESULTS.md) (thinking-off formats), [TURN_RESULTS.md](TURN_RESULTS.md) (thinking-on action sequences), and [RESULTS.md](RESULTS.md) (single-action baseline).
+
+Orin NX runtime choices, quantization behavior, latency estimates, and deployment checks are summarized in [DEPLOY.md](DEPLOY.md). Target performance remains unmeasured.
 
 ## Run
 

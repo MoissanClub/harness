@@ -1,0 +1,130 @@
+[
+  {
+    "variant": "box-prefill",
+    "n": 6,
+    "strict": 6,
+    "strict_rate": 1.0,
+    "strict_ci95": [
+      0.61,
+      1.0
+    ],
+    "permissive": 6,
+    "by_class": {
+      "left": "3/3",
+      "center": "1/1",
+      "right": "2/2"
+    },
+    "position_ok": "6/6",
+    "x_mae": 0.022,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 601.8,
+      "p90": 632.0,
+      "max": 632.0
+    },
+    "first_call_ms_p50": 415.0,
+    "prompt_n": 223.0,
+    "cache_n": 1.0,
+    "prompt_ms": 399.2,
+    "predicted_n": 17.0,
+    "predicted_ms": 186.4,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "where-then-plan",
+    "n": 6,
+    "strict": 1,
+    "strict_rate": 0.167,
+    "strict_ci95": [
+      0.03,
+      0.564
+    ],
+    "permissive": 1,
+    "by_class": {
+      "left": "0/3",
+      "center": "1/1",
+      "right": "0/2"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 664.6,
+      "p90": 713.2,
+      "max": 713.2
+    },
+    "first_call_ms_p50": 180.0,
+    "prompt_n": 228.0,
+    "cache_n": 177.0,
+    "prompt_ms": 483.9,
+    "predicted_n": 15.0,
+    "predicted_ms": 143.7,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "face-tool",
+    "n": 6,
+    "strict": 5,
+    "strict_rate": 0.833,
+    "strict_ci95": [
+      0.436,
+      0.97
+    ],
+    "permissive": 5,
+    "by_class": {
+      "left": "2/3",
+      "center": "1/1",
+      "right": "2/2"
+    },
+    "position_ok": "5/6",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 502.0,
+      "p90": 522.4,
+      "max": 522.4
+    },
+    "first_call_ms_p50": 430.6,
+    "prompt_n": 187.0,
+    "cache_n": 101.0,
+    "prompt_ms": 367.2,
+    "predicted_n": 15.0,
+    "predicted_ms": 117.4,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "approach-x-ask",
+    "n": 6,
+    "strict": 4,
+    "strict_rate": 0.667,
+    "strict_ci95": [
+      0.3,
+      0.903
+    ],
+    "permissive": 4,
+    "by_class": {
+      "left": "1/3",
+      "center": "1/1",
+      "right": "2/2"
+    },
+    "position_ok": "4/6",
+    "x_mae": 0.498,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 517.2,
+      "p90": 519.1,
+      "max": 519.1
+    },
+    "first_call_ms_p50": 447.0,
+    "prompt_n": 207.0,
+    "cache_n": 105.0,
+    "prompt_ms": 383.9,
+    "predicted_n": 14.0,
+    "predicted_ms": 117.6,
+    "under_1s": 1.0
+  }
+]

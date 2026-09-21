@@ -1,0 +1,19 @@
+{
+  "variants": [
+    "codex-off",
+    "box-prefill-480x336",
+    "face-tool-480x336",
+    "where-grammar-off-480x336"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": 40,
+  "dataset": "present",
+  "tag": "flags-np1-nomtp",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}

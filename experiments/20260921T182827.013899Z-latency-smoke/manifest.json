@@ -1,0 +1,24 @@
+{
+  "variants": [
+    "codex-off",
+    "codex-brief-budget32",
+    "act-target-off",
+    "act-x-off",
+    "json-schema-off",
+    "dsl-grammar-off",
+    "where-grammar-off",
+    "where-free-off",
+    "x-grammar-off",
+    "box-off"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": 6,
+  "tag": "smoke",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}

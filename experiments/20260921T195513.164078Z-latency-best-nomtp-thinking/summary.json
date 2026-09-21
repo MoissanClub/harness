@@ -1,0 +1,35 @@
+[
+  {
+    "variant": "codex-brief",
+    "n": 24,
+    "strict": 15,
+    "strict_rate": 0.625,
+    "strict_ci95": [
+      0.427,
+      0.788
+    ],
+    "permissive": 15,
+    "by_class": {
+      "left": "4/12",
+      "center": "4/4",
+      "right": "7/8",
+      "none": "0/0"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 2144.7,
+      "p90": 3906.2,
+      "max": 4190.2
+    },
+    "first_call_ms_p50": 2062.8,
+    "prompt_n": 173.0,
+    "cache_n": 210.0,
+    "prompt_ms": 312.7,
+    "predicted_n": 204.5,
+    "predicted_ms": 1812.9,
+    "under_1s": 0.0
+  }
+]

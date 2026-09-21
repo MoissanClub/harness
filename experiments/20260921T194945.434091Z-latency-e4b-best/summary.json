@@ -1,0 +1,200 @@
+[
+  {
+    "variant": "codex-off",
+    "n": 78,
+    "strict": 40,
+    "strict_rate": 0.513,
+    "strict_ci95": [
+      0.404,
+      0.621
+    ],
+    "permissive": 40,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "22/30",
+      "none": "0/0"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 700.5,
+      "p90": 798.2,
+      "max": 800.9
+    },
+    "first_call_ms_p50": 568.5,
+    "prompt_n": 173.0,
+    "cache_n": 195.0,
+    "prompt_ms": 477.4,
+    "predicted_n": 13.0,
+    "predicted_ms": 195.5,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "look-move-off",
+    "n": 78,
+    "strict": 20,
+    "strict_rate": 0.256,
+    "strict_ci95": [
+      0.173,
+      0.363
+    ],
+    "permissive": 20,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "2/30",
+      "none": "0/0"
+    },
+    "position_ok": "46/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 796.2,
+      "p90": 799.4,
+      "max": 897.6
+    },
+    "first_call_ms_p50": 569.9,
+    "prompt_n": 166.0,
+    "cache_n": 257.0,
+    "prompt_ms": 480.9,
+    "predicted_n": 19.0,
+    "predicted_ms": 291.8,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "next-tool",
+    "n": 78,
+    "strict": 8,
+    "strict_rate": 0.103,
+    "strict_ci95": [
+      0.053,
+      0.19
+    ],
+    "permissive": 8,
+    "by_class": {
+      "left": "0/30",
+      "center": "8/18",
+      "right": "0/30",
+      "none": "0/0"
+    },
+    "position_ok": "8/46",
+    "x_mae": null,
+    "errors": 32,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 682.4,
+      "p90": 694.6,
+      "max": 698.1
+    },
+    "first_call_ms_p50": 553.2,
+    "prompt_n": 161.0,
+    "cache_n": 152.0,
+    "prompt_ms": 472.1,
+    "predicted_n": 13.0,
+    "predicted_ms": 193.7,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "box-prefill-480x336",
+    "n": 78,
+    "strict": 78,
+    "strict_rate": 1.0,
+    "strict_ci95": [
+      0.953,
+      1.0
+    ],
+    "permissive": 78,
+    "by_class": {
+      "left": "30/30",
+      "center": "18/18",
+      "right": "30/30",
+      "none": "0/0"
+    },
+    "position_ok": "78/78",
+    "x_mae": 0.015,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 656.2,
+      "p90": 659.6,
+      "max": 675.0
+    },
+    "first_call_ms_p50": 397.7,
+    "prompt_n": 139.0,
+    "cache_n": 5.0,
+    "prompt_ms": 384.0,
+    "predicted_n": 17.0,
+    "predicted_ms": 258.8,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "face-tool-480x336",
+    "n": 78,
+    "strict": 73,
+    "strict_rate": 0.936,
+    "strict_ci95": [
+      0.859,
+      0.972
+    ],
+    "permissive": 73,
+    "by_class": {
+      "left": "26/30",
+      "center": "18/18",
+      "right": "29/30",
+      "none": "0/0"
+    },
+    "position_ok": "73/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 532.8,
+      "p90": 538.5,
+      "max": 550.5
+    },
+    "first_call_ms_p50": 403.9,
+    "prompt_n": 102.0,
+    "cache_n": 106.0,
+    "prompt_ms": 291.4,
+    "predicted_n": 15.0,
+    "predicted_ms": 227.1,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "where-free-off-480x336",
+    "n": 78,
+    "strict": 69,
+    "strict_rate": 0.885,
+    "strict_ci95": [
+      0.795,
+      0.938
+    ],
+    "permissive": 69,
+    "by_class": {
+      "left": "25/30",
+      "center": "18/18",
+      "right": "26/30",
+      "none": "0/0"
+    },
+    "position_ok": "69/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 357.8,
+      "p90": 359.3,
+      "max": 363.8
+    },
+    "first_call_ms_p50": 339.6,
+    "prompt_n": 106.0,
+    "cache_n": 29.0,
+    "prompt_ms": 331.6,
+    "predicted_n": 2.0,
+    "predicted_ms": 18.3,
+    "under_1s": 1.0
+  }
+]

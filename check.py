@@ -16,7 +16,7 @@ def call(direction, ident="a"):
 
 
 def main():
-    for path in ROOT.glob("*.py"):
+    for path in [*ROOT.glob("*.py"), *ROOT.glob("bench/*.py")]:
         ast.parse(path.read_text())
 
     original = []

@@ -1,0 +1,101 @@
+[
+  {
+    "variant": "codex-off",
+    "n": 78,
+    "strict": 18,
+    "strict_rate": 0.231,
+    "strict_ci95": [
+      0.151,
+      0.336
+    ],
+    "permissive": 18,
+    "by_class": {
+      "left": "0/30",
+      "center": "18/18",
+      "right": "0/30",
+      "none": "0/0"
+    },
+    "position_ok": null,
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 595.7,
+      "p90": 607.9,
+      "max": 631.0
+    },
+    "first_call_ms_p50": 525.4,
+    "prompt_n": 368.0,
+    "cache_n": 0.0,
+    "prompt_ms": 465.4,
+    "predicted_n": 13.0,
+    "predicted_ms": 106.5,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "face-tool-480x336",
+    "n": 78,
+    "strict": 76,
+    "strict_rate": 0.974,
+    "strict_ci95": [
+      0.911,
+      0.993
+    ],
+    "permissive": 76,
+    "by_class": {
+      "left": "30/30",
+      "center": "18/18",
+      "right": "28/30",
+      "none": "0/0"
+    },
+    "position_ok": "76/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 409.8,
+      "p90": 417.0,
+      "max": 434.5
+    },
+    "first_call_ms_p50": 339.5,
+    "prompt_n": 208.0,
+    "cache_n": 0.0,
+    "prompt_ms": 273.6,
+    "predicted_n": 15.0,
+    "predicted_ms": 123.3,
+    "under_1s": 1.0
+  },
+  {
+    "variant": "where-free-off-480x336",
+    "n": 78,
+    "strict": 77,
+    "strict_rate": 0.987,
+    "strict_ci95": [
+      0.931,
+      0.998
+    ],
+    "permissive": 77,
+    "by_class": {
+      "left": "29/30",
+      "center": "18/18",
+      "right": "30/30",
+      "none": "0/0"
+    },
+    "position_ok": "77/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 246.3,
+      "p90": 248.1,
+      "max": 264.9
+    },
+    "first_call_ms_p50": 236.6,
+    "prompt_n": 135.0,
+    "cache_n": 0.0,
+    "prompt_ms": 228.6,
+    "predicted_n": 2.0,
+    "predicted_ms": 9.7,
+    "under_1s": 1.0
+  }
+]

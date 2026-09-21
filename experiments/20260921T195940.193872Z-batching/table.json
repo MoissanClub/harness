@@ -1,0 +1,82 @@
+[
+  {
+    "format": "plan",
+    "actions": 1,
+    "output_tokens": 15,
+    "decode_ms": 125.2,
+    "total_ms": 137.6,
+    "first_delta_ms": 47.8,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "plan",
+    "actions": 2,
+    "output_tokens": 19,
+    "decode_ms": 156.6,
+    "total_ms": 168.9,
+    "first_delta_ms": 46.7,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "plan",
+    "actions": 4,
+    "output_tokens": 29,
+    "decode_ms": 244.0,
+    "total_ms": 256.2,
+    "first_delta_ms": 47.0,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "plan",
+    "actions": 8,
+    "output_tokens": 45,
+    "decode_ms": 383.1,
+    "total_ms": 395.1,
+    "first_delta_ms": 46.8,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "atomic",
+    "actions": 1,
+    "output_tokens": 9,
+    "decode_ms": 70.0,
+    "total_ms": 82.1,
+    "first_delta_ms": 64.9,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "atomic",
+    "actions": 2,
+    "output_tokens": 17,
+    "decode_ms": 138.6,
+    "total_ms": 150.7,
+    "first_delta_ms": 64.1,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "atomic",
+    "actions": 4,
+    "output_tokens": 33,
+    "decode_ms": 278.0,
+    "total_ms": 290.2,
+    "first_delta_ms": 64.2,
+    "exact": 5,
+    "n": 5
+  },
+  {
+    "format": "atomic",
+    "actions": 8,
+    "output_tokens": 65,
+    "decode_ms": 562.8,
+    "total_ms": 576.0,
+    "first_delta_ms": 65.6,
+    "exact": 5,
+    "n": 5
+  }
+]

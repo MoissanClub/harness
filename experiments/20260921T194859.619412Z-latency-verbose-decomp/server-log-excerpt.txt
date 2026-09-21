@@ -1,0 +1,104 @@
+0.01.366.986 I slot process_mtmd: id  0 | task 0 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.01.528.403 I decoding image batch 1/1, n_tokens_batch = 150
+0.01.531.005 I image decoded (batch 1/1) in 2 ms
+0.01.732.529 I slot print_timing: id  0 | task 0 | prompt eval time =     358.48 ms /   215 tokens (    1.67 ms per token,   599.75 tokens per second)
+0.01.747.980 I slot process_mtmd: id  0 | task 4 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.01.883.189 I decoding image batch 1/1, n_tokens_batch = 150
+0.01.884.952 I image decoded (batch 1/1) in 1 ms
+0.02.086.707 I slot print_timing: id  0 | task 4 | prompt eval time =     328.10 ms /   186 tokens (    1.76 ms per token,   566.89 tokens per second)
+0.02.103.566 I slot process_mtmd: id  0 | task 7 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.02.238.452 I decoding image batch 1/1, n_tokens_batch = 150
+0.02.240.144 I image decoded (batch 1/1) in 2 ms
+0.02.442.647 I slot print_timing: id  0 | task 7 | prompt eval time =     329.47 ms /   186 tokens (    1.77 ms per token,   564.54 tokens per second)
+0.02.459.349 I slot process_mtmd: id  0 | task 10 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.02.594.696 I decoding image batch 1/1, n_tokens_batch = 150
+0.02.596.362 I image decoded (batch 1/1) in 2 ms
+0.02.797.818 I slot print_timing: id  0 | task 10 | prompt eval time =     328.25 ms /   186 tokens (    1.76 ms per token,   566.64 tokens per second)
+0.02.814.387 I slot process_mtmd: id  0 | task 13 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.02.949.899 I decoding image batch 1/1, n_tokens_batch = 150
+0.02.951.681 I image decoded (batch 1/1) in 2 ms
+0.03.153.074 I slot print_timing: id  0 | task 13 | prompt eval time =     328.90 ms /   186 tokens (    1.77 ms per token,   565.52 tokens per second)
+0.03.168.709 I slot process_mtmd: id  0 | task 16 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.03.303.662 I decoding image batch 1/1, n_tokens_batch = 150
+0.03.305.382 I image decoded (batch 1/1) in 2 ms
+0.03.507.699 I slot print_timing: id  0 | task 16 | prompt eval time =     329.43 ms /   186 tokens (    1.77 ms per token,   564.60 tokens per second)
+0.03.523.257 I slot process_mtmd: id  0 | task 19 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.03.658.152 I decoding image batch 1/1, n_tokens_batch = 150
+0.03.659.886 I image decoded (batch 1/1) in 1 ms
+0.03.862.462 I slot print_timing: id  0 | task 19 | prompt eval time =     329.21 ms /   186 tokens (    1.77 ms per token,   564.99 tokens per second)
+0.03.878.380 I slot process_mtmd: id  0 | task 22 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.04.013.042 I decoding image batch 1/1, n_tokens_batch = 150
+0.04.014.966 I image decoded (batch 1/1) in 2 ms
+0.04.215.460 I slot print_timing: id  0 | task 22 | prompt eval time =     327.47 ms /   186 tokens (    1.76 ms per token,   568.00 tokens per second)
+0.04.230.934 I slot process_mtmd: id  0 | task 25 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.04.365.909 I decoding image batch 1/1, n_tokens_batch = 150
+0.04.367.555 I image decoded (batch 1/1) in 2 ms
+0.04.570.021 I slot print_timing: id  0 | task 25 | prompt eval time =     329.70 ms /   186 tokens (    1.77 ms per token,   564.15 tokens per second)
+0.04.586.744 I slot process_mtmd: id  0 | task 28 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.04.721.688 I decoding image batch 1/1, n_tokens_batch = 150
+0.04.723.467 I image decoded (batch 1/1) in 2 ms
+0.04.926.507 I slot print_timing: id  0 | task 28 | prompt eval time =     329.22 ms /   186 tokens (    1.77 ms per token,   564.98 tokens per second)
+0.04.943.389 I slot process_mtmd: id  0 | task 31 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.05.078.089 I decoding image batch 1/1, n_tokens_batch = 150
+0.05.079.875 I image decoded (batch 1/1) in 1 ms
+0.05.283.355 I slot print_timing: id  0 | task 31 | prompt eval time =     329.62 ms /   186 tokens (    1.77 ms per token,   564.29 tokens per second)
+0.05.298.759 I slot process_mtmd: id  0 | task 34 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.05.433.701 I decoding image batch 1/1, n_tokens_batch = 150
+0.05.435.405 I image decoded (batch 1/1) in 2 ms
+0.05.637.621 I slot print_timing: id  0 | task 34 | prompt eval time =     329.41 ms /   186 tokens (    1.77 ms per token,   564.65 tokens per second)
+0.05.653.654 I slot process_mtmd: id  0 | task 37 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.05.788.203 I decoding image batch 1/1, n_tokens_batch = 150
+0.05.789.952 I image decoded (batch 1/1) in 1 ms
+0.05.992.137 I slot print_timing: id  0 | task 37 | prompt eval time =     328.95 ms /   186 tokens (    1.77 ms per token,   565.43 tokens per second)
+0.06.001.057 I slot process_mtmd: id  0 | task 40 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.06.059.465 I decoding image batch 1/1, n_tokens_batch = 70
+0.06.061.074 I image decoded (batch 1/1) in 2 ms
+0.06.213.396 I slot print_timing: id  0 | task 40 | prompt eval time =     202.97 ms /   106 tokens (    1.91 ms per token,   522.24 tokens per second)
+0.06.221.687 I slot process_mtmd: id  0 | task 43 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.06.279.210 I decoding image batch 1/1, n_tokens_batch = 70
+0.06.280.848 I image decoded (batch 1/1) in 1 ms
+0.06.433.161 I slot print_timing: id  0 | task 43 | prompt eval time =     201.89 ms /   106 tokens (    1.90 ms per token,   525.04 tokens per second)
+0.06.442.104 I slot process_mtmd: id  0 | task 46 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.06.500.046 I decoding image batch 1/1, n_tokens_batch = 70
+0.06.501.651 I image decoded (batch 1/1) in 2 ms
+0.06.654.271 I slot print_timing: id  0 | task 46 | prompt eval time =     202.67 ms /   106 tokens (    1.91 ms per token,   523.01 tokens per second)
+0.06.663.039 I slot process_mtmd: id  0 | task 49 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.06.720.800 I decoding image batch 1/1, n_tokens_batch = 70
+0.06.722.424 I image decoded (batch 1/1) in 2 ms
+0.06.874.811 I slot print_timing: id  0 | task 49 | prompt eval time =     202.37 ms /   106 tokens (    1.91 ms per token,   523.79 tokens per second)
+0.06.883.370 I slot process_mtmd: id  0 | task 52 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.06.941.175 I decoding image batch 1/1, n_tokens_batch = 70
+0.06.942.776 I image decoded (batch 1/1) in 1 ms
+0.07.095.065 I slot print_timing: id  0 | task 52 | prompt eval time =     202.28 ms /   106 tokens (    1.91 ms per token,   524.02 tokens per second)
+0.07.103.487 I slot process_mtmd: id  0 | task 55 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.07.160.997 I decoding image batch 1/1, n_tokens_batch = 70
+0.07.162.605 I image decoded (batch 1/1) in 2 ms
+0.07.314.751 I slot print_timing: id  0 | task 55 | prompt eval time =     201.86 ms /   106 tokens (    1.90 ms per token,   525.11 tokens per second)
+0.07.323.035 I slot process_mtmd: id  0 | task 58 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.07.380.868 I decoding image batch 1/1, n_tokens_batch = 70
+0.07.382.496 I image decoded (batch 1/1) in 2 ms
+0.07.534.774 I slot print_timing: id  0 | task 58 | prompt eval time =     202.35 ms /   106 tokens (    1.91 ms per token,   523.86 tokens per second)
+0.07.543.240 I slot process_mtmd: id  0 | task 61 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.07.600.911 I decoding image batch 1/1, n_tokens_batch = 70
+0.07.602.475 I image decoded (batch 1/1) in 2 ms
+0.07.755.014 I slot print_timing: id  0 | task 61 | prompt eval time =     202.22 ms /   106 tokens (    1.91 ms per token,   524.18 tokens per second)
+0.07.763.273 I slot process_mtmd: id  0 | task 64 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.07.821.195 I decoding image batch 1/1, n_tokens_batch = 70
+0.07.822.868 I image decoded (batch 1/1) in 1 ms
+0.07.975.563 I slot print_timing: id  0 | task 64 | prompt eval time =     202.58 ms /   106 tokens (    1.91 ms per token,   523.26 tokens per second)
+0.07.984.742 I slot process_mtmd: id  0 | task 67 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.08.042.532 I decoding image batch 1/1, n_tokens_batch = 70
+0.08.044.191 I image decoded (batch 1/1) in 2 ms
+0.08.195.079 I slot print_timing: id  0 | task 67 | prompt eval time =     200.79 ms /   106 tokens (    1.89 ms per token,   527.91 tokens per second)
+0.08.204.176 I slot process_mtmd: id  0 | task 70 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.08.262.014 I decoding image batch 1/1, n_tokens_batch = 70
+0.08.263.728 I image decoded (batch 1/1) in 2 ms
+0.08.416.068 I slot print_timing: id  0 | task 70 | prompt eval time =     202.37 ms /   106 tokens (    1.91 ms per token,   523.78 tokens per second)
+0.08.424.461 I slot process_mtmd: id  0 | task 73 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.08.482.339 I decoding image batch 1/1, n_tokens_batch = 70
+0.08.483.929 I image decoded (batch 1/1) in 1 ms
+0.08.637.689 I slot print_timing: id  0 | task 73 | prompt eval time =     203.71 ms /   106 tokens (    1.92 ms per token,   520.35 tokens per second)
+0.08.646.214 I slot process_mtmd: id  0 | task 76 | encoding mtmd batch from idx = 29, n_chunks = 1
+0.08.703.817 I decoding image batch 1/1, n_tokens_batch = 70
+0.08.705.478 I image decoded (batch 1/1) in 2 ms
+0.08.857.544 I slot print_timing: id  0 | task 76 | prompt eval time =     201.75 ms /   106 tokens (    1.90 ms per token,   525.41 tokens per second)

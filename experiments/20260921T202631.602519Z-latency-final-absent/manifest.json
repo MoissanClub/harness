@@ -1,0 +1,19 @@
+{
+  "variants": [
+    "where4-grammar-480x336",
+    "present-only-480x336",
+    "gate-where-480x336"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "dataset": "both",
+  "tag": "final-absent",
+  "list": false,
+  "images": 92,
+  "build": "b10909-a2878d30d",
+  "server_launch": "final: llama serve -hf unsloth/gemma-4-E2B-it-qat-GGUF:UD-Q4_K_XL --alias gemma4-e2b --gpu-layers all --jinja -np 1 --cache-ram 0 -c 4096 --swa-full"
+}

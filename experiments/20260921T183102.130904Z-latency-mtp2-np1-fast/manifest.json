@@ -1,0 +1,27 @@
+{
+  "variants": [
+    "codex-off",
+    "locate-plan-off",
+    "act-target-off",
+    "look-move-off",
+    "lookx-move-off",
+    "approach-x-off",
+    "json-schema-off",
+    "json-x-schema-off",
+    "dsl-grammar-off",
+    "where-grammar-off",
+    "where-free-off",
+    "x-grammar-off",
+    "box-off"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "tag": "mtp2-np1-fast",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d"
+}
