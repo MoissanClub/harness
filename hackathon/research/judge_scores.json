@@ -1,0 +1,578 @@
+[
+ {
+  "persona": "Google DeepMind Gemma team judge (Ian Ballantyne / Omar Sanseviero lens). I score whether Gemma 4 is the cognitive core rather than a swappable wrapper; whether Gemma-4-specific capabilities are load-bearing and visible (native audio in with no ASR, 70-token vision and box_2d, native function calling, E2B sub-second latency, the thinking toggle, EmbeddingGemma 2); whether everything provably runs on the robot (radios down, factory assistant off, no tethered laptop doing inference); whether the demo is real (gates deciding on screen, not timers or scripted branches); whether the numbers on the slide were measured on the Orin; and whether I could write it up in two honest sentences for the winners post. Shared EV assumptions: ~30 teams, ~15 in Track 2 with 1-3 humanoids; a reliable, fully offline humanoid closing a hear-see-decide-act loop with an honest success table has P(1st|works) 0.35-0.45, P(2nd) 0.2, P(3rd) 0.15 (value ~$4.4k when strong, ~$3.6k medium, ~$2.5k for a fallback-only tier); the LiteRT pool is judged by AI Edge people who weight LiteRT-LM running Gemma 4 on the demo device highest, EmbeddingGemma 2 via litert-lm serve in the critical path next (P top-3 ~0.4, ~$2.1k), an off-loop CPU sidecar ~0.25 (~$1.3k), a standby engine or MediaPipe-on-LiteRT ~0.10 (~$0.5k); Best in Show needs a real Android app on a Pixel; hardware awards are not cash; stacking is assumed allowed but AGI House has not said so, and I flag every EV that depends on it. Harness facts I held every concept to: the 'text-only percept-to-plan works' result is a 3-case left/center/right probe, not multi-step composition; brief thinking was 90% at 3.5 s p50 / 11.2 s max on the Mac; yes/no gates had 2/14 false positives on wide views; Mac numbers are not Orin numbers; audio on the Orin is unverified.",
+  "scores": [
+   {
+    "concept_name": "Any Language, One Can (the polyglot host)",
+    "wow": 9,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 4000,
+    "total": 78,
+    "rationale": "The best story and the most complete Gemma loop here: one E2B turn hears Spanish, grounds it in the rack frame and emits order(item, language), the confirmation comes back in the judge's language, and the numbers board with a per-language table is what I would paste into a winners post. Feasibility is the problem: the ORDER turn is image + audio + tools in one llama.cpp request (the path with the known looping failure, untested with tools), autonomous rack grasp, crowd raised-hand detection and Orin audio are all unverified, and 180 h plus an optional Pixel/Pi front end is the whole team's capacity, so Tier B point-and-pass rehearsed as the show is the right call and the Pixel is a dilution unless an Android developer appears. EV: Track 2 P(works at Tier B or better) 0.75 x (0.4x7.5k + 0.2x5k + 0.15x2.5k) = $3.3k; LiteRT via a front end that ships with P 0.4 = $0.5k; Best in Show = $0.2k; everything beyond Track 2 assumes stacking."
+   },
+   {
+    "concept_name": "Show Me Once (the apprentice)",
+    "wow": 7,
+    "feasibility": 8,
+    "gemma_centrality": 7,
+    "differentiation": 6,
+    "prize_ev_usd": 3200,
+    "total": 66,
+    "rationale": "Reliable because it is presets plus hearing, and 'one-shot sequence learning over a preset vocabulary' is the right kind of honesty, but I would ask what Gemma does here that a MediaPipe gesture classifier plus an ASR could not: the multilingual hearing and the multi-frame ordering are real Gemma 4 work, the 'learning' is a 10-class enum and the by-name memory is a JSON dict. The 6-frame perform(steps) sequence call is unmeasured and E2B's thinking-off composition record is poor, so the proven per-keyframe one-word path should be primary from day one; MediaPipe-on-LiteRT is a partial claim I would not count for the LiteRT pool. EV: Track 2 0.85 x (0.25x7.5k + 0.2x5k + 0.15x2.5k) = $2.8k; LiteRT partial = $0.4k."
+   },
+   {
+    "concept_name": "Lantern (a humanoid guide that narrates the world)",
+    "wow": 9,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 3300,
+    "total": 64,
+    "rationale": "The clip would travel and every Gemma modality is live (native audio, box_2d steering, narration generated in the user's language, yes/no gates, EmbeddingGemma 2 memory), with the 'not a guide dog' line in the right tone. But a blindfolded judge coupled by the hand to a 35 kg robot that can fall, a path-clear gate that is a 70-token VLM answer every 0.5 s (the harness saw yes/no false positives on wide views), free-text narration every 3 s in a crowded scene and an odometry memory walk are four unproven primitives stacked on one stage, and organizers may veto the coupling outright; voice-follow is the realistic tier and halves the wow. EV: Track 2 0.6 x (0.4x7.5k + 0.2x5k + 0.15x2.5k) = $2.6k; LiteRT via the memory tier 0.5 x ~$1.3k = $0.7k."
+   },
+   {
+    "concept_name": "Any-Language Butler",
+    "wow": 7,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 4500,
+    "total": 71,
+    "rationale": "Same fetch-and-handover loop as Polyglot Butler and Fetch with the clearest EV arithmetic, and the native-audio-to-tool-call path with box_2d and one-word gates is genuinely Gemma-only. Two downgrades: the LiteRT-LM E2B 'slow brain' on CPU for open questions is a second 3 GB instance that reads as decoration and threatens the 16 GB budget, and the wheelchair-user protagonist is asserted rather than shown; keep EmbeddingGemma 2 memory, drop the slow brain unless the GPU path moves the whole voice turn, and soften 'beats Google's Reachy Mini' in front of the person who built it. EV: Track 2 0.8 x $4.4k = $3.5k; LiteRT moderate = $1.0k; stacking-dependent beyond $3.5k."
+   },
+   {
+    "concept_name": "Pixel Is the Brain",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 9,
+    "prize_ev_usd": 4400,
+    "total": 63,
+    "rationale": "Two Gemmas on two chips with an on-screen decision trail is the most featurable architecture in the set and the only one that touches the $15k pool, and LiteRT-LM would genuinely be the brain, which is what the AI Edge judges want to see. But no Android developer is on the team, the TPU sample is Pixel 10 and litertlm 0.12 on paper, the Pixel 10a report shows GPU corrupting numeric tool arguments, a Kotlin fork is 25-40 h of unfamiliar work on a six-day clock, and for Track 2 the phone becomes the project and the robot a peripheral. EV is a fat tail that assumes stacking: Best in Show 0.45 x 0.15 x $15k = $1.0k; LiteRT 0.45 x ~$2.1k = $0.9k; Track 2 with collapse to the robot-only demo 0.7 x $3.6k = $2.5k."
+   },
+   {
+    "concept_name": "Show Me Once",
+    "wow": 9,
+    "feasibility": 4,
+    "gemma_centrality": 8,
+    "differentiation": 7,
+    "prize_ev_usd": 3600,
+    "total": 61,
+    "rationale": "[EV-maximizer version: Pi 5 coach, thinking-on plan.] The confirmation step and EmbeddingGemma 2 skill grounding are honest design, but the load-bearing claim is wrong: the harness's 'text-only percept-to-plan works' is a 3-case left/center/right probe, not two-step chore composition, and brief thinking was 90% at 3.5 s p50 / 11 s max on the Mac with one image, so 5-8 s on the Orin at a 256 budget is optimistic and E2B burning its budget into empty content is a known failure. Pi 5 LiteRT-LM audio has no published latency (an x86 CPU took 5.4 s for a 3 s clip), so the coach's ear will probably be Moonshine, and the Pi is a second device judges may read as padding. EV: Track 2 0.35 x $4.6k (full) + 0.45 x $2.5k (gesture-mirroring tier) = $2.7k; LiteRT via the Pi = $0.9k."
+   },
+   {
+    "concept_name": "Fetch: 'Can you get me a drink?' (voice-to-handover butler, fridge door cut)",
+    "wow": 8,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 3900,
+    "total": 72,
+    "rationale": "The most disciplined engineering plan in the set: the brain view (frame, question, answer, tool call, ms) is auditable reasoning made visible, the 48-h spikes are time-boxed in the right order, and 'human-assisted pick' labelled on the slide is the honesty I reward. Two downgrades: a MacBook-tethered audio fallback is a gray zone for 'runs on the device in front of you' and would cost the single-model claim, and the hand gates on 280-token crops are unmeasured while the harness saw yes/no false positives on wide views, so finger-stall must be the primary release signal; the story is thinner than Any Language, One Can. EV: Track 2 0.8 x ~$4.1k = $3.3k; LiteRT via the additive pantry memory = $0.6k."
+   },
+   {
+    "concept_name": "Lead Me: a seeing-eye humanoid guide you can talk to",
+    "wow": 7,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 3800,
+    "total": 70,
+    "rationale": "The safest guide variant (forearm handle, 0.3 m/s, teammate as default walker, 110 h, the leanest plan here) and every Gemma feature is load-bearing: native multilingual audio, presence gate, box_2d bearing, clear-ahead gate, 12-token captions, on-demand description, EmbeddingGemma 2 route memory, with 'I cannot see a fridge' rehearsed as a feature. My concern is that the clear-ahead gate is a VLM answer and the lidar cone is 'optional if it reads cleanly in an hour'; the lidar must be mandatory before any human holds the handle, and the bench loop is the same act as Lantern with fewer beats, so it earns less wow. EV: Track 2 0.75 x (0.35x7.5k + 0.2x5k + 0.15x2.5k) = $3.0k; LiteRT moderate x 0.6 = $0.8k."
+   },
+   {
+    "concept_name": "Show Me Once: teach a chore through the robot's own arms, Gemma labels it, anyone runs it by voice",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 7,
+    "differentiation": 7,
+    "prize_ev_usd": 3700,
+    "total": 68,
+    "rationale": "An honest mechanism (demonstration through the robot's own arms, Gemma labels and checks, code replays) and the robot can stay on its stand all day, which is why it is feasible; the refusal line 'the cup is about 20 cm right of where you taught me' and the EmbeddingGemma 2 skill index are real Gemma-family work in the loop. But Gemma is a layer, not the core: the labels could be typed, the motion is teleop replay that the AGI House robotics crowd discounts, and a judge wearing a Quest at a crowded bench is a two-minute pairing-and-coaching detour per group that will often be skipped for the pre-taught library. EV: Track 2 0.8 x $3.6k = $2.9k; LiteRT moderate x 0.6 = $0.8k."
+   },
+   {
+    "concept_name": "Polyglot Butler",
+    "wow": 8,
+    "feasibility": 6,
+    "gemma_centrality": 10,
+    "differentiation": 7,
+    "prize_ev_usd": 4200,
+    "total": 80,
+    "rationale": "This is the Gemma team's own Orin demo made physical with the STT removed, in one sentence I would quote: audio and image enter the same turn, one tool call comes out in about 1.5 s, and the radios are provably down on the bench screen. It has the smartest de-risk in the set (a chest holster as the fallback pick, a known body-relative grasp with no table) and an irreducible 20-second demo; the weak points are that the one-turn audio+image+tools request is the path with the known looping mode (keep an audio-only tool turn as plan B before any ASR), the LiteRT-LM 'standby engine' will not win the LiteRT pool, and a 3-s timer release is how cans get dropped on judges. EV: Track 2 0.8 x (0.4x7.5k + 0.2x5k + 0.15x2.5k) = $3.5k; LiteRT standby = $0.5k plus a 0.2 chance the GPU path makes it a strong claim, = $0.7k."
+   },
+   {
+    "concept_name": "The Robot That Remembers",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 4700,
+    "total": 79,
+    "rationale": "EmbeddingGemma 2 via litert-lm serve in the critical path of every query, twelve days after release, with recall-then-verify and honest negatives, is the strongest LiteRT claim here and the disciplined, non-hallucinatory design we praise by name; 'hide your badge, ask in your language' is the best science-fair test in the set because it needs no walking. The risks are contained but real: image-embedding latency on the Orin CPU is unknown (caption-only text embeddings are the declared fallback), the captioner shares llama-server's single slot, verification needs a two-frame rule given the harness's wide-view false positives, and the physical act (walk back and point) is modest. EV: Track 2 0.8 x (0.3x7.5k + 0.22x5k + 0.15x2.5k) = $3.0k; LiteRT 0.8 x (0.15x7.5k + 0.13x5k + 0.12x2.5k) = $1.7k."
+   },
+   {
+    "concept_name": "Show Me Once",
+    "wow": 9,
+    "feasibility": 3,
+    "gemma_centrality": 10,
+    "differentiation": 8,
+    "prize_ev_usd": 2900,
+    "total": 60,
+    "rationale": "[Gemma-native purist version: narrated keyframes, thinking on, push primitive.] The concept I most want to see and least expect to work: six 70-token frames plus 25 s of audio plus a JSON schema plus thinking in one llama.cpp request is the most exotic path available, and the harness's thinking-on plan was 90% at 3.5 s p50 / 11 s max on a Mac with one image and no audio, so 15-30 s on the Orin with E2B budget burn is the realistic expectation. Add a pinocchio-IK push on 5-DoF arms at a 90 cm table that can trip the balance controller and a D435i source build, and feasibility is a 3; Gemma centrality is a 10 because video frames, audio, the thinking toggle, schema-constrained output and box_2d are all load-bearing, and narrate-and-point is the honest tier. EV: Track 2 0.3 x $4.6k + 0.5 x $2.5k = $2.6k; LiteRT GPU-conditional = $0.3k."
+   },
+   {
+    "concept_name": "Polyglot Porter",
+    "wow": 6,
+    "feasibility": 8,
+    "gemma_centrality": 8,
+    "differentiation": 5,
+    "prize_ev_usd": 3400,
+    "total": 66,
+    "rationale": "Feasible and interruptible (stationary, the audio-only tool turn separated from the vision turn, hip-tray handover, a 90%-or-better language gate, a grace window and an amber ask-back), and audio-to-understood(kind, language) is genuinely Gemma-native. But a hotel concierge reading a printed sign on an easel is the Pepper trope that service robots died of, the physical act is small, and a 60-entry EmbeddingGemma knowledge base looks like a lookup table to a judge; the ask-back, cancel window and LED grammar should be grafted into whatever wins. EV: Track 2 0.85 x (0.22x7.5k + 0.2x5k + 0.2x2.5k) = $2.7k; LiteRT via the knowledge base = $0.7k."
+   },
+   {
+    "concept_name": "Lantern",
+    "wow": 9,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 3700,
+    "total": 71,
+    "rationale": "[Concierge-designer guide version.] The best-engineered guide: the lidar is the white cane (10 Hz, independent of Gemma, stop under 150 ms) and every spatial word comes from a one-word class answer or a range, never from free text, which is exactly the non-hallucination discipline I would feature; the bench never walks and the stage walk is 3 m at 0.25 m/s on a breakaway strap. It still carries the highest physical risk in the set, depends entirely on the unverified locomotion gate, and the Pixel narrator is a second product nobody is staffed to build. EV: Track 2 0.7 x $4.4k = $3.1k; Best in Show and LiteRT only via a staffed Pixel track 0.2 x ~$3.1k = $0.6k."
+   },
+   {
+    "concept_name": "Reunite",
+    "wow": 8,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 4400,
+    "total": 75,
+    "rationale": "The same memory engine as The Robot That Remembers with a more emotional frame, a better live-watch beat (the wave when the green jacket reappears) and privacy said first (embeddings plus twelve-word notes, no faces, ten-minute wipe). The lost-child framing is a risk in a room of judges: a robot watching the bench for children in red jackets can land as surveillance even with the card, the teammate-in-a-jacket seeding is visibly staged, and twelve-word notes at 140 tokens on real crowd frames are unmeasured; the 'is this yours?' tray handover is a good small physical act. EV: Track 2 0.8 x $3.6k = $2.9k; LiteRT 0.75 x ~$2.1k = $1.5k."
+   },
+   {
+    "concept_name": "Show Once (one-shot chore imitation from the robot's own eyes)",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 8,
+    "differentiation": 7,
+    "prize_ev_usd": 3500,
+    "total": 62,
+    "rationale": "The provenance screen ([learned] recipe versus [verb: XR-recorded] skill) and the autonomous success counter are the most honest presentation of 'learns from watching' in the set and should be grafted everywhere. But 220 person-hours exceeds a four-person team's six days with robot time serialized, the recipe depends on per-keyframe hand-state answers in clutter that the harness never measured, and the slot grasp is the same unproven primitive the fetch concepts carry; MoveNet on ai-edge-litert is a real LiteRT runtime use while EmbeddingGemma 2 chore memory is forced. EV: Track 2 0.65 x $4.0k = $2.6k; LiteRT moderate x 0.7 = $0.9k."
+   },
+   {
+    "concept_name": "Apprentice (guide its hands once, then just say the word)",
+    "wow": 8,
+    "feasibility": 7,
+    "gemma_centrality": 7,
+    "differentiation": 7,
+    "prize_ev_usd": 3600,
+    "total": 69,
+    "rationale": "Near-identical to the realist's teach-through-arms concept, improved by the headset-in-a-box staging, a teammate rather than a judge doing the live teach, and EmbeddingGemma 2 narrowing the skill enum before the tool call. The honest split (motions taught by guidance and replayed, understanding learned) is what I would write up, but it is also why Gemma reads as a layer: if arm_sdk replay is unsafe the fallback is canned presets and the learning becomes phrase mapping, and teleop-taught motion will be discounted by the robotics judges however it is framed. EV: Track 2 0.8 x $3.6k = $2.9k; LiteRT = $0.7k."
+   },
+   {
+    "concept_name": "Show Me Around (a guided tour becomes a map, then one-sentence errands)",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 2850,
+    "total": 61,
+    "rationale": "A walking humanoid that learns places from a tour and composes errands from one sentence in any language would fill the stage, and it is the honest first leg of the owner's real goal. But the central claim is unproven: 'the harness showed E2B composes text-to-plan reliably' refers to a 3-case left/right probe and every thinking-off composition test failed; add vest-following through a crowd, odometry drift, walking in a 100-person house and a floor hand-over, and this is the lowest P(works) in the set, with the EmbeddingGemma 2 place memory as a modest but real LiteRT-LM job. EV: Track 2 0.55 x $4.4k = $2.4k; LiteRT weak = $0.45k."
+   }
+  ],
+  "top3": [
+   "Polyglot Butler",
+   "The Robot That Remembers",
+   "Any Language, One Can (the polyglot host)"
+  ],
+  "grafts": "Winner: Polyglot Butler, merged with Any Language, One Can (they are the same demo; take #10's engineering and #1's story and tiering). Grafts, in priority order:\n1. From Any Language, One Can: the Yuki opener; the robot confirming in the judge's language from a verified-language enum (templated Piper lines; a Gemma-written reply of 12 words or fewer only for unverified languages); a language table with n per language on the numbers board; the honest sentence 'scripted skills, Gemma decisions, zero teleop'; the raised-hand return on stage only, with a floor marker at the bench.\n2. From Any Language, One Can and Fetch: hard tiering with a Wednesday 20:00 gate: Tier C autonomous table pick kept only at 8/10 or better in two consecutive sessions, else the chest-holster pick (a real grasp with no table) as Tier B-plus and 'would you put it in my hand?' as Tier B, rehearsed as the show; slide labels 'pick: holster / human-assisted' versus 'handover: autonomous'.\n3. From Fetch and Show Once: the brain view (frame, question, answer, tool-call JSON, ms, state) with provenance tags [Gemma decision] versus [recorded skill] and a running autonomous success counter; preflight.sh; a demo_mode flag at the Friday noon freeze; Fetch's time-boxed Monday spike order (15-min LocoClient FSM 500 check, 30-min ExecuteAction and hands, 2-3 h CUDA arch-87 build plus a 3 s WAV, 1 h mic SNR at 2 m with crowd noise, stand-first pick trials).\n4. From The Robot That Remembers and Reunite: replace the LiteRT-LM 'standby engine' with EmbeddingGemma 2 via litert-lm serve as request-and-scene memory (every transcript and tool call, plus a 12-word caption every few seconds, embedded with time and heading; 'what did the last judge ask for?', 'where did you see the green can?') with recall-then-verify (a Gemma yes/no on the retrieved frame, two-frame rule before speaking a hit) and honest negatives; text embeddings over captions are enough; the privacy line (no faces, wiped at 17:00) said first; cut at Wednesday's gate if it costs more than half a day.\n5. From Lantern (concierge) and Lead Me: the lidar front-sector minimum range as the hard stop independent of Gemma for any person approach; no walking at the crowded bench; arms extend only in locked stand, never while stepping; release on BrainCo finger-state pull plus the hand gate, never on a timer; every spatial word spoken comes from a one-word class answer or a range, never from free text; pre-rendered Piper lines for stop and recovery events.\n6. From Polyglot Porter: a 1.5 s grace window with 'no' or a raised palm cancelling, an amber ask-back when the tool returns unsure/other, the LED grammar (blue listening, cyan thinking, green understood, amber ask-back, red recovery), and the rule that only languages at 9/10 or better on Tuesday's real-mic table are promised; the audio-only tool turn followed by a separate vision turn as the robust plan B before any ASR if audio+image+tools in one request loops.\n7. From Show Me Once (the apprentice) and Apprentice: the Layer-0 floor done by Monday evening: gesture(name) tool to ExecuteAction presets with a palm sync gate for the high five, so a 20-second bench version (speak in any language, one Gemma turn, tool call on screen, gesture or reply in that language) works even if everything else slips.\n8. From Pixel Is the Brain and Any Language, One Can, only if an Android developer joins by Monday night: the Pixel as an order kiosk (Gemma 4 E2B via LiteRT-LM hears the order, sends order() over WebSocket on the team's own AP, TPU numbers off slides); otherwise no side device at all.",
+  "warnings": "Disqualifiers: any cloud in the loop. Unitree's factory assistant is GPT-over-internet and still wakes offline and drives the speaker and LEDs; TtsMaker and the rt/audio_msg ASR run on PC1 with undocumented locality, so prove them with WAN unplugged or do not use them; venue Wi-Fi, Tailscale and the Unitree app stay out of the judged loop; show `ip -br link` on the bench screen. A MacBook doing inference over the robot's AP is a gray zone for 'runs on the device in front of you': ask the organizers, say it on the slide if used, and expect me to downgrade the single-model claim. Downgrades for faking or overclaiming: a 'recovery' that is a scripted branch rather than a gate deciding on screen (disclose the nudged rack); 'learns' for a 10-preset classifier or a teleop replay; 'autonomous' for an assisted pick; 'memory' for a JSON dict; Mac measurements or projections presented as Orin numbers; TPU tok/s on slides (Tensor ML terms); 'beats Google's Reachy Mini' said to the person who built it. Downgrades for unverified Gemma claims presented as facts: audio on the Orin under llama.cpp CUDA; audio+image+tools in one turn (known looping mode); multi-step composition with thinking off (the harness's text-only 'works' is a 3-case left/right probe, and every thinking-off composition test failed); handover and presence gates with the harness's 2/14 wide-view false positives; raised-hand or vest detection in crowds; Chinese (CER 0.19) and one-shot Spanish S2TT, so promise only Tuesday-scored languages. LiteRT padding: a standby engine, a Pi badge nobody owns, MediaPipe-on-LiteRT or an off-loop sidecar claimed for the LiteRT pool; two E2B instances on 16 GB; a captioner starving llama-server's single slot. Safety: a blindfolded judge coupled to the robot; walking at the crowded bench; reaching while stepping; timer-based release; L2+R2; a fall with BrainCo hands fitted ends the demo and the story. Capacity: Show Once (220 h), the purist Show Me Once (200 h) and Show Me Around (200 h) exceed a four-person team's six days with serialized robot time; every Pixel, Pi or Coral side track is the first cut. Stacking is unstated at AGI House: every plan must pay off on Track 2 alone, and Pixel Is the Brain's EV is the most stacking-dependent. Naming: two concepts share the exact name 'Show Me Once' (the EV-maximizer Pi 5 coach version and the Gemma-native purist version) and two carry the Lantern title; I kept the exact names, preserved input order, and disambiguated in the rationales."
+ },
+ {
+  "persona": "AGI House hackathon veteran and robotics investor (the Bulatov/Garg seat): I score the 2-3 minute stage moment, whether the story fits in two sentences, whether there is a real user and real-world value, differentiation from the other ~25 robot and phone projects, and whether the demo survives a loud 100-person house with judges interrupting. I discount teleop in view, canned video and overclaimed autonomy, and I treat a 35 kg humanoid that collapses on L2+B as a liability until the plan shows me the safety envelope. Totals weight wow and story about half, feasibility and loud-room survival about a third, Gemma centrality the rest. prize_ev_usd is cash only (Track 2 7.5/5/2.5k, LiteRT 7.5/5/2.5k, Best in Show 15k; hardware awards excluded), assumes ~30 teams with ~15 in Track 2 and 1-3 humanoids, P(win) = P(works on the day) x P(place | works), the LiteRT pool contested by ~15 mobile teams running Gemma natively on LiteRT-LM, and stacking allowed (flagged where it matters; without stacking every LiteRT term goes to zero and the ranking does not change).",
+  "scores": [
+   {
+    "concept_name": "Any Language, One Can (the polyglot host)",
+    "wow": 9,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 3800,
+    "total": 71,
+    "rationale": "This is the Figure-01 apple shot with a real twist (order in your language, the robot finds whoever raised a hand) and it is the only fetch concept that rehearses the point-and-pass tier as the show rather than as an apology. But it stacks four unproven primitives (Orin audio, LocoClient walking, rack grasp, raised-hand detection in a crowd) on 180 person-hours and then adds a Pixel/Pi front end, which is the scope that leaves a team debugging mDNS at 02:00 Friday. EV: P(some tier works)=0.75, P(1st|works)=0.35 because fetch is the most common humanoid shape in the room, plus ~$600 of stacking-dependent LiteRT/BiS upside only if the phone track survives Tuesday's gate; cut the phone track and the EV barely moves while P(works) rises."
+   },
+   {
+    "concept_name": "Show Me Once (the apprentice)",
+    "wow": 7,
+    "feasibility": 8,
+    "gemma_centrality": 6,
+    "differentiation": 8,
+    "prize_ev_usd": 3500,
+    "total": 66,
+    "rationale": "The high five that waits for your palm is the most filmable ten seconds in this list and nothing can fall over, so it survives the loud room and the Friday freeze better than anything else here. The investor problem: a humanoid that learns handshakes from a menu of ten presets has no user, and a sharp judge reads 'gesture classification plus playback' the moment they see the menu card; Gemma is also the most swappable here, since a pose classifier could label the keyframes and only the 'watch me' audio is truly Gemma-specific. EV: P(works)=0.85 but P(1st|works)=0.25 because the story is charming rather than important; the MediaPipe-on-LiteRT claim is partial and worth ~$400."
+   },
+   {
+    "concept_name": "Lantern (a humanoid guide that narrates the world)",
+    "wow": 9,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 3500,
+    "total": 66,
+    "rationale": "Same act as Lead Me and the clip would travel just as far, but this version puts a magnetic breakaway handle in the robot's closed hand, runs a 4 m walking lane at the bench inside a 100-person house, and bolts EmbeddingGemma venue memory on top, on 160 hours. A coupled blindfolded stranger plus a robot that collapses on the e-stop is the one scenario where an organizer shuts the demo down on the spot; the realist's forearm strap and a stationary bench loop are better engineering of the same idea. EV: P(works incl. voice-follow)=0.65, P(1st|works)=0.35; the memory tier adds ~$750 of LiteRT upside only if it survives Wednesday's gate."
+   },
+   {
+    "concept_name": "Any-Language Butler",
+    "wow": 7,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 5,
+    "prize_ev_usd": 4100,
+    "total": 62,
+    "rationale": "The most portfolio-rational fetch: robot-only, a hidden-can recovery every round, and EmbeddingGemma memory plus a CPU LiteRT-LM 'slow brain' that a LiteRT judge can actually point at. It is also the least differentiated story in the list ('bring me the red can' is what every humanoid demo since 2024 has done) and the protagonist, a wheelchair user asking across the room, exists only in the narration, not in the demo. EV: P(works)=0.8, P(1st|works)=0.3; LiteRT P(top-3)=0.25 (~$1,000) because two LiteRT-LM jobs are in the loop, stacking-dependent."
+   },
+   {
+    "concept_name": "Pixel Is the Brain",
+    "wow": 7,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 3800,
+    "total": 52,
+    "rationale": "'Two Gemmas, two chips' is a good sentence and a phone that shows its decision trail answers the teleop suspicion, but this is two products in six days for a team with no confirmed Android developer, on an unproven Pixel 11 TPU path with API drift from litertlm 0.12 to 0.18. Android judges will see a robot peripheral in a field of twenty polished apps and robotics judges will see a phone app with a robot accessory; the chest-mounted phone also captures the presenter. EV counts the $15k pool at P(works)=0.55 x P(win)=0.12, Track 2 at 0.55 x (0.3/0.2/0.15), LiteRT at 0.3 x 0.55, all before the $899 phone and the day the Kotlin fork costs; fattest tail, lowest floor."
+   },
+   {
+    "concept_name": "Show Me Once",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 3900,
+    "total": 57,
+    "rationale": "[EV-maximizer version: Pi 5 coach station, thinking-on plan turn, tray pick-and-place] It is the organizers' own sentence with the judge as teacher, which is why P(1st | it works) is the highest in the list; but it chains a thinking-on E2B plan turn (the mode the harness shows burning its budget and returning empty content), an unproven tabletop pick-and-place, and a second device whose mic must survive the house. The claim that the harness proved text-only percept-to-plan rests on a 3-sample probe, and SeeDo's open-model baselines were near zero. EV: P(full)=0.3, P(gesture-mirroring fallback)=0.5, plus ~$1,000 stacking-dependent LiteRT upside from the Pi running Gemma 4 natively; a 6-10 s 'let me think' pause on stage is where the room's attention leaves."
+   },
+   {
+    "concept_name": "Fetch: 'Can you get me a drink?' (voice-to-handover butler, fridge door cut)",
+    "wow": 8,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 5,
+    "prize_ev_usd": 3600,
+    "total": 63,
+    "rationale": "The best-engineered fetch plan here (ten spikes in retirement order, brain view, preflight.sh, demo_mode, judge-interrupt drill, assisted pick shipped under an honest label) and the post-surgery protagonist is relatable. It is still a can off a tray, which three other concepts in this list and probably another team in the room also do, and the Mac-tethered audio fallback is a gray zone under 'runs on the device in front of you' that must be cleared with organizers in writing before it is in the plan. EV: P(works incl. assisted pick)=0.8, P(1st|works)=0.3; the EmbeddingGemma pantry memory is additive and worth ~$500 of LiteRT upside."
+   },
+   {
+    "concept_name": "Lead Me: a seeing-eye humanoid guide you can talk to",
+    "wow": 8,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 3900,
+    "total": 76,
+    "rationale": "Two sentences, a real user, every Gemma modality live, no grasp, and the gasp is a safety behaviour (it stops and says why), which is exactly what the DeepMind/NVIDIA robotics people in that room respect. The forearm strap instead of hand-holding, 0.3 m/s pulses, the 'I cannot see a fridge' refusal and the stationary-narrator fallback make it the only high-wow concept whose Friday rehearsal is likely to be boring in the good way; what can still kill it is LocoClient gating and a venue with no 4 m lane, so the bench loop should be the stationary version and the stage the only walk. EV: P(works incl. stationary fallback)=0.75, P(1st|works)=0.35 because accessibility stories recur in every Gemma winners post; EmbeddingGemma route memory adds ~$700 of stacking-dependent LiteRT upside."
+   },
+   {
+    "concept_name": "Show Me Once: teach a chore through the robot's own arms, Gemma labels it, anyone runs it by voice",
+    "wow": 6,
+    "feasibility": 7,
+    "gemma_centrality": 7,
+    "differentiation": 7,
+    "prize_ev_usd": 3700,
+    "total": 60,
+    "rationale": "Honest and buildable (teleop with --record works today, the robot can stay on its stand all day) and the moved-cup refusal that quotes a distance is a lovely non-hallucination beat. But the stage moment is a person in a VR headset puppeting the robot, which is the image that lost the room for Optimus and NEO, and the 'learning' is a caption plus a precondition on an open-loop replay; the robotics crowd will call it kinesthetic record-and-replay with a Gemma label, which is what it is. EV: P(works)=0.85, P(1st|works)=0.25; EmbeddingGemma skill retrieval is a modest LiteRT claim (~$600)."
+   },
+   {
+    "concept_name": "Polyglot Butler",
+    "wow": 7,
+    "feasibility": 6,
+    "gemma_centrality": 10,
+    "differentiation": 5,
+    "prize_ev_usd": 3350,
+    "total": 61,
+    "rationale": "The purest Gemma story in the list: one request with audio and image in, one tool call out, radios-off proof on screen, and the chest-holster fallback cleverly removes the table grasp. It is still a fetch, it leans on the single most exotic llama.cpp path (audio plus image in one turn, untested on the Orin), and the LiteRT 'standby engine' is honest but buys nothing unless the Orin GPU path works, which the brief says is officially unsupported. EV: P(works)=0.8, P(1st|works)=0.3; LiteRT ~$250 because a standby that never runs is not a use."
+   },
+   {
+    "concept_name": "The Robot That Remembers",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 4400,
+    "total": 68,
+    "rationale": "Every judge can test it with their own object in their own language, the father-with-memory-loss story has a real user, the recall-then-verify loop is the opposite of the hallucinating demo judges distrust, and it is the strongest honest LiteRT claim in the list (EmbeddingGemma 2 in the critical path of every query, two weeks after release). The physical act is modest (walk back and point) and the bench demo is slow-burn: a judge has to hide something and wait, and a robot recording the room needs the privacy sign said first. EV: P(works)=0.8, P(1st|works)=0.25, LiteRT P(top-3)=0.35 (~$1,500, stacking-dependent) because this is what Google built EmbeddingGemma 2 for; it is also the only strong concept whose EV does not depend on walking."
+   },
+   {
+    "concept_name": "Show Me Once",
+    "wow": 8,
+    "feasibility": 3,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 2800,
+    "total": 50,
+    "rationale": "[Gemma-native purist version: narrated demonstration, thinking-on JSON-schema plan, IK push primitives] The author's own feasibility 4 is generous: IK pushes at a 90 cm table with 5-DoF arms and no torso pitch, a six-image-plus-audio-plus-thinking turn on an untested Orin audio path, and 200 person-hours. Because the narration carries most of the plan, what judges will actually see is a voice-instructed push with a visual check, and the 6-12 s thinking pause is where a stage demo dies. EV: P(full)=0.35, P(narrate-and-point)=0.45; LiteRT only if the Orin GPU path works (~$450)."
+   },
+   {
+    "concept_name": "Polyglot Porter",
+    "wow": 5,
+    "feasibility": 8,
+    "gemma_centrality": 8,
+    "differentiation": 4,
+    "prize_ev_usd": 3550,
+    "total": 54,
+    "rationale": "It will work, the echo-and-cancel grace window and amber ask-back are the best misrecognition design in the list, and reading the lobby sign with its own eyes is a nice grounded beat. But a stationary concierge handing out water from a hip tray is the Pepper/Henn-na category the brief itself says got retired, and in a room with 25 projects it is the one nobody films; the far-field XVF3800 as the default mic is also the one choice guaranteed to misfire in the house. EV: P(works)=0.85, P(1st|works)=0.2; EmbeddingGemma house knowledge is a real but small LiteRT claim (~$800)."
+   },
+   {
+    "concept_name": "Lantern",
+    "wow": 9,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 3350,
+    "total": 67,
+    "rationale": "The best bench design of the three guide concepts (the bench never walks, only the stage does), a lidar guard reacting in 150 ms independent of Gemma, and the rule that every spatial word comes from a one-word class answer or a lidar range are the right safety architecture. It loses to Lead Me on the strap (on the hand rather than the forearm), on 190 hours, and on an optional Pixel narrator that is a second product in disguise; the airport framing is also slightly less universal than 'a guide you can talk to'. EV: P(works)=0.7, P(1st|works)=0.35; BiS/Pixel upside only if an Android developer appears by Monday night (~$400)."
+   },
+   {
+    "concept_name": "Reunite",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 4100,
+    "total": 64,
+    "rationale": "The live-watch wave ('there, on my right') when the jacket reappears is a genuine moment, the honest negative is built in, and EmbeddingGemma retrieval is in the loop for every query. But a lost-child framing in a hackathon house is a tone risk (a judge may find it uncomfortable, and a robot that remembers everyone who walked past needs the privacy card read aloud), and the physical act is a turn, two steps and a point. EV: P(works)=0.8, P(1st|works)=0.2 after the tone discount, LiteRT P(top-3)=0.35 (~$1,500, stacking-dependent)."
+   },
+   {
+    "concept_name": "Show Once (one-shot chore imitation from the robot's own eyes)",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 8,
+    "differentiation": 8,
+    "prize_ev_usd": 3800,
+    "total": 56,
+    "rationale": "The provenance screen ('learned recipe' vs 'built verbs') is the most honest framing of learn-from-watching in the list and the variation moment proves it is not a script. At 220 person-hours across four parallel tracks, with an unproven slot grasp and keyframe semantics that SeeDo could not get from open models, this is the concept most likely to be half-finished on Friday; the narrate-and-point fallback keeps the learning claim but loses the completed physical act. EV: P(full)=0.25, P(fallback)=0.55; MoveNet on ai-edge-litert plus EmbeddingGemma gives a credible ~$1,000 LiteRT upside."
+   },
+   {
+    "concept_name": "Apprentice (guide its hands once, then just say the word)",
+    "wow": 6,
+    "feasibility": 7,
+    "gemma_centrality": 7,
+    "differentiation": 7,
+    "prize_ev_usd": 3700,
+    "total": 59,
+    "rationale": "A 60-second live teach-then-recall in the judge's own language is a real 'learns once' beat, and the headset-in-a-box theatre is smart. It still asks judges to watch a teammate puppet the robot right before the 'autonomous' recall, the one image the AGI House robotics crowd discounts on sight, and the fallback (canned gestures by voice) is a two-hour demo any team with a G1 can match. EV: P(works)=0.85, P(1st|works)=0.25; EmbeddingGemma skill memory ~$600."
+   },
+   {
+    "concept_name": "Show Me Around (a guided tour becomes a map, then one-sentence errands)",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 2900,
+    "total": 57,
+    "rationale": "A humanoid walking to places it was shown an hour ago, handing over and reporting back fills a stage and is the honest first leg of the owner's real goal. It depends on the least reliable primitive in the brief (following a person through other people), on LocoClient not being gated, on odometry across several legs, on an errand-composition claim backed by a 3-sample probe, and on a 3x3 m clear floor that a 100-person house will not give the bench; the remote-driven tour fallback makes the teaching look like driving. EV: P(works)=0.6, P(1st|works)=0.35; the LiteRT claim is weak (~$350)."
+   }
+  ],
+  "top3": [
+   "Lead Me: a seeing-eye humanoid guide you can talk to",
+   "Any Language, One Can (the polyglot host)",
+   "The Robot That Remembers"
+  ],
+  "grafts": "Winner: Lead Me. Merge these into it.\n1. From Lantern (concierge): the bench loop never walks (describe the room, where-is-the-free-seat, bottle into the palm with the hand gate); the stage is the only walk, on a taped 3 m lane the organizers have confirmed in writing. Take its lidar sector guard at 10 Hz with a <150 ms stop that does not wait on Gemma, the rule that every spatial word in speech comes from a one-word class answer or a lidar range and never from free text, and pre-rendered Piper lines for every guard event so a stop is never waiting on TTS.\n2. From Lantern (stage): the crossing stop-and-announce as the rehearsed gasp with a planted stranger; release the strap on the word, not on a timer; the honest 'not a guide dog, six days, spotter on the e-stop' paragraph; a breakaway under ~2 kg, but on the forearm strap, never the hand.\n3. From Any Language, One Can: the handheld DJI/Lark stick with push-to-talk as the only mic path in the house (onboard array never in the loop); the verified-language table (n per language, tool-call correctness) on the numbers board; LED state colours; dated gates (Tue 20:00 walking, Wed 20:00 contact vs voice-follow) where the table decides the tier, not hope.\n4. From Fetch (realist): the brain-view page (frame, question, answer, tool call, milliseconds) projected on stage; preflight.sh before anyone touches the remote; demo_mode at the Friday 12:00 freeze; the judge-interrupt drill (resume from any state); the Monday spike list in retirement order with LocoClient first (15 min) because it decides the whole concept.\n5. From The Robot That Remembers and Reunite: EmbeddingGemma 2 via litert-lm serve as the route memory ('did we pass a water fountain?') with the verify-before-answer gate and an honest negative, as the single LiteRT claim; say the privacy line first (no faces, wiped at close).\n6. From Polyglot Porter: the 1.5 s echo-and-cancel grace window and the amber ask-back so a mishear costs two seconds and a smile; the ReSpeaker DOA turn-to-face-the-speaker as a free primitive before the request is even understood.\n7. From Polyglot Butler: the radios-off panel (ip -br link, phone in airplane mode, the unplugged cable held up) on the dashboard, and the raw request stream showing audio and image entering one Gemma call.\n8. From Show Me Once (the apprentice): by-name memory, so a judge who came back is greeted and guided in their language without asking; and the sync-gate pattern (wait for the human's hand, shown on screen) for the bottle handover at arrival.\n9. From Lantern (concierge) again: the bottle-into-the-palm handover at arrival as the one small manipulation act, included only if the standing arm extension is clean on the Wednesday table; otherwise the handshake (id 27) closes the walk.\nKeep Any Language, One Can alive only as the Thursday stretch if LocoClient and the grasp spike both pass; its raised-hand return and multilingual order are the pieces worth stealing, its Pixel/Pi front end is not.",
+  "warnings": "What makes me disqualify or downgrade on the day:\n1. Cloud contamination: the Unitree factory assistant (GPT over internet) waking on its wake word or L2+Select, the Unitree app's MQTT/WebRTC, Tailscale left up, venue Wi-Fi, or TtsMaker and the rt/audio_msg ASR whose execution location is undocumented. Any of these in the loop is disqualifying under the one hard rule; prove it WAN-unplugged on Tuesday and show the radios-off panel.\n2. The Mac-tethered inference fallback in Fetch, Lead Me and the teach-through-arms concept: not cloud, but without written organizer approval it reads as a laptop demo to a judge, and 'runs on the device in front of you' is their sentence. Get the answer Sunday or delete it from the plan.\n3. Teleop in view: any concept where a teammate wears a headset in front of judges (Apprentice, teach-through-arms) is discounted on sight by the AGI House robotics crowd regardless of the provenance screen; a remote-driven tour (Show Me Around fallback) is driving, not teaching.\n4. Overclaimed autonomy: 'learns a chore' for a ten-preset lookup, 'autonomous fetch' when a human places the can, 'guide' for a robot that cannot see a step. The slide and the presenter's mouth must label scripted versus decided; a Gemma judge who asks one pointed question and gets a hedge downgrades the whole entry.\n5. Safety stop: a fall with a blindfolded judge coupled, or with any judge within arm reach, ends the team's day and possibly the floor for everyone. Forearm strap, 0.3 m/s, taped lane, spotter on L2+B, never L2+R2, organizer consent, a teammate as the blindfolded walker if there is any doubt. A fall with BrainCo hands fitted breaks fingers, so no standing pick rehearsals before the stand tests are clean.\n6. Crowd-dependent perception at the bench (raised-hand detection, path-clear gate, person following, free-text narration of a crowded scene) will fail in a 100-person house; a bench loop that needs them is a bench loop that fails in front of judges.\n7. Thinking-on plan turns (both Show Me Once chore versions): E2B burns its budget and returns empty content, the 6-12 s silent pause kills a stage demo, and the 'text-only percept-to-plan works' claim rests on a 3-sample probe in the harness.\n8. Second devices (Pixel brain, Pi coach, Pi badge) without a named owner by Monday night: cut them. A half-built phone app in a chest mount loses both pools and the presenter's attention.\n9. Battery and thermals: a GPU-loaded G1 runs under two hours and judging spans five; no second battery or charging plan means the bench loop dies at 13:00 while judges are still rotating.\n10. Canned video as the stage demo: expect last among the humanoids. The backup video is for a hardware fault only, announced as such, with the live robot still doing whatever part still works.\n11. Far-field mic as the default (onboard array, chest XVF3800 without push-to-talk): a downgrade before the first judge speaks; the noise test at 75-80 dB is not optional.\n12. Stacking: AGI House has not said one project can take Track 2 plus LiteRT. Every EV above assumes it; without stacking the LiteRT terms go to zero, the ranking does not change, and the plan must pay off on Track 2 alone, which Lead Me does."
+ },
+ {
+  "persona": "Robotics engineer who has shipped Unitree G1 demos. I score by what will run ten times in a row at 09:30 on Oct 24 in a loud house with judges interrupting: hidden integration costs (USB audio on L4T, firmware gating of LocoClient, RealSense needing a source build on JetPack 6, DDS on eth0 plus our own AP, battery under GPU load, 16 GB unified memory shared with the robot stack), crowd failure modes, and safety around a 35 kg biped that can fall (human on L2+B, never L2+R2, BrainCo fingers break in a fall). Verified today: Mac-side sub-second E2B perception and live audio-in; xr_teleoperate --record/--motion with BrainCo on this robot; LocoClient/G1ArmActionClient/AudioClient/brainco DDS in the local SDK; GetActionList reports app-taught actions. Unverified: Orin audio under llama.cpp CUDA, LocoClient Move on this firmware, any autonomous grasp, LiteRT-LM GPU on Orin (officially unsupported), onboard mic SNR. EV assumptions for every concept: ~30 teams, 12-15 in Track 2 with 1-3 humanoids; P(win) = P(works at the shown tier) x P(place | works); cash pools only (Track 2 and LiteRT 7.5/5/2.5k, Best in Show 15k); stacking assumed allowed, noted where a concept depends on it.",
+  "scores": [
+   {
+    "concept_name": "Any Language, One Can (the polyglot host)",
+    "wow": 9,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 3900,
+    "total": 56,
+    "rationale": "Tier C chains six unproven things on one battery: Orin audio, LocoClient walking, a rack grasp, raised-hand detection in a crowd, a return walk carrying a can, and a Pixel app, across four parallel tracks for a team of unknown skills; the honest tier is B (point-and-pass), which is a 7 for feasibility but is not the pitch. Hidden costs the plan underweights: pyrealsense2 is a source build on JetPack 6 (use the C920 it already lists), DJI/Lark UAC enumeration on L4T is untested, and walking to a raised hand at the bench puts the biped inside a crowd, which I would not allow outside the stage lane. EV: P(works at Tier B+) 0.75, P(1st|works) 0.35 gives Track 2 about $3.0k; the LiteRT ear (about $0.6k) and Best in Show (about $0.3k) exist only if stacking holds and the Pixel survives Tuesday's gate, and the phone is an $899 outlay."
+   },
+   {
+    "concept_name": "Show Me Once (the apprentice)",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 7,
+    "differentiation": 7,
+    "prize_ev_usd": 3300,
+    "total": 64,
+    "rationale": "The safest humanoid demo in the set: no walking, no grasp, preset gestures that run every time, and the palm-up sync gate before the high five is a real Gemma decision. Two hidden costs: MediaPipe Pose/Hand Landmarker is not a pip install on Jetson aarch64 and the .task bundles need the MediaPipe Tasks runtime, not the LiteRT interpreter, so plan MoveNet single-shot keyframing (as concepts 16/17 do) or budget a day; and preset 18 plays through rather than holding, so the high-five needs a recorded arm_sdk hold pose and the ServiceSwitch toggle between the arm service and arm_sdk must be timed Monday. The main downgrade is the critique 'a gesture classifier driving macros'; the by-name recall and any-language hearing are what keep Gemma central. EV: P(works) 0.8, P(1st|works) 0.3 gives Track 2 about $2.9k; the MediaPipe-on-LiteRT claim is partial, about $0.4k."
+   },
+   {
+    "concept_name": "Lantern (a humanoid guide that narrates the world)",
+    "wow": 9,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 3500,
+    "total": 50,
+    "rationale": "Coupling a blindfolded judge to a 35 kg biped by a bar in its hand is the highest physical risk in the set, and the design makes a 0.5 Hz VLM yes/no part of the stop logic; only the lidar sector can be the safety layer, and a magnetic breakaway under about 2 kg will separate on any ordinary tug, leaving a blindfolded person loose mid-stride. Expect the organizers to require a teammate as the walker, which removes the 'judge is the user' moment on stage. The odometry-guided walk to a morning memory adds drift and a second LLM runtime; keep that tier cut-able as planned. EV: P(works at voice-follow or better) 0.65, P(1st|works) 0.35 gives Track 2 about $2.6k; EmbeddingGemma memory through LiteRT-LM about $0.9k."
+   },
+   {
+    "concept_name": "Any-Language Butler",
+    "wow": 8,
+    "feasibility": 5,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 4250,
+    "total": 60,
+    "rationale": "Same fetch loop as concepts 7 and 10 but with two extra engines resident on the 16 GB board (LiteRT-LM E2B on CPU as a 'slow brain' plus EmbeddingGemma) beside llama-server, Piper, RealSense and the Unitree services; the plan admits the budget is tight, and a CPU side-job answering 'what can you do?' is decoration a LiteRT judge will see through. The tray grasp is the same unproven primitive, with the right point-and-assisted-pick fallback. Releasing when the BrainCo finger-state shows a pull is a good idea that needs a day-one calibration because there is no tactile data over the bridge. EV: P(works at assisted+) 0.75, P(1st|works) 0.35 gives Track 2 about $3.0k; LiteRT about $1.25k if the memory is visibly used."
+   },
+   {
+    "concept_name": "Pixel Is the Brain",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 8,
+    "differentiation": 8,
+    "prize_ev_usd": 5000,
+    "total": 48,
+    "rationale": "A second product in six days for a Python team with no Android Studio installed: a Kotlin fork across the 0.12 to 0.18 API drift, an unproven TPU path on Pixel 11, a chest mount, a WebSocket/mDNS bridge, phone thermals and one more battery, all before the robot work that still needs the whole team. If a committed Android developer is not on the team by Monday night this collapses to concept 4 with the phone as a display. The dilution risk is real at AGI House: judges who read 'phone app with a robot accessory' lower Track 2 odds. The EV is the fattest only because of the $15k pool: P(works) 0.5, Best in Show about $1.1k, Track 2 about $3.0k including the collapse path, LiteRT about $0.9k; it depends on stacking more than any other concept."
+   },
+   {
+    "concept_name": "Show Me Once",
+    "wow": 8,
+    "feasibility": 5,
+    "gemma_centrality": 8,
+    "differentiation": 7,
+    "prize_ev_usd": 4250,
+    "total": 54,
+    "rationale": "[EV-maximizer version: Pi 5 coach, thinking-on plan call, pick-and-place between trays.] It puts a thinking-on plan call on the Orin (5-8 s projected, with E2B's known empty-content and looping behaviour at small budgets) and a pick-and-place, which is harder than pick-and-handover because placement needs precision; the gesture-mirroring fallback is solid but is a different demo. The Pi 5 coach is a credible LiteRT-LM job (CPU is the supported path, audio-in, embeddings) but it is a fourth device on the AP with its own mic in a loud room; the arcade button is the real confirmation path. The Tuesday plan-accuracy spike on the Mac is the right gate and costs no robot time. EV: P(full) 0.4 and P(fallback) 0.4 give Track 2 about $3.0k; LiteRT about $1.25k."
+   },
+   {
+    "concept_name": "Fetch: 'Can you get me a drink?' (voice-to-handover butler, fridge door cut)",
+    "wow": 8,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 3950,
+    "total": 68,
+    "rationale": "This is the fetch I would ship: unknowns ordered by how fast they retire Monday, a UVC webcam instead of a pyrealsense2 source build, finger-stall grasp detect from rt/brainco/right/state, koozies, arms extended only in locked stand, preflight.sh and a demo_mode flag, and the assisted pick as the same demo with an honest label. The grasp is still the one unknown that cannot be retired in 48 h, and the return walk to a requester should be stage-only, never at a crowded bench. Missing: a body-relative holster (concept 10) as the tier between tray pick and assisted pick. EV: P(works at assisted+) 0.8, P(1st|works) 0.35 gives Track 2 about $3.2k; pantry memory via LiteRT-LM about $0.75k."
+   },
+   {
+    "concept_name": "Lead Me: a seeing-eye humanoid guide you can talk to",
+    "wow": 7,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 3700,
+    "total": 60,
+    "rationale": "The safer guide: forearm strap instead of hand-holding, a teammate as the default walker, a 20-pulse cap and a stationary-narrator fallback. Two downgrades: the lidar cone is 'optional if it reads cleanly in an hour', which inverts the safety order (the lidar/depth stop must be mandatory and the VLM gate advisory), and a human dragging on an arm_sdk-held forearm is a disturbance the balance controller has not been tested against. Walking a blindfolded person at the bench in a 100-person house is a no; walks belong in the taped stage lane only. EV: P(works) 0.75, P(1st|works) 0.3 gives Track 2 about $2.7k; route memory via LiteRT-LM about $1.0k."
+   },
+   {
+    "concept_name": "Show Me Once: teach a chore through the robot's own arms, Gemma labels it, anyone runs it by voice",
+    "wow": 8,
+    "feasibility": 7,
+    "gemma_centrality": 8,
+    "differentiation": 8,
+    "prize_ev_usd": 4200,
+    "total": 74,
+    "rationale": "Built almost entirely from what works today: xr_teleoperate --record with BrainCo hands on this exact robot, the documented rt/arm_sdk weight-ramp replay, the harness perception formats and live audio-in; the robot can stay on its stand all day, which removes the fall, battery and crowd problems at once. The remaining unknowns are retirable Monday on the stand (replay fidelity, hand replay at 100 Hz, Orin audio) plus a Tuesday tolerance study for the precondition check; replay the recorded action targets rather than the measured states so the same controller reproduces the teleop motion. Judge risk: without the visible label, the precondition check and the refusal-with-distance on screen every cycle it reads as a macro recorder to the AGI House robotics crowd. EV: P(works) 0.8, P(1st|works) 0.35 gives Track 2 about $3.2k; the EmbeddingGemma skill index exercised on every run about $1.0k."
+   },
+   {
+    "concept_name": "Polyglot Butler",
+    "wow": 8,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 6,
+    "prize_ev_usd": 3700,
+    "total": 66,
+    "rationale": "The chest holster is the best grasp de-risk in the set: a body-relative pick is a fixed trajectory that does not care where the table is, and it keeps the walk-to-speaker handover. Downgrades: a 3 GB LiteRT-LM standby engine on a 16 GB board shared with the robot stack is memory risk for no judge-visible gain unless the GPU spike works (officially unsupported on Orin), and the 2 m walk to the speaker needs the arm held by arm_sdk while stepping with a load, which xr_teleoperate --motion proves only unloaded. The radios-off panel and the 'Damp on the stand between rounds' habit are exactly right. EV: P(works) 0.8, P(1st|works) 0.35 gives Track 2 about $3.2k; LiteRT about $0.5k, GPU-conditional."
+   },
+   {
+    "concept_name": "The Robot That Remembers",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 4200,
+    "total": 65,
+    "rationale": "No manipulation, LiteRT-LM on the officially supported CPU path doing the job EmbeddingGemma 2 was built for, a recall-then-verify loop, and a cheap physical act (turn, walk back, point). Hidden costs: the captioner and the voice loop share one llama-server slot; image embeddings on the Orin CPU are unmeasured and may force text-only memory; the index must be persisted to the SSD because a battery swap reboots PC2 and would wipe the morning; and a humanoid filming attendees all day needs organizer sign-off and a visible sign, not just a privacy line in the pitch. Pointing to a bearing through arm_sdk is untested; preset 23 plus waist yaw is the fallback. EV: P(works) 0.8, P(1st|works) 0.25 gives Track 2 about $2.6k; the strongest honest LiteRT claim about $1.6k."
+   },
+   {
+    "concept_name": "Show Me Once",
+    "wow": 9,
+    "feasibility": 3,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 2900,
+    "total": 40,
+    "rationale": "[Gemma-native purist version: narrated keyframes plus audio in one thinking-on turn, push primitive.] It stacks the most exotic llama.cpp path (6 images plus 25 s of audio plus json_schema plus thinking) on the least proven motion (pinocchio IK pushes at a 90 cm table edge with 5-DoF arms and no torso pitch, table-plane mapping from a RealSense that needs a source build), with 200 person-hours against a team whose robotics skill is unknown. Table contact while standing in FSM 500 is exactly the disturbance that trips the balance controller, and a fall with hands fitted breaks fingers. Narrate-and-point is the realistic tier, which is a different and weaker demo. EV: P(push tier) 0.35 and P(narrate-and-point) 0.4 give Track 2 about $2.5k; LiteRT GPU-conditional about $0.4k."
+   },
+   {
+    "concept_name": "Polyglot Porter",
+    "wow": 6,
+    "feasibility": 8,
+    "gemma_centrality": 8,
+    "differentiation": 5,
+    "prize_ev_usd": 3500,
+    "total": 62,
+    "rationale": "Highest probability of flawless bench loops in the set: stationary in a 1x1 m square, hip-tray handover (body-relative), preset gestures, an echo-and-cancel grace window, LED states, and two steps only on stage. It is also the shape (talking concierge) that bored people with Pepper, and an arrow next to an icon on an A3 sign at 1.5 m will not resolve in a 480x336, 70-token frame; plan a 280-token crop or a much larger sign. The two-enum-argument understood(kind, language) tool with client-side validation is exactly the right E2B contract. EV: P(works) 0.85, P(1st|works) 0.25 gives Track 2 about $2.8k; EmbeddingGemma house knowledge about $0.75k."
+   },
+   {
+    "concept_name": "Lantern",
+    "wow": 9,
+    "feasibility": 6,
+    "gemma_centrality": 9,
+    "differentiation": 8,
+    "prize_ev_usd": 3350,
+    "total": 56,
+    "rationale": "Better safety engineering than the other Lantern: guard.py on the lidar at 10 Hz independent of Gemma, a 200 ms Move watchdog, bench demos that never walk, 0.25 m/s, a slack strap with a breakaway. It still puts a blindfolded person on a 35 kg biped on stage, which the organizers may veto, and the Pixel narrator is an unstaffed second product that should be dropped now rather than 'if a mobile developer joins'. Continuous Move with a software watchdog is correct but must be tested against the sport lease and FSM 500 on this firmware Monday. EV: P(works) 0.7, P(1st|works) 0.35 gives Track 2 about $2.8k; LiteRT and Best in Show only through the Pixel, about $0.55k."
+   },
+   {
+    "concept_name": "Reunite",
+    "wow": 7,
+    "feasibility": 7,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 4000,
+    "total": 60,
+    "rationale": "Technically the same memory stack as concept 11 with less walking and a stronger LiteRT claim, so reliability is similar; the extra risks are narrative and optical. A 'lost child' framing with a humanoid that films the aisle all day can make judges uncomfortable even with no real children, and the verifier's known false-positive weakness on wide views must be gated by two consecutive yes answers as planned. Persist the ring buffer to disk for battery swaps; seeding the memory needs teammates walking past the bench on a schedule, which is fragile during judge rotation. EV: P(works) 0.8, P(1st|works) 0.25 gives Track 2 about $2.6k; LiteRT about $1.4k."
+   },
+   {
+    "concept_name": "Show Once (one-shot chore imitation from the robot's own eyes)",
+    "wow": 8,
+    "feasibility": 5,
+    "gemma_centrality": 8,
+    "differentiation": 7,
+    "prize_ev_usd": 3900,
+    "total": 54,
+    "rationale": "The honest learn-from-watching design (MoveNet through the LiteRT interpreter is the right simple choice; per-keyframe questions and code diffs; a provenance panel) sits on top of an unproven autonomous pick-from-slot plus table docking, and it is the largest plan in the set at 220 person-hours across four tracks. The open-loop pick tolerates only a few cm of stance error after docking by Move pulses, so expect the push-to-zone or point-and-narrate tier to be what ships. EV: P(full) 0.4 and P(fallback) 0.45 give Track 2 about $2.9k; MoveNet-on-LiteRT plus EmbeddingGemma about $1.0k."
+   },
+   {
+    "concept_name": "Apprentice (guide its hands once, then just say the word)",
+    "wow": 8,
+    "feasibility": 7,
+    "gemma_centrality": 7,
+    "differentiation": 8,
+    "prize_ev_usd": 4200,
+    "total": 72,
+    "rationale": "Same core as concept 9 and nearly as strong; its best contribution is the alternative replay path: GetActionList reports app-taught actions with names and durations, so ExecuteAction(name) under Unitree's own balance controller may be the lowest-risk replay on this firmware and is worth 30 minutes Monday. The 60-second live teach at the bench is both the memorable moment and the main failure mode, so drilling it 20 times and keeping a pre-taught surprise skill is right. Replays are open-loop, so a judge placing the can elsewhere gets a polite refusal; it needs the distance-quoting precondition from concept 9 to read as intelligence rather than brittleness. EV: P(works) 0.8, P(1st|works) 0.35 gives Track 2 about $3.2k; LiteRT about $1.0k."
+   },
+   {
+    "concept_name": "Show Me Around (a guided tour becomes a map, then one-sentence errands)",
+    "wow": 8,
+    "feasibility": 4,
+    "gemma_centrality": 9,
+    "differentiation": 7,
+    "prize_ev_usd": 2500,
+    "total": 44,
+    "rationale": "It depends on the least reliable primitives in the brief: following a person through other people, LocoClient walking that may be firmware-gated, odometry over several legs, and multi-step errand composition by a thinking-off E2B that the harness only showed working on text with a rule in the prompt (3/3, n=3). A humanoid walking errands across a 3x3 m floor in a 100-person house with judges rotating is the demo most likely to be stopped by the spotter mid-run. The remote-driven tour fallback looks like driving, which is what the AGI House robotics crowd discounts. EV: P(works) 0.5, P(1st|works) 0.35 gives Track 2 about $2.0k; LiteRT weak, about $0.5k."
+   }
+  ],
+  "top3": [
+   "Show Me Once: teach a chore through the robot's own arms, Gemma labels it, anyone runs it by voice",
+   "Apprentice (guide its hands once, then just say the word)",
+   "Fetch: 'Can you get me a drink?' (voice-to-handover butler, fridge door cut)"
+  ],
+  "grafts": "Winner: merge 'Show Me Once: teach a chore through the robot's own arms' and 'Apprentice' into one concept (same mechanism, two authors). Graft in: (1) From Apprentice: test ExecuteAction(name) on app-taught actions (GetActionList lists taught-action names and durations) as the lowest-risk replay under Unitree's own balance controller; drill the 60-second live teach 20 times and keep a pre-taught surprise skill; the headset-in-a-box with per-skill provenance; ReSpeaker DOA turn-to-speaker. (2) From the Fetch realist: the Monday spike order, preflight.sh and a demo_mode flag, a UVC chest webcam instead of a pyrealsense2 source build, finger-stall grasp detect from rt/brainco/right/state, koozies on cans, arms extended only in locked stand, and Mac-tethered inference over the robot's AP as a config change if Orin audio fails (ask the organizers Sunday whether a tethered laptop counts). (3) From Polyglot Butler: a chest or hip holster so 'hand me the can' is a body-relative skill that never depends on table placement; the ip -br link radios-off panel; Damp on the stand between rounds; buy two mic brands because UAC compliance on L4T is untested. (4) From Polyglot Porter: the 1.5 s echo-and-cancel grace window, the amber ask-back and shrug on misrecognition, the LED state vocabulary, and the two-enum-argument tool contract validated client-side. (5) From Show Me Once (the apprentice): by-name memory of who taught what, and a palm-up or hand-present sync gate before any contact move (high five, handover). (6) From Any Language, One Can: the per-call-type numbers board with n, the 30-trial tables, and a language table scored Tuesday on the real mic with only scored languages promised. (7) From Show Once: [learned] versus [verb: XR-recorded date] provenance tags on the skill card and the judge-variation moment. (8) From The Robot That Remembers: persist the skill library and any index to the SSD because a battery swap reboots PC2, plus 'what did the last person teach you' recall. (9) Keep a handover as the stage's physical act: pre-teach 'hand me the can' with the vision release gate so the stage ends with an object in a judge's hand. (10) Engineering details: replay recorded action targets rather than measured states, 2 s blend to the first frame, velocity clamps, abort on IMU tilt, time the ServiceSwitch toggle between the arm service and arm_sdk on Monday, and keep the robot on the stand for every pick rehearsal until Thursday.",
+  "warnings": "What makes me disqualify or downgrade: (a) any concept whose stage moment depends on an autonomous table grasp without a rehearsed lower tier that is the same demo (holster or assisted pick); (b) walking inside the crowd at the bench, or walking with a blindfolded judge attached, without organizer consent and a mandatory non-VLM hard stop (lidar or depth); a 0.3-0.45 s VLM gate is advisory, never a safety layer; (c) the Pixel track without a committed Android developer by Monday night; (d) two LLM engines resident on the 16 GB Orin beside the robot stack (concepts Any-Language Butler, Polyglot Butler, the purist Show Me Once) unless a 30-minute tegrastats soak passes with at least 2.5 GB free; (e) thinking-on plan calls on the critical path (both plan-composing Show Me Once variants); (f) assuming pyrealsense2 is a pip install on JetPack 6 (it is a source build; use a UVC webcam) or that MediaPipe Tasks runs on Jetson aarch64 through the LiteRT interpreter (Show Me Once the apprentice; use MoveNet); (g) continuous filming of attendees (The Robot That Remembers, Reunite) without a visible sign and organizer sign-off; (h) any plan that relies on LiteRT-LM GPU on the Orin, which is officially unsupported; (i) mixing canned arm-service gestures with rt/arm_sdk replay without timing the ServiceSwitch toggle Monday, since 7404 and 7401 gating also apply; (j) the onboard mic or factory assistant anywhere in the loop: the stream only flows in wake mode, the assistant wakes on L2+Select or its wake word and drives the LEDs and speaker, so test contention; (k) battery: a swap reboots PC2 (persist state, 5-minute preflight), and walking plus GPU is well under 2 h, so stand-based concepts are structurally safer; (l) the single biggest fork for every concept is Orin audio under llama.cpp CUDA: if it fails Monday the 'no ASR' line goes and every concept needs the sherpa-onnx or tethered-Mac fallback wired by Tuesday; (m) LocoClient Move may be gated on this firmware, so every walking concept must rehearse its stationary tier as the show; (n) two concepts share the exact name 'Show Me Once' (the EV-maximizer Pi-coach version and the purist push-primitive version); I scored both under that name with the version flagged at the start of each rationale, and three more carry 'Show Me Once' prefixes, so the orchestrator should disambiguate before tallying; (o) the teleop-taught winner must show Gemma's label, precondition check and refusal on screen every cycle, or the AGI House robotics crowd reads it as a macro recorder with a voice trigger."
+ }
+]

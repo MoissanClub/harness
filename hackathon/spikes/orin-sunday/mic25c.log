@@ -1,0 +1,11 @@
+api 1008 mode=1 -> (3103, None)
+mic multicast: packets=99 bytes=506880 sizes=[5120] seconds=15.8 first_packet_at=9.291718244552612
+peak abs sample: 21684 rms: 1478
+rt/audio_msg messages: 7
+   {"play_state":1}
+   {"play_state":0}
+   {"index":0,"timestamp":1792370157868,"type":0,"text":"うん。","angle":0,"speaker_id":0,"emotion":"<|EMO_UNKNOWN|>","confidence":0.500000,"language":"<|ja|>","is_final":false}
+   {"index":1,"timestamp":1792370160160,"type":0,"text":"站起来。","angle":0,"speaker_id":0,"emotion":"<|EMO_UNKNOWN|>","confidence":0.500000,"language":"<|zh|>","is_final":false}
+   {"index":2,"timestamp":1792370165191,"type":0,"text":"语叫我笨笨同学。","angle":0,"speaker_id":0,"emotion":"<|NEUTRAL|>","confidence":0.500000,"language":"<|zh|>","is_final":false}
+   {"play_state":1}
+   {"play_state":0}

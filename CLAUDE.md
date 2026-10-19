@@ -32,4 +32,4 @@ python3 -B bench/run_bench.py --tag dev --variants "face-tool-480x336,where-free
 - Benchmarks are serial and GPU-exclusive: never run two inference jobs at once. Restart the server only via `bench/serve.sh` (it stops just the port-8080 process; the Llama.app router on another port is the user's).
 - Never time repeated identical images — the server reuses the image KV and reports fantasy latencies. `run_bench.py` rotates images and flags `image_cache_hit`; bench with `-np 1 --cache-ram 0`.
 - Report accuracy with n and per-class counts; when sampling with temperature, seed every request differently (llama.cpp re-seeds per request). The 3 source kitchens are generated images, so results are a diagnostic, not navigation capability. Mac numbers are not Orin numbers.
-- Do not download models or other files without asking. Keep experiment artifacts; `runs/` is git-ignored.
+- Downloads the project needs (models, wheels, sources) are pre-approved (owner, 2026-10-18): fetch them without asking and list what was fetched in the run notes. Keep experiment artifacts; `runs/` is git-ignored.
