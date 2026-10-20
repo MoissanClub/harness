@@ -1,0 +1,33 @@
+{"ev": "order", "n": 3, "params": {"dx": -0.06, "dz": 0.0, "pre": 0.05, "contact": 0.015, "press": 0.02, "tol": 0.035, "pause": 8.0, "diam": 0.0, "lane_y": [0.06, 0.3], "lane_x": [0.28, 0.46], "seconds": 4.0}, "session": "20261021T024115", "tag": "scripted skill", "t": 1792521891.9714782}
+{"ev": "say", "stage": "LISTEN", "text": "Which can would you like? Tell me the colour.", "tag": "scripted skill", "t": 1792521891.9720163}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792521894.772844}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4076, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T024115/order_03/order_1.wav", "tag": "scripted skill", "t": 1792521899.4501753}
+{"ev": "stage", "stage": "LISTEN", "ms": 7478, "tag": "scripted skill", "t": 1792521899.4502869}
+{"ev": "gemma", "t": 1792521899.7928507, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 341, "tag": "Gemma decision", "media": "audio", "prompt_n": 163, "prompt_ms": 293.197, "predicted_n": 2, "predicted_ms": 33.075, "cache_n": 2}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 343, "tag": "scripted skill", "t": 1792521899.7935693}
+{"ev": "say", "stage": "LISTEN", "text": "Please say the colour again.", "tag": "scripted skill", "t": 1792521899.7961445}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792521901.396666}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4026, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T024115/order_03/order_2.wav", "tag": "scripted skill", "t": 1792521906.026343}
+{"ev": "stage", "stage": "LISTEN", "ms": 6235, "tag": "scripted skill", "t": 1792521906.029094}
+{"ev": "gemma", "t": 1792521906.301608, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 271, "tag": "Gemma decision", "media": "audio", "prompt_n": 106, "prompt_ms": 222.427, "predicted_n": 2, "predicted_ms": 33.038, "cache_n": 59}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 273, "tag": "scripted skill", "t": 1792521906.303022}
+{"ev": "say", "stage": "LISTEN", "text": "Please say the colour again.", "tag": "scripted skill", "t": 1792521906.3055058}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792521907.9060564}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4028, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T024115/order_03/order_3.wav", "tag": "scripted skill", "t": 1792521912.535424}
+{"ev": "stage", "stage": "LISTEN", "ms": 6232, "tag": "scripted skill", "t": 1792521912.5355294}
+{"ev": "gemma", "t": 1792521912.7957864, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "White", "ms": 259, "tag": "Gemma decision", "media": "audio", "prompt_n": 106, "prompt_ms": 207.728, "predicted_n": 2, "predicted_ms": 32.98, "cache_n": 59}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 261, "tag": "scripted skill", "t": 1792521912.7965693}
+{"ev": "say", "stage": "CONFIRM", "text": "The white can. Coming up.", "tag": "scripted skill", "t": 1792521912.799622}
+{"ev": "stage", "stage": "CONFIRM", "ms": 1003, "tag": "scripted skill", "t": 1792521913.8000648}
+{"ev": "detect", "stage": "LOCATE", "n": 1, "ms": 37, "boxes": [[194, 56, 265, 209]], "conf": [0.87], "tag": "scripted skill", "t": 1792521913.8926542}
+{"ev": "gemma", "t": 1792521914.2559192, "stage": "LOCATE", "kind": "crop_colour", "question": "What is the main colour of this can? Answer with one colour word.", "answer": "Silver", "ms": 363, "tag": "Gemma decision", "media": "can 0", "prompt_n": 108, "prompt_ms": 321.638, "predicted_n": 2, "predicted_ms": 32.72, "cache_n": 2}
+{"ev": "target", "stage": "LOCATE", "colour": "white", "p": [0.49, 0.104, 0.128], "diam": 0.066, "box": [194, 56, 265, 209], "z": 0.548, "size_m": [0.064, 0.139], "colour_seen": "silver", "tag": "scripted skill", "t": 1792521914.2675495}
+{"ev": "lane", "stage": "LOCATE", "p": [0.49, 0.104, 0.128], "reason": "That white can is too far away. Please move it closer to me.", "tag": "scripted skill", "t": 1792521914.2676752}
+{"ev": "say", "stage": "LOCATE", "text": "That white can is too far away. Please move it closer to me. I will look again in five seconds.", "tag": "scripted skill", "t": 1792521914.2678313}
+{"ev": "stage", "stage": "LOCATE", "ms": 6468, "tag": "scripted skill", "t": 1792521920.2683063}
+{"ev": "detect", "stage": "LOCATE", "n": 1, "ms": 29, "boxes": [[194, 56, 265, 209]], "conf": [0.88], "tag": "scripted skill", "t": 1792521920.3566334}
+{"ev": "gemma", "t": 1792521920.7032702, "stage": "LOCATE", "kind": "crop_colour", "question": "What is the main colour of this can? Answer with one colour word.", "answer": "Silver", "ms": 345, "tag": "Gemma decision", "media": "can 0", "prompt_n": 105, "prompt_ms": 301.869, "predicted_n": 2, "predicted_ms": 33.192, "cache_n": 5}
+{"ev": "target", "stage": "LOCATE", "colour": "white", "p": [0.489, 0.103, 0.129], "diam": 0.066, "box": [194, 56, 265, 209], "z": 0.547, "size_m": [0.064, 0.139], "colour_seen": "silver", "tag": "scripted skill", "t": 1792521920.7116902}
+{"ev": "lane", "stage": "LOCATE", "p": [0.489, 0.103, 0.129], "reason": "That white can is too far away. Please move it closer to me.", "tag": "scripted skill", "t": 1792521920.7117896}
+{"ev": "say", "stage": "LOCATE", "text": "That white can is too far away. Please move it closer to me. Then order again.", "tag": "scripted skill", "t": 1792521920.711943}
+{"ev": "result", "t": "2026-10-21 02:44:51", "result": "outside_lane", "assisted": false, "stages": [{"stage": "LISTEN", "ms": 7478}, {"stage": "UNDERSTAND", "ms": 343}, {"stage": "LISTEN", "ms": 6235}, {"stage": "UNDERSTAND", "ms": 273}, {"stage": "LISTEN", "ms": 6232}, {"stage": "UNDERSTAND", "ms": 261}, {"stage": "CONFIRM", "ms": 1003}, {"stage": "LOCATE", "ms": 6468}, {"stage": "LOCATE", "ms": 5444}], "release": null, "heard": ["none", "none", "white"], "colour": "white", "colour_check": ["silver"], "target": {"p": [0.4894090819679882, 0.1032947118395887, 0.12857548834217147], "diam": 0.066, "box": [194, 56, 265, 209], "z": 0.547, "size_m": [0.064, 0.139], "colour_seen": "silver", "n_cans": 1}, "autonomous": false, "total_ms": 33737, "tag": "scripted skill"}

@@ -1,0 +1,14 @@
+{"ev": "order", "n": 2, "params": {"dx": -0.096, "dz": 0.0, "pre": 0.05, "contact": 0.015, "press": 0.02, "tol": 0.035, "pause": 4.0, "diam": 0.0, "lane_y": [0.06, 0.3], "lane_x": [0.31, 0.5], "seconds": 4.0}, "session": "20261021T030059", "tag": "scripted skill", "t": 1792523032.5301876}
+{"ev": "say", "stage": "LISTEN", "text": "Which can would you like? Tell me the colour.", "tag": "scripted skill", "t": 1792523032.5306623}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792523035.3315086}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4075, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T030059/order_02/order_1.wav", "tag": "scripted skill", "t": 1792523040.008017}
+{"ev": "stage", "stage": "LISTEN", "ms": 7477, "tag": "scripted skill", "t": 1792523040.008124}
+{"ev": "gemma", "t": 1792523040.347147, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 337, "tag": "Gemma decision", "media": "audio", "prompt_n": 163, "prompt_ms": 289.557, "predicted_n": 2, "predicted_ms": 33.136, "cache_n": 2}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 339, "tag": "scripted skill", "t": 1792523040.347843}
+{"ev": "say", "stage": "LISTEN", "text": "Please say the colour again.", "tag": "scripted skill", "t": 1792523040.3504066}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792523041.9512517}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4025, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T030059/order_02/order_2.wav", "tag": "scripted skill", "t": 1792523046.577622}
+{"ev": "stage", "stage": "LISTEN", "ms": 6229, "tag": "scripted skill", "t": 1792523046.5777252}
+{"ev": "gemma", "t": 1792523046.8488884, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 270, "tag": "Gemma decision", "media": "audio", "prompt_n": 106, "prompt_ms": 221.776, "predicted_n": 2, "predicted_ms": 33.049, "cache_n": 59}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 271, "tag": "scripted skill", "t": 1792523046.849622}
+{"ev": "say", "stage": "LISTEN", "text": "Please say the colour again.", "tag": "scripted skill", "t": 1792523046.852101}

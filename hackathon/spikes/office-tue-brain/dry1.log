@@ -1,0 +1,58 @@
+server            PASS  health ok, models ['gemma4-e2b']
+warmup            PASS  C922 frame + yes/no: 'yes' in 304 ms (prompt 92 tok)
+cam_services      PASS  realsense-webrtc=inactive, compat=inactive
+d435i             PASS  8 v4l nodes, lsusb: Bus 002 Device 003: ID 8086:0b3a Intel Corp. Intel(R) RealSe
+c922_video        PASS  /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0
+c922_mic          PASS  plughw:0,0
+power             PASS  cpus online 0-7 (MAXN)
+clocks            PASS  GPU 918 MHz now, min 918, max 918 (pinned by jetson_clocks)
+fsm               PASS  fsm_id 500
+hands             PASS  left publishing, right publishing
+arm_service       WARN  g1_arm_example status 0 (brain switches it off at start, on at exit)  -> ok if 0 after a crashed run: the brain restores it on exit
+assistant         PASS  rt/audio_msg: 0 messages in 3 s
+no_default_route  WARN  default via 192.168.1.254 dev wlx94ba06f8160d proto dhcp metric 50   -> unplug the uplink / nmcli con down <uplink>
+wifi_radio        WARN  onboard Wi-Fi radio enabled  -> nmcli radio wifi off (the MT7612U AP is hostapd, unaffected)
+tailscaled        WARN  tailscaled active  -> sudo systemctl stop tailscaled
+PREFLIGHT: PASS (4 warnings)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:13:39] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:13:39] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:13:39] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:13:39] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:13:39] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:13:39] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:13:39] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:13:39] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:13:39] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yolo26n.engine for TensorRT inference...
+[10/21/2026-02:13:41] [TRT] [I] Loaded engine size: 7 MiB
+[10/21/2026-02:13:41] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:13:41] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 1, GPU 54 (MiB)
+robot ready in 11.8 s; mic plughw:0,0; cam3 /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0; runs /home/unitree/harness/hackathon/brain/runs/20261021T021334
+SAY: Ready.
+== IDLE 
+== LISTEN attempt 1
+SAY: Which can would you like? Tell me the colour.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'None' (406 ms)
+== LISTEN attempt 2
+SAY: Please say the colour again.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'White' (275 ms)
+== CONFIRM white
+SAY: The white can. Coming up.
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (344 ms)
+  target white can at pelvis [0.401, 0.03, 0.14], box [273, 112, 344, 272], 0.48 m, width 0.057 m -> diameter 0.055
+SAY: That white can is too close to my centre line for my left hand. Please move it to my left. I will look again in five seconds.
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (321 ms)
+  target white can at pelvis [0.401, 0.03, 0.14], box [273, 112, 344, 272], 0.48 m, width 0.057 m -> diameter 0.055
+SAY: That white can is too close to my centre line for my left hand. Please move it to my left. Then order again.
+== RESULT order 1: outside_lane (autonomous False) in 27.4 s; counters {'orders': 1, 'autonomous': 0, 'honest_negatives': 0, 'assisted': 0, 'manual_release': 0, 'failed': 1, 'grasps': 0, 'misses': 0}
+== shutting down: hand open, arm streamer off, arm service on
+arm service on -> 0

@@ -126,7 +126,10 @@ colour from audio 178-259 ms, crop colour 206-404 ms, all correct. A scripted-Ge
 placement and the vision release. Spoken let-go detection on 14 synthetic clips (7 phrases, 2 voices): transcript + keywords
 14/14, the yes/no judgement 9/14, so the transcript is the default.
 
-Not yet validated, needs the robot and the owner present: the long-running loop itself on PC2 (persistent camera, detector,
-arm streamer and C922 across orders), the handover release on a real guest's hand, the `take it` clip through the C922 in a
-room, and the ten-consecutive-order run. `rb.speak` is assumed non-blocking as in the spike scripts (the listen prompt uses the
-same sleeps as `voice_grab.py`).
+On the robot (2026-10-21, owner present; logs in `spikes/office-tue-brain/`): the loop ran 8 sessions of up to 3 orders with one
+build per session (11.1 s) and no rebuild between orders; preflight passed on the robot. After the axis fix: 4 grasps in a row
+(closure 0.42-0.50, every finger 0.32-0.55, contact detected, lift within 7 mm, Gemma "can in hand" yes each time), two released
+on a voice clip (the robot hearing its own reminder, since fixed), two by the operator key. Then two misses on a can 7-8 cm from
+the centre line. Latencies on the Orin: colour from audio 255-342 ms, crop colour 313-364 ms, yes/no 304-340 ms, 2 s transcript
+222-577 ms. Not yet done: the pulled-can cue and the vision release on a real guest (webcam must see the offer pose), the
+absent-colour order, the ten-consecutive-order run, the grasp calibration the owner asked for (thumb lock after the fingers).

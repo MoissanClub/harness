@@ -1,0 +1,121 @@
+server            PASS  health ok, models ['gemma4-e2b']
+warmup            PASS  C922 frame + yes/no: 'yes' in 330 ms (prompt 95 tok)
+cam_services      PASS  realsense-webrtc=inactive, compat=inactive
+d435i             PASS  8 v4l nodes, lsusb: Bus 002 Device 003: ID 8086:0b3a Intel Corp. Intel(R) RealSe
+c922_video        PASS  /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0
+c922_mic          PASS  plughw:0,0
+power             PASS  cpus online 0-7 (MAXN)
+clocks            PASS  GPU 918 MHz now, min 918, max 918 (pinned by jetson_clocks)
+fsm               PASS  fsm_id 500
+hands             PASS  left publishing, right publishing
+arm_service       PASS  g1_arm_example on (brain switches it off at start, on at exit)
+assistant         PASS  rt/audio_msg: 0 messages in 3 s
+no_default_route  WARN  default via 192.168.1.254 dev wlx94ba06f8160d proto dhcp metric 50   -> unplug the uplink / nmcli con down <uplink>
+wifi_radio        WARN  onboard Wi-Fi radio enabled  -> nmcli radio wifi off (the MT7612U AP is hostapd, unaffected)
+tailscaled        WARN  tailscaled active  -> sudo systemctl stop tailscaled
+PREFLIGHT: PASS (3 warnings)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:34:25] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:34:25] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:34:25] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:34:26] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:34:26] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:34:26] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:34:26] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:34:26] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:34:26] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yolo26n.engine for TensorRT inference...
+[10/21/2026-02:34:28] [TRT] [I] Loaded engine size: 7 MiB
+[10/21/2026-02:34:28] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:34:28] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 1, GPU 54 (MiB)
+robot ready in 11.1 s; mic plughw:0,0; cam3 /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0; runs /home/unitree/harness/hackathon/brain/runs/20261021T023422
+SAY: Ready.
+== IDLE 
+== LISTEN attempt 1
+SAY: Which can would you like? Tell me the colour.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'White' (338 ms)
+== CONFIRM white
+SAY: The white can. Coming up.
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (349 ms)
+  target white can at pelvis [0.411, 0.132, 0.14], box [137, 101, 227, 264], 0.49 m, width 0.072 m -> diameter 0.066
+  grasp [0.315, 0.175, 0.14] IK err 0.003 (floor 0.98 m)
+== PICK 
+SAY: Raising.
+  up: goal [0.179, 0.225, 0.26] measured [0.178, 0.236, 0.244] err 0.019
+SAY: Reaching.
+  high: goal [0.315, 0.225, 0.26] measured [0.314, 0.228, 0.225] err 0.035
+SAY: Lowering beside the can.
+  pre: goal [0.315, 0.225, 0.14] measured [0.316, 0.224, 0.133] err 0.007
+SAY: Thumb first.
+SAY: Sliding.
+  slide: steps 8 contact False (none) cmd y 0.145 measured [0.306, 0.15, 0.11]
+== VERIFY 
+  closure 0.60 state [0.9, 0.8, 0.46, 0.54, 0.49, 0.9] -> MISSED
+SAY: Missed. Let me try once more.
+== RECOVER retreat
+  retreat-up: goal [0.307, 0.2, 0.26] measured [0.308, 0.202, 0.225] err 0.035
+  retreat-back: goal [0.179, 0.225, 0.26] measured [0.179, 0.235, 0.245] err 0.018
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (337 ms)
+  target white can at pelvis [0.384, 0.056, 0.143], box [238, 124, 311, 284], 0.47 m, width 0.056 m -> diameter 0.055
+SAY: That white can is too close to my centre line for my left hand. Please move it to my left. Then order again.
+== RECOVER assist
+  assist-raise: goal [0.18, 0.225, 0.26] measured [0.179, 0.236, 0.244] err 0.019
+  assist-offer: goal [0.195, 0.255, 0.26] measured [0.19, 0.265, 0.243] err 0.020
+SAY: I missed. Please place the white can in my hand.
+== VERIFY 
+  closure 0.55 state [0.1, 0.79, 0.51, 0.61, 0.58, 0.49] -> GRASPED
+== CHECK 
+  Gemma CHECK/yesno: 'Is the robot holding the soda can in its hand, off the table' -> 'yes' (320 ms)
+== HANDOVER 
+SAY: I have the can. Please take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (332 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (316 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (233 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (342 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (317 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> 'Oh, ah, oh, ah.' (466 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (318 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (222 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (318 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (222 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (318 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (221 ms)
+SAY: I am holding the can. Take it, or say take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (339 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (318 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> 'I am holding the car take it' (429 ms)
+  release: voice after 18.7 s
+SAY: Enjoy.
+== RECOVER retreat
+  retreat-up: goal [0.191, 0.315, 0.26] measured [0.184, 0.321, 0.243] err 0.019
+  retreat-back: goal [0.18, 0.225, 0.26] measured [0.179, 0.237, 0.247] err 0.017
+== RESULT order 1: assisted (autonomous False) in 130.1 s; counters {'orders': 1, 'autonomous': 0, 'honest_negatives': 0, 'assisted': 1, 'manual_release': 0, 'failed': 0, 'grasps': 1, 'misses': 1}
+== IDLE 
+== LISTEN attempt 1
+SAY: Which can would you like? Tell me the colour.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'White' (341 ms)
+== CONFIRM white
+SAY: The white can. Coming up.
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (362 ms)
+  target white can at pelvis [0.387, 0.105, 0.143], box [170, 120, 254, 282], 0.47 m, width 0.065 m -> diameter 0.066
+  grasp [0.291, 0.148, 0.143] IK err 0.004 (floor 0.98 m)
+== PICK 
+SAY: Raising.
+[q] quitting after a safe release
+  up: goal [0.179, 0.198, 0.263] measured [0.179, 0.211, 0.245] err 0.022
+SAY: Reaching.
+abort requested
+== shutting down: hand open, arm streamer off, arm service on
+arm service on -> 0

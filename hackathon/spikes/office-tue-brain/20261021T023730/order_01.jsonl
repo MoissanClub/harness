@@ -1,0 +1,55 @@
+{"ev": "order", "n": 1, "params": {"dx": -0.096, "dz": 0.0, "pre": 0.05, "contact": 0.015, "press": 0.02, "tol": 0.035, "pause": 8.0, "diam": 0.0, "lane_y": [0.06, 0.3], "lane_x": [0.28, 0.46], "seconds": 4.0}, "session": "20261021T023730", "tag": "scripted skill", "t": 1792521462.7522542}
+{"ev": "say", "stage": "LISTEN", "text": "Which can would you like? Tell me the colour.", "tag": "scripted skill", "t": 1792521462.7549899}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792521465.5555243}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4129, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T023730/order_01/order_1.wav", "tag": "scripted skill", "t": 1792521470.2861617}
+{"ev": "stage", "stage": "LISTEN", "ms": 7533, "tag": "scripted skill", "t": 1792521470.2862747}
+{"ev": "gemma", "t": 1792521470.62614, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "White", "ms": 338, "tag": "Gemma decision", "media": "audio", "prompt_n": 163, "prompt_ms": 289.818, "predicted_n": 2, "predicted_ms": 33.116, "cache_n": 2}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 340, "tag": "scripted skill", "t": 1792521470.6270728}
+{"ev": "say", "stage": "CONFIRM", "text": "The white can. Coming up.", "tag": "scripted skill", "t": 1792521470.6320755}
+{"ev": "stage", "stage": "CONFIRM", "ms": 1005, "tag": "scripted skill", "t": 1792521471.6325378}
+{"ev": "detect", "stage": "LOCATE", "n": 1, "ms": 112, "boxes": [[169, 120, 253, 282]], "conf": [0.87], "tag": "scripted skill", "t": 1792521471.792857}
+{"ev": "gemma", "t": 1792521472.1565933, "stage": "LOCATE", "kind": "crop_colour", "question": "What is the main colour of this can? Answer with one colour word.", "answer": "Silver", "ms": 363, "tag": "Gemma decision", "media": "can 0", "prompt_n": 108, "prompt_ms": 320.308, "predicted_n": 2, "predicted_ms": 32.757, "cache_n": 2}
+{"ev": "target", "stage": "LOCATE", "colour": "white", "p": [0.387, 0.106, 0.143], "diam": 0.066, "box": [169, 120, 253, 282], "z": 0.469, "size_m": [0.065, 0.125], "colour_seen": "silver", "tag": "scripted skill", "t": 1792521472.1643016}
+{"ev": "stage", "stage": "LOCATE", "ms": 553, "tag": "scripted skill", "t": 1792521472.1863773}
+{"ev": "say", "stage": "PICK", "text": "Raising.", "tag": "scripted skill", "t": 1792521476.2129433}
+{"ev": "move", "stage": "PICK", "label": "up", "goal": [0.18, 0.199, 0.263], "measured": [0.179, 0.212, 0.245], "err": 0.0222, "tag": "scripted skill", "t": 1792521487.141105}
+{"ev": "say", "stage": "PICK", "text": "Reaching.", "tag": "scripted skill", "t": 1792521487.1413054}
+{"ev": "move", "stage": "PICK", "label": "high", "goal": [0.291, 0.199, 0.263], "measured": [0.292, 0.204, 0.232], "err": 0.0316, "tag": "scripted skill", "t": 1792521492.7738822}
+{"ev": "say", "stage": "PICK", "text": "Lowering beside the can.", "tag": "scripted skill", "t": 1792521492.7743928}
+{"ev": "move", "stage": "PICK", "label": "pre", "goal": [0.291, 0.199, 0.143], "measured": [0.292, 0.199, 0.137], "err": 0.0054, "tag": "scripted skill", "t": 1792521500.3263905}
+{"ev": "say", "stage": "PICK", "text": "Thumb first.", "tag": "scripted skill", "t": 1792521508.4206197}
+{"ev": "say", "stage": "PICK", "text": "Sliding.", "tag": "scripted skill", "t": 1792521509.6237483}
+{"ev": "slide", "stage": "PICK", "steps": 7, "contact": true, "why": "hand lags the command by 0.014 m in y", "tag": "scripted skill", "t": 1792521511.419226}
+{"ev": "stage", "stage": "PICK", "ms": 42164, "tag": "scripted skill", "t": 1792521514.3509004}
+{"ev": "verify", "stage": "VERIFY", "closure": 0.899, "hand_state": [0.59, 0.77, 0.9, 0.9, 0.9, 0.9], "grasped": false, "rule": "strict", "stalled": ["False", "False", "False", "False"], "tag": "sensor gate", "t": 1792521514.3525126}
+{"ev": "say", "stage": "VERIFY", "text": "Missed. Let me try once more.", "tag": "scripted skill", "t": 1792521514.3549747}
+{"ev": "stage", "stage": "VERIFY", "ms": 805, "tag": "scripted skill", "t": 1792521515.1562498}
+{"ev": "move", "stage": "RECOVER", "label": "retreat-up", "goal": [0.285, 0.194, 0.263], "measured": [0.286, 0.201, 0.229], "err": 0.0342, "tag": "scripted skill", "t": 1792521521.1279633}
+{"ev": "move", "stage": "RECOVER", "label": "retreat-back", "goal": [0.18, 0.199, 0.263], "measured": [0.18, 0.211, 0.248], "err": 0.0191, "tag": "scripted skill", "t": 1792521526.7228415}
+{"ev": "stage", "stage": "RECOVER", "ms": 16091, "tag": "scripted skill", "t": 1792521531.2481546}
+{"ev": "detect", "stage": "LOCATE", "n": 1, "ms": 40, "boxes": [[142, 116, 232, 279]], "conf": [0.92], "tag": "scripted skill", "t": 1792521531.3335729}
+{"ev": "gemma", "t": 1792521531.6552544, "stage": "LOCATE", "kind": "crop_colour", "question": "What is the main colour of this can? Answer with one colour word.", "answer": "Silver", "ms": 321, "tag": "Gemma decision", "media": "can 0", "prompt_n": 98, "prompt_ms": 279.991, "predicted_n": 2, "predicted_ms": 32.653, "cache_n": 5}
+{"ev": "target", "stage": "LOCATE", "colour": "white", "p": [0.39, 0.124, 0.144], "diam": 0.066, "box": [142, 116, 232, 279], "z": 0.47, "size_m": [0.07, 0.127], "colour_seen": "silver", "tag": "scripted skill", "t": 1792521531.6646552}
+{"ev": "stage", "stage": "LOCATE", "ms": 428, "tag": "scripted skill", "t": 1792521531.676277}
+{"ev": "say", "stage": "PICK", "text": "Raising.", "tag": "scripted skill", "t": 1792521535.702208}
+{"ev": "move", "stage": "PICK", "label": "up", "goal": [0.18, 0.217, 0.264], "measured": [0.179, 0.229, 0.248], "err": 0.0195, "tag": "scripted skill", "t": 1792521546.8918924}
+{"ev": "say", "stage": "PICK", "text": "Reaching.", "tag": "scripted skill", "t": 1792521546.892115}
+{"ev": "move", "stage": "PICK", "label": "high", "goal": [0.294, 0.217, 0.264], "measured": [0.293, 0.222, 0.231], "err": 0.0328, "tag": "scripted skill", "t": 1792521552.9028146}
+{"ev": "say", "stage": "PICK", "text": "Lowering beside the can.", "tag": "scripted skill", "t": 1792521552.903314}
+{"ev": "move", "stage": "PICK", "label": "pre", "goal": [0.294, 0.217, 0.144], "measured": [0.294, 0.221, 0.14], "err": 0.0048, "tag": "scripted skill", "t": 1792521559.9478056}
+{"ev": "say", "stage": "PICK", "text": "Thumb first.", "tag": "scripted skill", "t": 1792521568.4531095}
+{"ev": "say", "stage": "PICK", "text": "Sliding.", "tag": "scripted skill", "t": 1792521569.6540315}
+{"ev": "slide", "stage": "PICK", "steps": 8, "contact": false, "why": "", "tag": "scripted skill", "t": 1792521571.7035317}
+{"ev": "stage", "stage": "PICK", "ms": 44507, "tag": "scripted skill", "t": 1792521576.1840594}
+{"ev": "verify", "stage": "VERIFY", "closure": 0.637, "hand_state": [0.9, 0.8, 0.52, 0.56, 0.56, 0.9], "grasped": false, "rule": "strict", "stalled": ["True", "True", "True", "False"], "tag": "sensor gate", "t": 1792521576.1849656}
+{"ev": "stage", "stage": "VERIFY", "ms": 803, "tag": "scripted skill", "t": 1792521576.9879787}
+{"ev": "move", "stage": "RECOVER", "label": "assist-up", "goal": [0.287, 0.192, 0.264], "measured": [0.289, 0.199, 0.233], "err": 0.0312, "tag": "scripted skill", "t": 1792521583.5326798}
+{"ev": "move", "stage": "RECOVER", "label": "assist-offer", "goal": [0.174, 0.247, 0.264], "measured": [0.173, 0.256, 0.25], "err": 0.016, "tag": "scripted skill", "t": 1792521592.0038087}
+{"ev": "say", "stage": "RECOVER", "text": "I missed. Please place the white can in my hand.", "tag": "scripted skill", "t": 1792521592.0040255}
+{"ev": "stage", "stage": "RECOVER", "ms": 25629, "tag": "scripted skill", "t": 1792521602.6174474}
+{"ev": "verify", "stage": "VERIFY", "closure": 0.647, "hand_state": [0.19, 0.4, 0.48, 0.55, 0.67, 0.9], "grasped": false, "rule": "strict", "stalled": ["True", "True", "True", "False"], "tag": "sensor gate", "t": 1792521602.6184015}
+{"ev": "say", "stage": "VERIFY", "text": "Sorry, I could not hold the can. Let us try another order.", "tag": "scripted skill", "t": 1792521602.620879}
+{"ev": "stage", "stage": "VERIFY", "ms": 804, "tag": "scripted skill", "t": 1792521603.422414}
+{"ev": "move", "stage": "RECOVER", "label": "retreat-up", "goal": [0.172, 0.308, 0.264], "measured": [0.166, 0.313, 0.25], "err": 0.0156, "tag": "scripted skill", "t": 1792521604.920986}
+{"ev": "move", "stage": "RECOVER", "label": "retreat-back", "goal": [0.18, 0.217, 0.264], "measured": [0.179, 0.235, 0.249], "err": 0.0227, "tag": "scripted skill", "t": 1792521608.2979486}
+{"ev": "result", "t": "2026-10-21 02:37:42", "result": "missed", "assisted": false, "stages": [{"stage": "LISTEN", "ms": 7533}, {"stage": "UNDERSTAND", "ms": 340}, {"stage": "CONFIRM", "ms": 1005}, {"stage": "LOCATE", "ms": 553}, {"stage": "PICK", "ms": 42164}, {"stage": "VERIFY", "ms": 805}, {"stage": "RECOVER", "ms": 16091}, {"stage": "LOCATE", "ms": 428}, {"stage": "PICK", "ms": 44507}, {"stage": "VERIFY", "ms": 803}, {"stage": "RECOVER", "ms": 25629}, {"stage": "VERIFY", "ms": 804}, {"stage": "RECOVER", "ms": 9398}], "release": null, "heard": ["white"], "colour": "white", "colour_check": ["silver"], "target": {"p": [0.3899250944675103, 0.12438597707227504, 0.14367273674790298], "diam": 0.066, "box": [142, 116, 232, 279], "z": 0.47, "size_m": [0.07, 0.127], "colour_seen": "silver", "n_cans": 1}, "ik_err": 0.0035, "pre_measured": [0.294, 0.221, 0.14], "slide_steps": 8, "contact": false, "contact_why": "", "slide_measured": [0.286, 0.142, 0.117], "closure": 0.647, "hand_state": [0.19, 0.4, 0.48, 0.55, 0.67, 0.9], "autonomous": false, "total_ms": 150060, "tag": "scripted skill"}

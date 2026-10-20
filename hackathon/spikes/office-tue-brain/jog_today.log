@@ -1,0 +1,24 @@
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:24:44] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:24:44] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:24:44] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:24:44] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:24:44] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:24:44] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-02:24:44] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-02:24:44] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:24:44] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yolo26n.engine for TensorRT inference...
+[10/21/2026-02:24:46] [TRT] [I] Loaded engine size: 7 MiB
+[10/21/2026-02:24:46] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-02:24:46] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 1, GPU 54 (MiB)
+can [0.478, 0.097, 0.139]
+step 0: palm x offset -0.118 from the can axis; measured hand [0.36, 0.234, 0.135]
+step 1: palm x offset -0.097 from the can axis; measured hand [0.381, 0.232, 0.134]
+step 2: palm x offset -0.082 from the can axis; measured hand [0.396, 0.231, 0.129]
+step 3: palm x offset -0.069 from the can axis; measured hand [0.41, 0.225, 0.141]
+step 4: palm x offset -0.068 from the can axis; measured hand [0.41, 0.223, 0.142]
+step 5: palm x offset -0.066 from the can axis; measured hand [0.413, 0.222, 0.148]
+arm service on -> 0

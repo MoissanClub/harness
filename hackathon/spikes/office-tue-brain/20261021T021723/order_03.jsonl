@@ -1,0 +1,20 @@
+{"ev": "order", "n": 3, "params": {"dx": -0.096, "dz": 0.0, "pre": 0.05, "contact": 0.015, "press": 0.02, "tol": 0.035, "pause": 4.0, "diam": 0.0, "lane_y": [0.06, 0.3], "lane_x": [0.28, 0.46], "seconds": 4.0}, "session": "20261021T021723", "tag": "scripted skill", "t": 1792520418.4915733}
+{"ev": "say", "stage": "LISTEN", "text": "Which can would you like? Tell me the colour.", "tag": "scripted skill", "t": 1792520418.4942248}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792520421.295109}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4025, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T021723/order_03/order_1.wav", "tag": "scripted skill", "t": 1792520425.921461}
+{"ev": "stage", "stage": "LISTEN", "ms": 7430, "tag": "scripted skill", "t": 1792520425.9216852}
+{"ev": "gemma", "t": 1792520426.2646976, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 339, "tag": "Gemma decision", "media": "audio", "prompt_n": 163, "prompt_ms": 290.2, "predicted_n": 2, "predicted_ms": 33.062, "cache_n": 2}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 343, "tag": "scripted skill", "t": 1792520426.2654324}
+{"ev": "say", "stage": "LISTEN", "text": "Please say the colour again.", "tag": "scripted skill", "t": 1792520426.2661436}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792520427.8666208}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4027, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T021723/order_03/order_2.wav", "tag": "scripted skill", "t": 1792520432.4953027}
+{"ev": "stage", "stage": "LISTEN", "ms": 6229, "tag": "scripted skill", "t": 1792520432.4954062}
+{"ev": "gemma", "t": 1792520432.7656913, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 269, "tag": "Gemma decision", "media": "audio", "prompt_n": 106, "prompt_ms": 220.572, "predicted_n": 2, "predicted_ms": 32.673, "cache_n": 59}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 272, "tag": "scripted skill", "t": 1792520432.768006}
+{"ev": "say", "stage": "LISTEN", "text": "Please say the colour again.", "tag": "scripted skill", "t": 1792520432.7686312}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792520434.369183}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4076, "path": "/home/unitree/harness/hackathon/brain/runs/20261021T021723/order_03/order_3.wav", "tag": "scripted skill", "t": 1792520439.0461888}
+{"ev": "stage", "stage": "LISTEN", "ms": 6278, "tag": "scripted skill", "t": 1792520439.0462987}
+{"ev": "gemma", "t": 1792520439.3036604, "stage": "UNDERSTAND", "kind": "hear_colour", "question": "Which colour did the guest ask for?", "answer": "None", "ms": 255, "tag": "Gemma decision", "media": "audio", "prompt_n": 106, "prompt_ms": 207.025, "predicted_n": 2, "predicted_ms": 32.564, "cache_n": 59}
+{"ev": "say", "stage": "UNDERSTAND", "text": "Sorry, I did not catch a colour.", "tag": "scripted skill", "t": 1792520439.305216}
+{"ev": "result", "t": "2026-10-21 02:20:18", "result": "no_colour", "assisted": false, "stages": [{"stage": "LISTEN", "ms": 7430}, {"stage": "UNDERSTAND", "ms": 343}, {"stage": "LISTEN", "ms": 6229}, {"stage": "UNDERSTAND", "ms": 272}, {"stage": "LISTEN", "ms": 6278}, {"stage": "UNDERSTAND", "ms": 261}], "release": null, "heard": ["none", "none", "none"], "autonomous": false, "total_ms": 20813, "tag": "scripted skill"}

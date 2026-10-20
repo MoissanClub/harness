@@ -1,0 +1,112 @@
+server            PASS  health ok, models ['gemma4-e2b']
+warmup            PASS  C922 frame + yes/no: 'yes' in 329 ms (prompt 93 tok)
+cam_services      PASS  realsense-webrtc=inactive, compat=inactive
+d435i             PASS  8 v4l nodes, lsusb: Bus 002 Device 003: ID 8086:0b3a Intel Corp. Intel(R) RealSe
+c922_video        PASS  /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0
+c922_mic          PASS  plughw:0,0
+power             PASS  cpus online 0-7 (MAXN)
+clocks            PASS  GPU 918 MHz now, min 918, max 918 (pinned by jetson_clocks)
+fsm               PASS  fsm_id 500
+hands             PASS  left publishing, right publishing
+arm_service       PASS  g1_arm_example on (brain switches it off at start, on at exit)
+assistant         PASS  rt/audio_msg: 0 messages in 3 s
+no_default_route  WARN  default via 192.168.1.254 dev wlx94ba06f8160d proto dhcp metric 50   -> unplug the uplink / nmcli con down <uplink>
+wifi_radio        WARN  onboard Wi-Fi radio enabled  -> nmcli radio wifi off (the MT7612U AP is hostapd, unaffected)
+tailscaled        WARN  tailscaled active  -> sudo systemctl stop tailscaled
+PREFLIGHT: PASS (3 warnings)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-03:01:03] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-03:01:03] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-03:01:03] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-03:01:03] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-03:01:03] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-03:01:03] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/21/2026-03:01:03] [TRT] [I] Loaded engine size: 23 MiB
+[10/21/2026-03:01:03] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-03:01:03] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yolo26n.engine for TensorRT inference...
+[10/21/2026-03:01:05] [TRT] [I] Loaded engine size: 7 MiB
+[10/21/2026-03:01:05] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/21/2026-03:01:05] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 1, GPU 54 (MiB)
+robot ready in 11.1 s; mic plughw:0,0; cam3 /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0; runs /home/unitree/harness/hackathon/brain/runs/20261021T030059
+left arm parked (zero)
+SAY: Ready.
+== IDLE 
+== LISTEN attempt 1
+SAY: Which can would you like? Tell me the colour.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'None' (337 ms)
+== LISTEN attempt 2
+SAY: Please say the colour again.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'White' (271 ms)
+== CONFIRM white
+SAY: The white can. Coming up.
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (362 ms)
+  target white can at pelvis [0.459, 0.085, 0.14], box [206, 91, 279, 249], 0.50 m, width 0.060 m -> diameter 0.066
+  grasp [0.363, 0.128, 0.14] IK err 0.001 (floor 0.98 m)
+== PICK 
+SAY: Raising.
+  up: goal [0.186, 0.178, 0.26] measured [0.187, 0.189, 0.238] err 0.026
+SAY: Reaching.
+  high: goal [0.363, 0.178, 0.26] measured [0.362, 0.185, 0.215] err 0.046
+SAY: Lowering beside the can.
+  pre: goal [0.363, 0.178, 0.14] measured [0.365, 0.182, 0.136] err 0.006
+SAY: Thumb first.
+SAY: Sliding.
+  slide: steps 1 contact True (tracking error 0.081 > base 0.065 + 0.015) cmd y 0.168 measured [0.347, 0.167, 0.1]
+== VERIFY 
+  closure 0.90 state [0.59, 0.77, 0.9, 0.9, 0.9, 0.9] -> MISSED
+SAY: Missed. Let me try once more.
+== RECOVER retreat
+  retreat-up: goal [0.35, 0.22, 0.26] measured [0.35, 0.22, 0.219] err 0.041
+  retreat-back: goal [0.186, 0.178, 0.26] measured [0.188, 0.188, 0.24] err 0.023
+== LOCATE white
+  Gemma LOCATE/crop_colour: 'What is the main colour of this can? Answer with one colour ' -> 'Silver' (313 ms)
+  target white can at pelvis [0.464, 0.07, 0.141], box [227, 82, 297, 240], 0.50 m, width 0.058 m -> diameter 0.055
+  grasp [0.368, 0.107, 0.141] IK err 0.001 (floor 0.98 m)
+== PICK 
+SAY: Raising.
+  up: goal [0.186, 0.157, 0.261] measured [0.189, 0.165, 0.238] err 0.024
+SAY: Reaching.
+  high: goal [0.368, 0.157, 0.261] measured [0.37, 0.163, 0.218] err 0.043
+SAY: Lowering beside the can.
+  pre: goal [0.368, 0.157, 0.141] measured [0.371, 0.157, 0.136] err 0.005
+SAY: Thumb first.
+SAY: Sliding.
+  slide: steps 6 contact True (tracking error 0.092 > base 0.066 + 0.015) cmd y 0.097 measured [0.354, 0.122, 0.102]
+== VERIFY 
+  closure 0.61 state [0.9, 0.8, 0.53, 0.53, 0.46, 0.9] -> MISSED
+== RECOVER assist
+  assist-up: goal [0.354, 0.172, 0.261] measured [0.355, 0.176, 0.214] err 0.047
+  assist-offer: goal [0.248, 0.187, 0.261] measured [0.25, 0.195, 0.236] err 0.026
+SAY: I missed. Please place the white can in my hand.
+== VERIFY 
+  closure 0.90 state [0.59, 0.78, 0.9, 0.9, 0.9, 0.9] -> MISSED
+SAY: Sorry, I could not hold the can. Let us try another order.
+== RECOVER retreat
+  retreat-up: goal [0.25, 0.245, 0.261] measured [0.248, 0.248, 0.235] err 0.026
+  retreat-back: goal [0.186, 0.157, 0.261] measured [0.189, 0.166, 0.24] err 0.023
+== RESULT order 1: missed (autonomous False) in 155.5 s; counters {'orders': 1, 'autonomous': 0, 'honest_negatives': 0, 'assisted': 0, 'manual_release': 0, 'failed': 1, 'grasps': 0, 'misses': 3}
+== IDLE 
+== LISTEN attempt 1
+SAY: Which can would you like? Tell me the colour.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'None' (337 ms)
+== LISTEN attempt 2
+SAY: Please say the colour again.
+SAY: Listening.
+[q] quitting after a safe release
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_colour: 'Which colour did the guest ask for?' -> 'None' (270 ms)
+== LISTEN attempt 3
+SAY: Please say the colour again.
+abort requested
+== shutting down: hand open, arm streamer off, arm service on
+arm service on -> 0
