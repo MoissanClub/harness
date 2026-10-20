@@ -34,7 +34,7 @@ def parse():
     g.add_argument("--verify", choices=["strict", "majority"], default="strict", help="strict: every finger stalled in (0.15, 0.82); majority: thumb stalled below 0.3 and at least 3 of 4 fingers stalled")
     g = ap.add_argument_group("lane (pelvis frame: x ahead, y left)")
     g.add_argument("--lane-y", type=float, nargs=2, default=[0.06, 0.30], metavar=("LO", "HI"))
-    g.add_argument("--lane-x", type=float, nargs=2, default=[0.28, 0.46], metavar=("LO", "HI"))
+    g.add_argument("--lane-x", type=float, nargs=2, default=[0.31, 0.50], metavar=("LO", "HI"), help="can AXIS ahead of the pelvis; the jog reached an axis at 0.507 (palm limit 0.41 + 0.097)")
     g.add_argument("--relook", type=int, default=1, help="re-looks after asking the guest to move an out-of-lane can")
     g = ap.add_argument_group("voice and handover")
     g.add_argument("--seconds", type=float, default=4.0, help="order recording length")

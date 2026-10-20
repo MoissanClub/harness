@@ -74,7 +74,7 @@ no default route, Wi-Fi radio off, `tailscaled` inactive. The last three are war
 | `--diam` | auto | 55 mm if the box is under 60 mm wide, else 66 mm |
 | thumb first | on | `--no-prethumb` to disable |
 | `--lane-y` | 0.06 0.30 | can left of the centre line (grab_loop's guards); the comfortable lane is 10-25 cm |
-| `--lane-x` | 0.28 0.46 | can ahead of the pelvis (reach map 26-44 cm, minus the torso-collision case at 25 cm) |
+| `--lane-x` | 0.31 0.50 | can axis ahead of the pelvis (reach limit: the jog's palm stalled at x 0.41, i.e. an axis at 0.507; torso collision at 25 cm) |
 | `--seconds` | 4 | order recording |
 | `--retries` | 3 | listen attempts per order |
 | `--relook` | 1 | re-looks after asking to move an out-of-lane can |
