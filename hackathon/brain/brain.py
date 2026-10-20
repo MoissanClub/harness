@@ -453,7 +453,9 @@ class Brain:
         while how is None:
             self.check_abort(); it += 1
             if self.release_now: how = "operator"; break
-            st = self.hand.state()                                                       # the can pulled out: the fingers close past their stall
+            self.hand.set([0.9, 0.8] + [0.88 if it % 2 else 0.9] * 4)                     # fresh setpoint each cycle: a stalled BrainCo finger stops driving and ignores a repeated target; the fingers close on only when the can is gone
+            time.sleep(0.4); st = self.hand.state()
+            if st is not None: self.log.event(ev="hold", stage=self.state, it=it, hand=np.round(st, 2).tolist(), tag="sensor gate")
             if held is not None and st is not None and sum(float(st[2 + i]) - held[i] > 0.15 for i in range(4)) >= 2:
                 how = "taken"; self.log.event(ev="taken", stage=self.state, held=held, now=np.round(st, 2).tolist(), tag="sensor gate"); break
             if P.release_after and time.time() - t0 > P.release_after: how = "timer"; break
