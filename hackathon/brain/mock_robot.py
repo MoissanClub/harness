@@ -14,9 +14,10 @@ BRAIN_MOCK_SLEEP=0.25 (time.sleep scale)  BRAIN_MOCK_SAY=1 (speak through macOS 
 BRAIN_MOCK_ERRY=0 (true palm along the hand's y: an error along the palm normal)  BRAIN_MOCK_GEMMA_OFF=0 (Gemma's hand box shifted this far ahead)
 BRAIN_MOCK_TABLE_BIAS=0 (the depth camera sees the table this much LOWER than it is; the hand still meets the real table: the hand's
 bottom, palm z - 0.045, cannot go below the table top, the measured joints stay at the last command that did not penetrate)
-BRAIN_MOCK_TABLE_EDGE=0.34 (the table's near edge, pelvis x)  BRAIN_MOCK_START_Q=q0,..,q4 (the arm's pose at start, e.g. where a
+BRAIN_MOCK_TABLE_EDGE=0.34 (the table's near edge, pelvis x)  BRAIN_MOCK_TABLE_Z=0.075 (its top)  BRAIN_MOCK_START_Q=q0,..,q4 (the arm's pose at start, e.g. where a
 release left it)  BRAIN_MOCK_GEMMA_BOX=none (Gemma returns no hand box)  BRAIN_MOCK_NEAR_HAND=1 (a hand-sized box 10 cm in front of the
-chest)  BRAIN_MOCK_SAYKEYS="SAY prefix:k+k,..." (the operator types keys into the running brain, any version, after a sentence; `enter`
+chest; after:TEXT = once the robot says TEXT)  BRAIN_MOCK_OBSBOX=x0,x1,y0,y1,z0,z1 (the obstacle box)  BRAIN_MOCK_CAMFAIL=after:TEXT (the head
+camera raises on every read from then on)  BRAIN_MOCK_SAYKEYS="SAY prefix:k+k,..." (the operator types keys into the running brain, any version, after a sentence; `enter`
 = an empty line; a STOP kind `keys:q+q` types at a streamed target)  BRAIN_MOCK_TIMEKEYS="seconds:k+k,...": typed on a clock  BRAIN_MOCK_DEPTH=zero (every depth pixel invalid)  BRAIN_MOCK_MIN_RANGE=0.28 (depth nearer than this is invalid, as on the D435i)
 BRAIN_MOCK_STOP="SAY text;kind;when[,...]": after the robot says a sentence starting with SAY text, raise `kind` at a streamed target,
 before it is sent (abort = the a key, quit = the q key, fail = a g1-fetch exception, sigint = Ctrl-C), `when` = the n-th target, or
@@ -32,7 +33,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 MEDIA = os.path.join(HERE, "..", "spikes", "office-mon")
 CLIPS = os.path.join(HERE, "runs", "mock_clips")
 ns = types.SimpleNamespace
-TABLE_Z = 0.075                      # table top above the pelvis origin (cans 12 cm tall stood at mid-height z 0.14 in the office logs)
+TABLE_Z = float(os.environ.get("BRAIN_MOCK_TABLE_Z", "0.075"))   # table top above the pelvis origin (cans 12 cm tall stood at mid-height z 0.14 in the office logs)
 TABLE_X = (float(os.environ.get("BRAIN_MOCK_TABLE_EDGE", "0.34")), 1.10)   # the table's near and far edge (pelvis x): the run plan needs the near edge beyond ~0.33
 # scene cans: (description, colour name, axis x, axis y, diameter, height)
 SCENES = {"two": [("purple la croix", "purple", 0.41, 0.21, 0.066, 0.122), ("silver chi sparkling", "silver", 0.38, 0.05, 0.055, 0.135)],
@@ -51,7 +52,9 @@ HAND_HALF_H = 0.045                  # the true hand's half height (thumb up): i
 HOME_Q = np.array([0.0, 0.25, 0.0, 1.0, 0.0])
 START_Q = np.array([float(v) for v in os.environ["BRAIN_MOCK_START_Q"].split(",")]) if os.environ.get("BRAIN_MOCK_START_Q") else HOME_Q.copy()   # e.g. the pose a release left
 GEMMA_BOX = os.environ.get("BRAIN_MOCK_GEMMA_BOX", "")             # "none": Gemma answers with no box (server down, timeout)
-NEAR_HAND = os.environ.get("BRAIN_MOCK_NEAR_HAND") == "1"            # a hand-sized box 10 cm in front of the chest at belly height
+NEAR_HAND_SPEC = os.environ.get("BRAIN_MOCK_NEAR_HAND", "")            # "1" or "after:TEXT": a hand-sized box 10 cm in front of the chest at belly height
+CAMFAIL = os.environ.get("BRAIN_MOCK_CAMFAIL", "")                     # "after:TEXT": the head camera raises on every read once the robot says TEXT
+OBSBOX = [float(v) for v in os.environ["BRAIN_MOCK_OBSBOX"].split(",")] if os.environ.get("BRAIN_MOCK_OBSBOX") else [0.15, 0.25, -0.08, 0.08, 0.20, 0.40]   # x0,x1,y0,y1,z0,z1
 SAYKEYS = [tuple(s.split(":", 1)) for s in os.environ.get("BRAIN_MOCK_SAYKEYS", "").split(",") if ":" in s]   # "SAY prefix:key+key": the operator types
 TIMEKEYS = [(float(t), k) for t, k in (s.split(":", 1) for s in os.environ.get("BRAIN_MOCK_TIMEKEYS", "").split(",") if ":" in s)]   # "seconds:key+key" after start
 HAND_BOX = ((-0.045, 0.125), (-0.02, 0.02), (-0.045, 0.045))          # the true open hand about the true palm, hand frame (x fingers, y thickness, z thumb)
@@ -59,6 +62,18 @@ HAND_BOX = ((-0.045, 0.125), (-0.02, 0.02), (-0.045, 0.045))          # the true
 
 def hand_corners(tp, R):
     return [tp + R @ np.array([x, y, z]) for x in HAND_BOX[0] for y in HAND_BOX[1] for z in HAND_BOX[2]]
+
+
+def hand_in_table(tp, R):
+    """True when the open hand box reaches into the table: the box is convex, so its lowest point beyond the table's near edge is a
+    corner beyond the edge or a point where one of its 12 edges crosses x = edge (V2_REVIEW round 4: the corners alone missed the
+    bottom-back edge cutting the table at the kill slots)."""
+    C = hand_corners(tp, R); e = TABLE_X[0]; pts = [c for c in C if c[0] >= e]
+    for i in range(8):
+        for b in (1, 2, 4):
+            j = i ^ b
+            if j > i and (C[i][0] - e) * (C[j][0] - e) < 0: pts.append(C[i] + (C[j] - C[i]) * ((e - C[i][0]) / (C[j][0] - C[i][0])))
+    return any(p[2] < TABLE_Z and abs(p[1]) < 0.55 and p[0] < TABLE_X[1] for p in pts)
 
 
 def find_brain():
@@ -70,10 +85,17 @@ def find_brain():
     return None
 
 
+def note_key(k):
+    """A key the operator typed: a y opens the way home (targets streamed after a stop and before the next y are counted per stop)."""
+    if k == "y":
+        for rec in STATS["stops"]: rec["y_seen"] = True
+    STATS.setdefault("keys", []).append([k, STATS["targets"]])
+
+
 def type_keys(keys, why):
     b = find_brain()
     for k in keys:
-        print("  [mock operator] types %r (%s)" % (k, why), flush=True)
+        print("  [mock operator] types %r (%s)" % (k, why), flush=True); note_key(k)
         if b is not None: b.key("" if k == "enter" else k)
 OBSTACLE_SPEC = os.environ.get("BRAIN_MOCK_OBSTACLE", "")          # "1": always; "after:Missed.": from the moment the robot says that
 CONTACT = float(os.environ.get("BRAIN_MOCK_CONTACT", "0.006"))   # contact starts this far beyond r from the can axis (0.006: 4 mm past the closure pose)
@@ -103,11 +125,15 @@ def _low_reach(q, below=None):
 def on_say(text):
     STATS["says"] += 1; _LAST_SAY[0] = text
     for rec in STATS["stops"]:
-        if text.startswith("The way out"): rec["way_out_said"] = True
+        if text.startswith("The way out") or text.startswith("The way home"): rec["way_out_said"] = True
     for say, keys in SAYKEYS:
         if text.startswith(say): type_keys(keys.split("+"), "after '%s'" % say)
     if OBSTACLE_SPEC.startswith("after:") and text.startswith(OBSTACLE_SPEC[6:]) and not STATE.get("obstacle"):
         STATE["obstacle"] = True; print("  [mock] a box appears at chest height 15-25 cm ahead", flush=True)
+    if CAMFAIL.startswith("after:") and text.startswith(CAMFAIL[6:]) and not STATE.get("camfail"):
+        STATE["camfail"] = True; print("  [mock] the head camera stops answering", flush=True)
+    if NEAR_HAND_SPEC.startswith("after:") and text.startswith(NEAR_HAND_SPEC[6:]) and not STATE.get("near_hand"):
+        STATE["near_hand"] = True; print("  [mock] a hand appears 10 cm in front of the chest", flush=True)
     for st in STOPS:
         if not st["fired"] and not st["armed"] and text.startswith(st["say"]): st["armed"] = True; st["n"] = 0
 
@@ -130,13 +156,14 @@ def fire(st, q_now):
     rec = {"kind": st["kind"], "say": st["say"], "when": st["when"], "palm": np.round(s["palm"], 3).tolist(), "target": STATS["targets"], "after_targets": 0, "after_low_reach": -1.0, "out_x": 0.0, "out_y": 0.0, "up_z": 0.0}
     # out_x / out_y: how far the palm went ahead / outward of where it stopped while still at that height (a retry that walks the arm
     # out over the table); the retraced descent home leaves the height first and does not count
-    rec["moved_before_way_out"] = 0; rec["way_out_said"] = False
+    rec["moved_before_way_out"] = 0; rec["way_out_said"] = False; rec["moved_before_y"] = 0; rec["y_seen"] = False
     STATS["stops"].append(rec); print("  [mock] injected stop: %s after '%s' (%s) with the palm at %s" % (st["kind"], st["say"], st["when"], rec["palm"]), flush=True)
     main = sys.modules.get("__main__")
     if st["kind"].startswith("keys:"): type_keys(st["kind"][5:].split("+"), "at a streamed target"); return
-    if st["kind"] == "abort": raise getattr(main, "OrderAborted")()
-    if st["kind"] == "quit": raise getattr(main, "Abort")()
-    if st["kind"] == "sigint": os.kill(os.getpid(), signal.SIGINT); time.sleep(0.05); return
+    if st["kind"] in ("abort", "quit") and find_brain() is not None:       # the a / q key itself, into any brain with a key reader
+        type_keys(["a" if st["kind"] == "abort" else "q"], "at a streamed target"); return
+    if st["kind"] in ("abort", "quit"): raise (getattr(main, "Stopped", None) or getattr(main, "OrderAborted" if st["kind"] == "abort" else "Abort"))()   # a brain without a key reader
+    if st["kind"] == "sigint": note_key("ctrl-c"); os.kill(os.getpid(), signal.SIGINT); time.sleep(0.05); return
     raise SkillFailed("injected g1-fetch failure at a streamed target")
 
 
@@ -158,6 +185,7 @@ def track(q_prev, q):
     for rec in STATS["stops"]:
         rec["after_targets"] += 1; rec["after_low_reach"] = max(rec["after_low_reach"], round(_low_reach(q), 4))
         if not rec.get("way_out_said", True): rec["moved_before_way_out"] = rec.get("moved_before_way_out", 0) + 1
+        if not rec.get("y_seen", True): rec["moved_before_y"] = rec.get("moved_before_y", 0) + 1
         p0 = np.array(rec["palm"]); rec["up_z"] = max(rec["up_z"], round(float(s["palm"][2] - p0[2]), 4))
         if s["palm"][2] >= p0[2] - 0.02: rec["out_x"] = max(rec["out_x"], round(float(s["palm"][0] - p0[0]), 4)); rec["out_y"] = max(rec["out_y"], round(float(s["palm"][1] - p0[1]), 4))
 
@@ -263,11 +291,11 @@ def render(true_palm, R_hand, fingers_open=True, cans=None, person=False):
         t = (-B - np.sqrt(np.maximum(disc, 0))) / (2 * np.where(A < 1e-9, 1e-9, A)); s = (w + dirs * t[:, None]) @ ax
         hit(t, (disc > 0) & (s > 0) & (s < L), 31)
     if OBSTACLE_SPEC == "1" or STATE.get("obstacle"):   # a box at chest height straight ahead (a guest leaning in): the 0.30 m rule must refuse
-        lo, hi = np.array([0.15, -0.08, 0.20]), np.array([0.25, 0.08, 0.40])
+        lo, hi = np.array([OBSBOX[0], OBSBOX[2], OBSBOX[4]]), np.array([OBSBOX[1], OBSBOX[3], OBSBOX[5]])
         with np.errstate(divide="ignore", invalid="ignore"):
             t1 = (lo - o) / dirs; t2 = (hi - o) / dirs; tmin = np.max(np.minimum(t1, t2), axis=1); tmax = np.min(np.maximum(t1, t2), axis=1)
         hit(tmin, (tmax > tmin) & (tmax > 0), 50)
-    if NEAR_HAND:                                # a guest's hand 10 cm in front of the chest at belly height: inside the D435i's minimum range
+    if NEAR_HAND_SPEC == "1" or STATE.get("near_hand"):   # a guest's hand 10 cm in front of the chest at belly height: inside the D435i's minimum range
         lo, hi = np.array([0.18, -0.04, 0.24]), np.array([0.24, 0.04, 0.32])
         with np.errstate(divide="ignore", invalid="ignore"):
             t1 = (lo - o) / dirs; t2 = (hi - o) / dirs; tmin = np.max(np.minimum(t1, t2), axis=1); tmax = np.min(np.maximum(t1, t2), axis=1)
@@ -299,6 +327,7 @@ class Camera:
     """Head camera: renders the current scene (needs the arm for the hand position)."""
     def __init__(self): self.arms = None; self.last_kind = None; self.intrinsics = INTR
     def read(self):
+        if STATE.get("camfail"): raise RuntimeError("mock: the head camera does not answer")
         tp, R = (self.arms.true_palm(), self.arms.true_R()) if self.arms is not None and self.arms.on else (None, np.eye(3))
         colour, depth, kind = render(tp, R, fingers_open=self.arms.hand_open if self.arms else True, person=STATE["person"])
         self.last_kind = kind
@@ -397,8 +426,7 @@ class Arms:
     def table_block(self, q_cmd):
         """True when the open hand, settled at q_cmd, would put any corner (palm box and fingertips, from its pitch and roll) below the
         REAL table top over the table."""
-        tp, R = self.true_palm_at(q_cmd)
-        return any(TABLE_X[0] < c[0] < TABLE_X[1] and abs(c[1]) < 0.55 and c[2] < TABLE_Z for c in hand_corners(tp, R))
+        tp, R = self.true_palm_at(q_cmd); return hand_in_table(tp, R)
     def would_block(self, q_cmd):
         """True when the open hand, settled at q_cmd, would penetrate a can (the geometry of blocked())."""
         if not self.on or self.held is not None or not self.hand_open: return False
@@ -599,7 +627,7 @@ def install(P):
 
 def mock_gemma(GemmaClass):
     """Scripted answers in place of the server: descriptions from the scene, the order matched against them, yes to every gate."""
-    def chat(base_url, payload):
+    def chat(base_url, payload, **kw):
         msgs = payload["messages"]; system = msgs[0]["content"] if msgs[0]["role"] == "system" else ""
         user = msgs[-1]["content"] if msgs[-1]["role"] == "user" else msgs[-2]["content"]
         parts = user if isinstance(user, list) else [{"type": "text", "text": user}]

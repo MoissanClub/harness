@@ -53,12 +53,12 @@ def colour_in(text):
 
 class Gemma:
     def __init__(self, base_url="http://127.0.0.1:8080/v1", on_record=None, chat=timed_chat):
-        self.base_url, self.on_record, self.chat, self.n = base_url, on_record or (lambda r: None), chat, 0
+        self.base_url, self.on_record, self.chat, self.n, self.timeout = base_url, on_record or (lambda r: None), chat, 0, 20.0
 
     def ask(self, kind, question, messages, max_tokens, stage=None, media=None, extra=None, tag=TAG):
         payload = dict(BASE, max_tokens=max_tokens, messages=messages); payload.update(extra or {})
         t0 = time.perf_counter(); err = None
-        try: r = self.chat(self.base_url, payload)
+        try: r = self.chat(self.base_url, payload, timeout=self.timeout)       # bounded: a hung server must not hold the arm at the pre-grasp for minutes
         except Exception as e: r, err = {"content": "", "timings": {}, "total_s": time.perf_counter() - t0}, "%s: %s" % (type(e).__name__, e)
         ans = (r.get("content") or "").strip(); tm = r.get("timings") or {}
         rec = {"ev": "gemma", "t": time.time(), "stage": stage, "kind": kind, "question": question, "answer": ans,
