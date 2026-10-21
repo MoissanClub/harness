@@ -95,8 +95,9 @@ def reach_candidates(yaws=(0, 10, 20, 30, 45), pitches=(0, -10)):
 
 
 # --- table plane -----------------------------------------------------------------------------------------------------------------------
-def fit_plane_ransac(points, thresh=0.012, iters=80, rng=None):
-    """Plane n.p = d (n unit) by RANSAC on an (N,3) cloud; returns (n, d, inlier_mask) or None. Same contract as g1-fetch's."""
+def fit_plane_ransac(points, thresh=0.012, iters=80, rng=None, min_nz=0.0):
+    """Plane n.p = d (n unit) by RANSAC on an (N,3) cloud; returns (n, d, inlier_mask) or None. Same contract as g1-fetch's. min_nz > 0
+    considers only candidates within acos(min_nz) of level (a can's side near the table would otherwise win on a narrow table strip)."""
     P = np.asarray(points, float)
     if P.shape[0] < 30: return None
     rng = np.random.default_rng(0) if rng is None else rng
@@ -105,7 +106,9 @@ def fit_plane_ransac(points, thresh=0.012, iters=80, rng=None):
         i = rng.choice(P.shape[0], 3, replace=False); a, b, c = P[i]
         n = np.cross(b - a, c - a); nn = np.linalg.norm(n)
         if nn < 1e-9: continue
-        n = n / nn; d = float(n @ a); inl = np.abs(P @ n - d) < thresh
+        n = n / nn
+        if abs(n[2]) < min_nz: continue
+        d = float(n @ a); inl = np.abs(P @ n - d) < thresh
         if best is None or inl.sum() > best[2].sum(): best = (n, d, inl)
     if best is None or best[2].sum() < 30: return None
     Q = P[best[2]]; c = Q.mean(axis=0); u, s, vt = np.linalg.svd(Q - c); n = vt[2]
@@ -114,15 +117,18 @@ def fit_plane_ransac(points, thresh=0.012, iters=80, rng=None):
 
 
 def table_plane(cloud, z_hint=None):
-    """Table plane from a pelvis-frame cloud of the region around the can's base. Rejects a plane that is not horizontal (|n_z| < 0.9)
-    or further than 6 cm from z_hint (the can base from the box). Returns dict(n, d, z, n_in) or None."""
-    fit = fit_plane_ransac(cloud)
+    """Table plane from a pelvis-frame cloud of the region around the can's base. With z_hint (the can base from the box) only the
+    points within 6 cm of it are fitted: with the cans near the table's edge the band under them also sees the floor, which would win
+    the RANSAC. Rejects a plane that is not horizontal (|n_z| < 0.9) or further than 6 cm from z_hint. Returns dict(n, d, z, n_in) or None."""
+    cloud = np.asarray(cloud, float)
+    if z_hint is not None and cloud.size: cloud = cloud[np.abs(cloud[:, 2] - z_hint) < 0.06]
+    fit = fit_plane_ransac(cloud, iters=200, min_nz=0.9)
     if fit is None: return None
     n, d, inl = fit
     if abs(n[2]) < 0.9: return None
-    z0 = d / n[2]                                         # plane height at x = y = 0 (the plane is nearly level)
-    if z_hint is not None and abs(z0 - z_hint) > 0.06: return None
-    return {"n": n, "d": d, "z": float(z0), "n_in": int(inl.sum()), "tilt_deg": float(math.degrees(math.acos(min(1.0, abs(n[2]))))) }
+    z0 = float(np.median(cloud[inl][:, 2]))               # the table height where it was seen (near the can): the plane's value at the pelvis
+    if z_hint is not None and abs(z0 - z_hint) > 0.06: return None      # origin extrapolated a 1.4 deg tilt of a 3.5 cm strip to +1 cm (mock)
+    return {"n": n, "d": d, "z": z0, "n_in": int(inl.sum()), "tilt_deg": float(math.degrees(math.acos(min(1.0, abs(n[2]))))) }
 
 
 def height_above(points, plane):
@@ -160,13 +166,26 @@ def in_boxes(uu, vv, boxes, pad=8):
     return m
 
 
-def hand_blob(frame, frames, expect_p, plane, exclude_boxes=(), xdir=(1.0, 0.0, 0.0), ndir=(0.0, -1.0, 0.0), half_w=130, half_h=110, min_h=0.03, max_h=0.30, radius=0.16, hand_len=0.12, step=2, exclude_cyl=()):
+def hand_blob(frame, frames, expect_p, plane, exclude_boxes=(), xdir=(1.0, 0.0, 0.0), ndir=(0.0, -1.0, 0.0), half_w=200, half_h=170, min_h=0.03, max_h=0.30, radius=0.25, hand_len=0.12, step=2, exclude_cyl=(), ahead=0.04, grow=True):
+    """The hand blob in a window centred `ahead` of the expected palm along xdir (the open hand spans -4.5..+12.5 cm about the palm
+    centre); a blob touching the window edge is searched again once in a window 1.4x larger (radius + 5 cm). See _hand_blob."""
+    c = np.asarray(expect_p, float) + np.asarray(xdir, float) * ahead
+    b = _hand_blob(frame, frames, c, plane, exclude_boxes, xdir, ndir, half_w, half_h, min_h, max_h, radius, hand_len, step, exclude_cyl)
+    if grow and b is not None and (b["win_edge_px"] < 8 or b["radius_cut"]):
+        b2 = _hand_blob(frame, frames, c, plane, exclude_boxes, xdir, ndir, int(half_w * 1.4), int(half_h * 1.4), min_h, max_h, radius + 0.05, hand_len, step, exclude_cyl)
+        if b2 is not None: b2["grown"] = True; return b2
+    return b
+
+
+def _hand_blob(frame, frames, expect_p, plane, exclude_boxes=(), xdir=(1.0, 0.0, 0.0), ndir=(0.0, -1.0, 0.0), half_w=200, half_h=170, min_h=0.03, max_h=0.30, radius=0.25, hand_len=0.12, step=2, exclude_cyl=()):
     """The robot's hand in the head camera: valid depth pixels in a window around the projected expected palm point, higher than min_h
     above the table plane, outside the can boxes, within `radius` (horizontal) of the expected point: that is the arm blob (hand plus
     forearm). The hand is its front part: the points within hand_len of the front extent along the forearm direction xdir (robust 90th
     percentile). Returns a dict with the hand's 3D median ('p'), its front ('front', the fingertips), extent, pixel bbox and count, or
     None. The median of the visible hand sits beside and ahead of the palm centre by a hand-geometry constant that the brain calibrates
-    once (the reference offset)."""
+    once (the reference offset). The window and radius hold the whole hand with a forward error up to 6 cm (the 130 x 110 px window cut
+    the fingertips: forward errors of 2.4-5.4 cm read 6-9 mm, V2_REVIEW round 2 blocker 5); 'win_edge_px' is the kept points' margin to
+    the window and 'radius_cut' says the front reaches the radius: either one means the features are the window's, not the hand's."""
     xdir = np.asarray(xdir, float); expect_p = np.asarray(expect_p, float)
     uv = pelvis_to_pixel(frames, frame.intrinsics, expect_p)
     if uv is None: return None
@@ -182,18 +201,35 @@ def hand_blob(frame, frames, expect_p, plane, exclude_boxes=(), xdir=(1.0, 0.0, 
     along = P @ xdir; front = float(np.percentile(along, 90)); keep = along > front - hand_len
     if keep.sum() < 20: return None
     P, U, V = P[keep], U[keep], V[keep]; med = np.median(P, axis=0); near = float(np.percentile(P @ np.asarray(ndir, float), 90))   # the face nearest the can
+    H, W = frame.depth.shape; wx1, wx2 = max(0, int(uv[0] - half_w)), min(W - 1, int(uv[0] + half_w)); wy1, wy2 = max(0, int(uv[1] - half_h)), min(H - 1, int(uv[1] + half_h))
+    win_edge = int(min(U.min() - wx1, V.min() - wy1, wx2 - U.max(), wy2 - V.max()))
+    fr = P[(P @ xdir) > front - 0.02]; radius_cut = bool(fr.shape[0] and float(np.max(np.hypot(fr[:, 0] - expect_p[0], fr[:, 1] - expect_p[1]))) > radius - 0.01)
     return {"p": med, "front": front, "near": near, "n": int(P.shape[0]), "xmin": float(P[:, 0].min()), "xmax": float(P[:, 0].max()), "ymin": float(P[:, 1].min()),
             "ymax": float(P[:, 1].max()), "zmin": float(P[:, 2].min()), "zmax": float(P[:, 2].max()),
-            "bbox": [int(U.min()), int(V.min()), int(U.max()), int(V.max())], "uv_expect": [int(uv[0]), int(uv[1])]}
+            "bbox": [int(U.min()), int(V.min()), int(U.max()), int(V.max())], "uv_expect": [int(uv[0]), int(uv[1])], "win_edge_px": win_edge, "radius_cut": radius_cut}
 
 
-def obstacle_ahead(frame, frames, x_max=0.30, y_half=0.15, z_lo=0.05, z_hi=0.50, step=6, min_pts=60):
-    """Hard safety: True when the depth image shows something within x_max straight ahead at chest height (pelvis frame)."""
+def obstacle_ahead(frame, frames, x_max=0.30, y_half=0.15, z_lo=0.05, z_hi=0.50, step=6, min_pts=60, min_valid=0.7, own=()):
+    """Hard safety, fail-closed: (blocked, why, info). Blocked when the depth image shows at least min_pts points within x_max straight
+    ahead at chest height (pelvis frame), or when under min_valid of the depth pixels are valid: a dropped stream, a blinded projector or
+    something inside the D435i's minimum range (a box 15-25 cm ahead leaves 12% valid in the mock) is not "clear". The zone at x < 0.30
+    covers nearly the whole image (the camera looks 47.6 deg down from z 0.47), so the frame's valid fraction is the zone's. On the robot
+    normal frames were 82-97% valid (Oct 19). `own`: (a, b, r) segments of the robot's own arm; points within r of them do not count
+    (a cross-body reach puts the forearm inside the zone)."""
     H, W = frame.depth.shape
+    valid = float(np.mean(np.asarray(frame.depth)[::step, ::step] > 0))
     pts, uu, vv = cloud_in_window(frame, frames, W / 2, H / 2, W / 2, H / 2, step)
-    if pts.shape[0] == 0: return False
-    sel = (pts[:, 0] > 0.05) & (pts[:, 0] < x_max) & (np.abs(pts[:, 1]) < y_half) & (pts[:, 2] > z_lo) & (pts[:, 2] < z_hi)
-    return int(sel.sum()) >= min_pts
+    n, n_own = 0, 0
+    if pts.shape[0]:
+        sel = (pts[:, 0] > 0.05) & (pts[:, 0] < x_max) & (np.abs(pts[:, 1]) < y_half) & (pts[:, 2] > z_lo) & (pts[:, 2] < z_hi)
+        for a, b, r in own:
+            a, b = np.asarray(a, float), np.asarray(b, float); ab = b - a; t = np.clip(((pts - a) @ ab) / max(1e-9, float(ab @ ab)), 0.0, 1.0)
+            mine = np.linalg.norm(pts - (a + t[:, None] * ab), axis=1) < r; n_own += int((sel & mine).sum()); sel &= ~mine
+        n = int(sel.sum())
+    info = {"valid": round(valid, 3), "n_zone": n, "n_own_arm": n_own}
+    if valid < min_valid: return True, "only %.0f%% of the depth pixels are valid: cannot see ahead" % (valid * 100), info
+    if n >= min_pts: return True, "%d points within %.2f m ahead at chest height" % (n, x_max), info
+    return False, "", info
 
 
 def in_view(frames, intr, p, margin=0.15):

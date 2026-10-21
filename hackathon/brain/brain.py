@@ -9,8 +9,11 @@ measured joint correction re-applied every step; corrections chosen from the fin
 rising in the head frame; the handover inside the head camera's view. Every measured number comes from calib.json (provenance,
 sha logged per order, CLI overrides logged as deviations).
 Usage (PC2, g1fetch env):  python brain.py [--manual] [--probe] [--venue] [--no-preflight] [--mock] [parameters, see -h]
-Keys on stdin: q quit (safe release)  a abort this order  r release the can now  p pause/resume  o record an observation
-Enter starts an order (--manual/--probe). Ctrl-C / SIGTERM: safe release (hand open, arm streamer disabled, arm service back on)."""
+Keys on stdin: a abort this order (during a retreat: stop, the arm holds)  q quit: the arm comes home first, then the release (during a
+retreat: stop, the arm holds)  r release the can now  p pause: no new order starts (the arm keeps holding at home)  o record an observation
+h (only while stuck) plan the way out, nothing moves; y run the plan shown  quit! exit WITHOUT releasing the arm (only after L2+B)
+Enter starts an order (--manual/--probe/--air). Ctrl-C / SIGTERM = q. The arm is never released away from home: the controller would
+take it back in a joint-space move (V2_REVIEW round 2 blocker 3); a stopped or refused move holds the arm ("stuck") until the operator."""
 import argparse, glob, json, math, os, re, shlex, signal, subprocess, sys, threading, time, traceback
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -19,10 +22,16 @@ CAL = calibmod.load()
 def cv(k): return calibmod.value(CAL, k)
 STAGES_THUMB = (([0.0, 0.8, 0, 0, 0, 0], 1.0), ([0.0, 0.8, 0.9, 0.9, 0.9, 0.9], 1.5), ([0.9, 0.8, 0.9, 0.9, 0.9, 0.9], 1.0))
 THUMB_PRE, OPEN6 = [0.0, 0.8, 0.0, 0.0, 0.0, 0.0], [0.0] * 6
-PARK_ZERO = [0.0, 0.0, 0.0, 0.0, 0.0]        # Unitree joint zero for the 5 left-arm joints (g1-docs 00_about_G1: 关节零点)
 PROMPTS = {"ask": "Tell me which one you'd like.", "listening": "Listening."}
 OWN_WORDS = ("holding the", "say take", "please take")       # the robot's own handover sentences, heard through the C922 (self-release on 2026-10-21)
-CALIB_ARGS = {"pre": "pregrasp_standoff_m", "grasp_below": "grasp_below_mid_m", "lift": "lift_m", "K": "hand_feature_K", "pitch_max": "pitch_max_deg", "ik_tol": "ik_tol_m", "contact": "contact_rise_rad", "palm_real": "palm_real_m", "clear": "clearance_m", "near": "near_ahead_m", "speed": "speed_scale"}
+CALIB_ARGS = {"pre": "pregrasp_standoff_m", "grasp_below": "grasp_below_mid_m", "lift": "lift_m", "K": "hand_feature_K", "pitch_max": "pitch_max_deg", "ik_tol": "ik_tol_m", "contact": "contact_rise_rad", "palm_real": "palm_real_m", "clear": "clearance_m", "near": "near_ahead_m", "speed": "speed_scale",
+              "table_edge": "table_edge_m"}
+
+
+def speed_arg(s):
+    v = float(s)
+    if not 0.0 < v <= 1.0: raise argparse.ArgumentTypeError("--speed must be in (0, 1], got %r" % s)    # '05' is 5x, 0 divides, negative is undefined in g1-fetch
+    return v
 
 
 def parse():
@@ -44,8 +53,12 @@ def parse():
     g.add_argument("--no-prethumb", action="store_true"); g.add_argument("--no-thumb-lock", action="store_true", help="skip the final thumb 0.9 stage")
     g.add_argument("--lift", type=float, default=cv("lift_m"))
     g.add_argument("--verify", choices=["signature", "strict"], default="signature", help="signature: thumb < 0.3 and 3 of 4 fingers in (0.25, 0.70); strict: every finger in (0.15, 0.82)")
-    g.add_argument("--park", choices=["zero", "home", "release"], default="home", help="left-arm pose between orders: home = g1-fetch home_q (real palm beside the hip, below the table top); zero = Unitree joint zero (real palm at x 0.36 y 0.15 z 0.10: ON the table slots, never with cans out)")
-    g.add_argument("--speed", type=float, default=cv("speed_scale"), help="scale of every Cartesian speed and joint-space move duration (0.5 = half speed); an override is logged as a deviation")
+    g.add_argument("--park", choices=["home", "release"], default="home", help="left arm between orders: home = held at g1-fetch home_q (real palm beside the hip, below the table top); release = released at home, announced (joint zero is gone: its fingertips are on the slots)")
+    g.add_argument("--speed", type=speed_arg, default=cv("speed_scale"), help="in (0, 1]: scales every Cartesian speed, the approach steps and the joint step per target (0.5 = half speed); an override is logged as a deviation")
+    g.add_argument("--model-grasp", action="store_true", help="allow a pick without the hand constant K: the hand closes on the model gap alone (logged as a deviation; the kill test measures K)")
+    g.add_argument("--pre-offset", type=float, default=0.0, help="the pre-grasp moved this far back along the forearm (logged as a deviation): an error for the servo to remove (the servo-residual block)")
+    g.add_argument("--pre-stop", type=float, default=0.02, help="a corrected pre-grasp further than this from its goal refuses the move (the run plan's stop rule)")
+    g.add_argument("--table-edge", type=float, default=cv("table_edge_m"), help="pelvis x of the table's near edge (the owner's tape); required before the arm is enabled: every raise, retreat and home path is refused if the hand below the table top + 3 cm would pass edge - 2 cm")
     g = ap.add_argument_group("reach (pelvis frame: x ahead, y left)")
     g.add_argument("--psi", default="-30:60:5", help="forearm yaw candidates lo:hi:step (degrees inward), visited outward from the preferred one")
     g.add_argument("--pitch-max", type=float, default=cv("pitch_max_deg")); g.add_argument("--ik-tol", type=float, default=cv("ik_tol_m"))
@@ -70,6 +83,8 @@ def parse():
     g.add_argument("--idle", type=float, default=1.0); g.add_argument("--orders", type=int, default=0)
     g.add_argument("--venue", action="store_true"); g.add_argument("--no-preflight", action="store_true"); g.add_argument("--preflight-args", default="")
     g.add_argument("--accept-calib", action="store_true", help="run with stale calib.json entries")
+    g.add_argument("--expect-calib", default=None, metavar="SHA16", help="refuse to start unless calib.json has this sha16 and the brain tree is clean (every run-plan command)")
+    g.add_argument("--stuck-reminder", type=float, default=30.0, help="seconds between the spoken reminders while the arm is stuck")
     g.add_argument("--mock", action="store_true"); g.add_argument("--mock-gemma", action="store_true")
     return ap.parse_args()
 
@@ -98,10 +113,14 @@ geom.HIGH_RISE, geom.FINGERTIP, geom.PALM_HALF_HEIGHT = cv("high_rise_m"), cv("f
 THRESH = {"upper": P.clear[0], "forearm": P.clear[1], "hand": P.clear[2], "right": P.clear[3], "pitch": P.pitch_max, "table": cv("table_clear_m")}
 _lo, _hi, _st = ([int(v) for v in P.psi.split(":")] + [5])[:3]; PSIS = list(range(_lo, _hi + 1, _st))
 SIG = cv("hold_signature"); Z = np.array([0.0, 0.0, 1.0])
+FLOOR_MARGIN, JOINT_STEP, GAP_AGREE = cv("table_floor_margin_m"), cv("joint_step_rad"), cv("visual_gap_agree_m")
+NO_TABLE_Z = 0.0                      # before any table is known, "below the table top" means below the pelvis origin (home palm z -0.17)
 
 
-class Abort(Exception): pass          # quit the program (signal or 'q')
-class OrderAborted(Exception): pass   # abort this order only ('a')
+class Stop(BaseException): pass       # operator stops: BaseException, so no broad `except Exception` swallows them
+class Abort(Stop): pass               # quit the program (signal or 'q')
+class OrderAborted(Stop): pass        # abort this order only ('a')
+class Frozen(Stop): pass              # a stop during a retreat: the arm holds where it is (stuck)
 
 
 def atomic_write(path, data, mode="w"):
@@ -224,12 +243,15 @@ class Brain:
         t0 = time.time()
         self.rb = build_robot(cfg)                      # DDS, loco (read-only), arm streamer, hands, D435i, YOLOE; arm service off
         self.hand = self.rb.hands["left"]
-        self.arm = motion.Arm(self.rb, cfg, log=self.log_move, tol=P.ik_tol, speed_scale=P.speed, roll_inward=float(getattr(cfg.robot.palm_inward_wrist_roll, "left", 0.0)), check_abort=self.check_abort)
-        self.stuck = False; self.home_req = False; self.home_q = np.array(cfg.arm.home_q.left, float); self.home_palm = self.arm.palm(self.home_q)
-        self.park_q = np.array(PARK_ZERO if P.park == "zero" else list(cfg.arm.home_q.left), float)
-        hs, zs = geom.arm_segments(self.home_q), geom.arm_segments(np.array(PARK_ZERO, float))
-        print("park pose %s: real palm at %s; home_q: real palm %s, fingertips %s (below the table top, behind the slots); joint zero: real palm %s, fingertips %s (on the slots)" % (
-              P.park, r3(self.arm.palm(self.park_q)), r3(self.home_palm), r3(hs["tip"]), r3(zs["palm"]), r3(zs["tip"])), flush=True)
+        self.arm = motion.Arm(self.rb, cfg, log=self.log_move, tol=P.ik_tol, speed_scale=P.speed, roll_inward=float(getattr(cfg.robot.palm_inward_wrist_roll, "left", 0.0)), check_abort=self.check_abort, joint_step=JOINT_STEP)
+        self.stuck = None; self.home_req = False; self.home_q = np.array(cfg.arm.home_q.left, float); self.home_palm = self.arm.palm(self.home_q)
+        self.retreating = self.in_shutdown = self.freeze_req = self.force_quit = False; self.answer = None; self.reminder_t = 0.0
+        self.raise_trail = []; self.retreat_ref = None; self.table_z = None; self.high_z = None; self.up_yaw = None
+        self.mock_keys = [k for k in os.environ.get("BRAIN_MOCK_KEYS", "").split(",") if k] if P.mock else []
+        print("speeds (x%.2f): raise %.3f, high %.3f, lower %.3f, corrections %.3f, approach steps %.3f m/s; joint step %.3f rad per 20 ms target" % (
+              P.speed, 0.10 * P.speed, 0.08 * P.speed, 0.05 * P.speed, self.arm.corr_speed * P.speed, self.arm.step_speed * P.speed, self.arm.joint_cap()), flush=True)
+        hs = geom.arm_segments(self.home_q)
+        print("home_q %s (g1-fetch config): real palm %s, fingertips %s; check against the run plan's expected line before any motion" % (r3(self.home_q), r3(self.home_palm), r3(hs["tip"])), flush=True)
         self.mic = Mic(P.mic) if not P.mock else MOCK["mic"]
         self.cam3 = Cam3(P.cam3) if not P.mock else MOCK["cam3"]
         print("robot ready in %.1f s; mic %s; cam3 %s; runs %s" % (time.time() - t0, self.mic.device, getattr(self.cam3, "node", "?"), self.dir), flush=True)
@@ -271,17 +293,37 @@ class Brain:
             self.check_abort(); time.sleep(min(0.1, max(0.0, end - time.time())))
 
     def check_abort(self):
-        if self.quit: raise Abort()
+        if self.freeze_req: self.freeze_req = False; raise Frozen()
+        if self.quit and not self.in_shutdown: raise Abort()
         if self.abort: self.abort = False; raise OrderAborted()
 
+    def stop_request(self, what):
+        """q, a or Ctrl-C: during a retreat (or the shutdown) a stop that holds the arm where it is; otherwise quit or abort the order."""
+        if self.retreating or self.in_shutdown:
+            print("[%s] stop: the arm holds where it is" % what, flush=True); self.freeze_req = True
+            if what != "a": self.quit = True
+        elif self.stuck:
+            print("[%s] my arm is out and holding: it is never released away from home. h plans the way out; or hold the arm, press L2+B, then type quit!" % what, flush=True)
+            if what != "a": self.quit = True
+        elif what == "a": print("[a] aborting this order", flush=True); self.abort = True
+        else: print("[%s] quitting: the arm comes home first, then the release (q or a again stops it there)" % what, flush=True); self.quit = True
+
     def keys(self):
-        for line in sys.stdin:
-            k = line.strip().lower()
-            if k == "q": print("[q] quitting after a safe release", flush=True); self.quit = True
-            elif k == "a": print("[a] aborting this order", flush=True); self.abort = True
+        for line in sys.stdin: self.key(line)
+
+    def key(self, line):
+            raw = line.strip(); k = raw.lower()
+            if raw == "quit!": print("[quit!] exiting WITHOUT releasing the arm (only after L2+B)", flush=True); self.force_quit = True; self.quit = True
+            elif k == "q": self.stop_request("q")
+            elif k == "a": self.stop_request("a")
             elif k == "r": print("[r] release now", flush=True); self.release_now = True
-            elif k == "h": print("[h] retry the retreat", flush=True); self.home_req = True
-            elif k == "p": self.paused = not self.paused; print("[p] paused" if self.paused else "[p] resumed", flush=True); self.view.update(paused=self.paused)
+            elif k == "h":
+                if self.stuck and not self.retreating: print("[h] planning the way out (nothing moves yet)", flush=True); self.home_req = True
+                else: print("[h] ignored: h works only while the arm is stuck", flush=True)
+            elif k in ("y", "n"):
+                if self.stuck: self.answer = k
+                else: print("[%s] ignored: nothing to confirm" % k, flush=True)
+            elif k == "p": self.paused = not self.paused; print("[p] paused: no new order starts; the arm keeps holding at home" if self.paused else "[p] resumed", flush=True); self.view.update(paused=self.paused)
             elif k.startswith("o"):
                 # owner's observation: "o contact=fingers pushed=2-5 grip=none height=low note=..." (DEV_WORKFLOW vocabulary)
                 obs = dict(kv.split("=", 1) for kv in k[1:].split() if "=" in kv); obs["raw"] = line.strip()
@@ -318,13 +360,72 @@ class Brain:
 
     def arms_enable(self):
         if P.dry: raise RuntimeError("--dry: the arm must not be enabled")
+        if P.table_edge is None and not P.mock: raise motion.SkillFailed("no table edge (--table-edge, the owner's tape): the arm is not enabled")
         if not self.arms_on: self.rb.arms.enable(); self.arms_on = True
     def arms_disable(self):
         if self.arms_on:
             try: self.rb.arms.disable()
             finally: self.arms_on = False
 
+    # --- stuck: the arm holds until the operator ----------------------------------------------------------
+    def set_stuck(self, why):
+        """A refused or stopped move: the arm holds where it is (the streamer keeps the last target), no order runs and nothing moves until
+        the operator: h plans the way out (nothing moves), y runs it; quit! exits without releasing (only after L2+B)."""
+        try: palm = r3(self.arm.palm_meas())
+        except Exception: palm = None
+        self.retreating = False; self.home_req = False; self.go = False; self.answer = None; self.freeze_req = False; self.abort = False
+        self.stuck = {"why": why, "palm": palm, "t": time.time()}; self.reminder_t = time.time()
+        if self.log: self.log.event(ev="stuck", stage=self.state, why=why, palm=palm, tag="scripted skill")
+        print("  STUCK: %s; the arm holds at %s (no move until the operator: h = plan the way out, y = run it; L2+B then quit! = exit without release)" % (why, palm), flush=True)
+        self.say("My arm stopped and is holding. Press h to see the way out.")
+
+    def mock_key(self):
+        """--mock: the scripted operator (BRAIN_MOCK_KEYS, one key per prompt); with none left, the operator holds the arm, presses L2+B
+        and types quit!."""
+        k = self.mock_keys.pop(0) if self.mock_keys else "quit!"
+        print("[mock operator] %s" % k, flush=True); self.key(k)
+
+    def stuck_loop(self):
+        """Hold while stuck: a spoken reminder every --stuck-reminder s; h plans the way out from where the arm is and says it (nothing
+        moves), y within 30 s runs it (announced); any stop during it holds again. Returns True when the arm is home, False on quit!."""
+        while self.stuck:
+            if self.force_quit: return False
+            if P.mock and not self.home_req: self.mock_key(); continue
+            if time.time() - self.reminder_t > P.stuck_reminder:
+                self.say("My arm is still holding. Press h to see the way out."); self.reminder_t = time.time()
+            if not self.home_req: time.sleep(0.2); continue
+            self.home_req = False
+            try: segs = self.plan_retreat()
+            except motion.SkillFailed as e:
+                print("  no safe way out: %s" % e, flush=True)
+                if self.log: self.log.event(ev="way_out", ok=False, why=str(e), tag="scripted skill")
+                self.say("I have no safe way out. Hold my arm, press L2 plus B, then type quit."); continue
+            text = self.describe_retreat(segs); print("  way out: %s; y runs it" % text, flush=True)
+            if self.log: self.log.event(ev="way_out", ok=True, plan=text, tag="scripted skill")
+            self.say("The way out: %s. Press y to run it." % text); self.answer = None; t0 = time.time()
+            while self.answer is None and not self.force_quit and time.time() - t0 < 30.0:
+                if P.mock: self.mock_key()
+                else: time.sleep(0.1)
+            if self.answer != "y": print("  the way out was not confirmed: still holding", flush=True); self.reminder_t = time.time(); continue
+            self.stuck = None
+            if self.run_retreat(segs): self.park_release()
+        return not self.force_quit
+
     # --- perception helpers -------------------------------------------------------------------------
+    def ahead_clear(self, frame, where):
+        """The hard safety on one head frame (ROBOT_RULES): nothing within --near straight ahead at chest height, and enough valid depth
+        to tell (fail-closed: an empty or mostly invalid depth frame refuses, V2_REVIEW round 2). Refuses aloud and returns False."""
+        own = []
+        if self.arms_on:                                                   # the robot's own left arm (measured joints) does not count
+            s = geom.arm_segments(self.arm.q_meas()); own = [(s["upper"], s["elbow"], 0.07), (s["elbow"], s["wrist"], 0.07), (s["wrist"], s["tip"], 0.08)]
+        blocked, why, info = geom.obstacle_ahead(frame, self.rb.frames, x_max=P.near, z_lo=0.15, y_half=0.12, own=own)
+        if self.log: self.log.event(ev="safety_check", stage=self.state, where=where, blocked=blocked, why=why, tag="sensor gate", **info)
+        print("  safety (%s): %s; valid depth %.0f%%, %d points in the zone (%d on my own arm, not counted)" % (where, why or "clear", info["valid"] * 100, info["n_zone"], info["n_own_arm"]), flush=True)
+        if blocked:
+            if self.log: self.log.event(ev="safety", stage=self.state, reason=why, tag="sensor gate")
+            self.say("Something is too close in front of me. Please step back." if "within" in why else "I cannot see well enough in front of me. I stop.", wait=4.0)
+        return not blocked
+
     def detect(self, frame):
         t0 = time.perf_counter(); cans = sorted([d for d in self.rb.detector.detect(frame.color) if d.label == "can"], key=lambda d: d.box[0])
         self.log.event(ev="detect", stage=self.state, n=len(cans), ms=int((time.perf_counter() - t0) * 1000), boxes=[[int(v) for v in d.box] for d in cans], conf=[round(float(d.conf), 2) for d in cans], tag="scripted skill")
@@ -341,8 +442,10 @@ class Brain:
                 "size": "slim" if diam < 0.06 else "standard"}
 
     def table(self, frame, can):
-        """Table plane from the depth band under and beside the can (pelvis frame), or None."""
-        b = can["box"]; H, W = frame.depth.shape[:2]; band = (max(0, b[0] - 160), min(H - 1, b[3] + 4), min(W - 1, b[2] + 160), H - 1)
+        """Table plane from the depth band beside and under the can (pelvis frame), or None. The band starts at the can's mid-height row:
+        with the can a few cm from the table's near edge the rows under its base see mostly the floor (geom.table_plane fits only near
+        the base height and only level planes, so the can's own side does not count)."""
+        b = can["box"]; H, W = frame.depth.shape[:2]; band = (max(0, b[0] - 160), min(H - 1, (b[1] + b[3]) // 2), min(W - 1, b[2] + 160), H - 1)
         try:
             cloud = np.asarray(box_cloud(frame, band, self.rb.frames, step=3, max_points=6000), float); z_hint = float(can["p"][2]) - can["h"] / 2
             plane = geom.table_plane(cloud, z_hint=z_hint)
@@ -370,10 +473,11 @@ class Brain:
         can = np.median(np.array(cans_p), axis=0) if cans_p else None
         blob = None if not blobs else dict(blobs[-1], p=np.median(np.array([b["p"] for b in blobs]), axis=0), front=float(np.median([b["front"] for b in blobs])), near=float(np.median([b["near"] for b in blobs])))
         model = self.arm.palm_meas(); m = {"label": label, "can": can, "blob": None if blob is None else blob["p"], "model_palm": model, "n_blob": None if blob is None else blob["n"], "bbox": None if blob is None else blob["bbox"], "uv_expect": None if blob is None else blob["uv_expect"]}
-        if blob is not None and frame is not None:                         # a hand cut off by the image border gives biased features: measured, not used
-            H, W = frame.color.shape[:2]; u1, v1, u2, v2 = blob["bbox"]; m["edge_px"] = int(min(u1, v1, W - 1 - u2, H - 1 - v2)); m["in_view"] = m["edge_px"] >= 8
+        if blob is not None and frame is not None:                         # a hand cut off by the image border, the window or the radius gives biased features: measured, not used
+            H, W = frame.color.shape[:2]; u1, v1, u2, v2 = blob["bbox"]; m["edge_px"] = int(min(u1, v1, W - 1 - u2, H - 1 - v2)); m["win_edge_px"] = blob.get("win_edge_px"); m["radius_cut"] = blob.get("radius_cut")
+            m["in_view"] = m["edge_px"] >= 8 and (blob.get("win_edge_px") is None or blob["win_edge_px"] >= 8) and not blob.get("radius_cut")
         if can is not None:
-            m["model_off"] = [float((model - can) @ d), float((model - can) @ n), float(model[2] - can[2])]       # model palm relative to the axis, (d, n, z)
+            m["model_off"] = [round(float((model - can) @ d), 4), round(float((model - can) @ n), 4), round(float(model[2] - can[2]), 4)]       # model palm relative to the axis, (d, n, z)
             if blob is not None:
                 f = np.array([blob["front"], blob["near"], blob["p"][2]]); axis = np.array([float(can @ d), float(can @ n), float(can[2])])
                 m["feat"] = r3(f); m["off"] = r3(f - axis)                                                       # features relative to the axis = what K is at the centred pose
@@ -388,12 +492,18 @@ class Brain:
                     hp = box_to_point(frame, Detection("hand", 1.0, hb, "gemma"), self.rb.frames, shrink=0.5)
                 except Exception: hp = None
                 m["gemma_hand"] = None if hp is None else np.asarray(hp, float); m["gemma_box"] = [int(v) for v in hb]
-                if hp is not None and blob is not None: m["gemma_vs_blob"] = round(float(np.linalg.norm(np.asarray(hp) - blob["p"])), 3)
+                if hp is not None and blob is not None: m["gemma_vs_blob"] = round(float(np.linalg.norm(np.asarray(hp) - blob["p"])), 3)   # logged: two different hand points
+                if blob is not None:                                       # the cross-check: how much of Gemma's hand box lies on the depth blob's box
+                    g, b = [float(v) for v in hb], [float(v) for v in blob["bbox"]]
+                    inter = max(0.0, min(g[2], b[2]) - max(g[0], b[0])) * max(0.0, min(g[3], b[3]) - max(g[1], b[1]))
+                    m["gemma_on_blob"] = round(inter / max(1.0, (g[2] - g[0]) * (g[3] - g[1])), 2)
         rec = {k: (r3(v) if isinstance(v, np.ndarray) else v) for k, v in m.items()}
         self.log.event(ev="measure", stage=self.state, tag="sensor gate", **rec)
-        txt = "%s: can %s hand feat %s (%s pts%s) model palm %s | off(feat-axis) %s | model_off %s" % (label, r3(can), m.get("feat"), m["n_blob"], "" if m.get("in_view", True) else ", AT THE IMAGE EDGE: not used", r3(model), m.get("off"), m.get("model_off"))
+        edge = "" if blob is None else ", margins image %s px window %s px%s" % (m.get("edge_px"), m.get("win_edge_px"), ", front at the radius" if m.get("radius_cut") else "")
+        seen = "hand not seen" if blob is None else ("" if m.get("in_view", True) else ", AT THE IMAGE EDGE: not used" if m.get("edge_px", 99) < 8 else ", AT THE WINDOW EDGE: not used")
+        txt = "%s: can %s hand feat %s (%s pts%s%s) model palm %s | off(feat-axis) %s | model_off %s | scatter %s" % (label, r3(can), m.get("feat"), m["n_blob"], edge, seen, r3(model), m.get("off"), m.get("model_off"), m.get("scatter"))
         if "err" in m: txt += " | err (e_d, e_n, e_z) %s" % m["err"]
-        if "gemma_vs_blob" in m: txt += " | gemma hand vs blob %.3f" % m["gemma_vs_blob"]
+        if "gemma_on_blob" in m: txt += " | gemma hand box on the blob %.0f%% (points %.3f apart)" % (m["gemma_on_blob"] * 100, m.get("gemma_vs_blob", -1))
         print("  " + txt, flush=True)
         if frame is not None and save:
             self.bundle(label, frame, {"can": r3(can), "measure": rec})
@@ -414,13 +524,9 @@ class Brain:
         self.view.update(colour=None, message="", stages=[], counters=self.counters)
         t_end = time.time() + P.idle
         while not self.quit:
-            if self.stuck:                                                  # an arm move was refused over the table: no order until it is home
-                if P.mock: print("stuck in the mock: quitting", flush=True); self.quit = True; break
-                if self.home_req:
-                    self.home_req = False; self.stuck = False
-                    try: self.retreat()
-                    except Exception as e: print("retreat failed:", e, flush=True); self.stuck = True
-                time.sleep(0.2); continue
+            if self.stuck:                                                  # a move was refused or stopped: no order until the operator brings it home
+                if not self.stuck_loop(): self.quit = True; break
+                self.go = False; t_end = time.time() + P.idle; continue      # a fresh Enter is needed after a way out
             if getattr(self.mic, "done", False): self.quit = True; break
             if (P.manual or P.probe or P.air) and not self.go and not P.mock and sys.stdin is not None and sys.stdin.isatty(): time.sleep(0.1); continue
             if self.paused: time.sleep(0.2); continue
@@ -529,9 +635,7 @@ class Brain:
         tg = self.can_point(frame, match)
         if tg is None: self.say("I see the %s one but I cannot measure where it is." % want["desc"], wait=3.0); self.o["result"] = "no_depth"; return None
         tg["desc"] = want["desc"]; tg["others"] = [c for c in (self.can_point(frame, d) for d in cans if d is not match) if c is not None]
-        if geom.obstacle_ahead(frame, self.rb.frames, x_max=P.near, z_lo=0.15, y_half=0.12):
-            self.log.event(ev="safety", stage=self.state, reason="obstacle within %.2f m ahead" % P.near, tag="sensor gate")
-            self.say("Something is too close in front of me. Please step back.", wait=4.0); self.o["result"] = "blocked"; return None
+        if not self.ahead_clear(frame, "locate"): self.o["result"] = "blocked"; return None
         tg["plane"] = self.table(frame, tg)
         self.bundle("locate", frame, {"target": r3(tg["p"]), "diam": tg["diam"], "plane": None if tg["plane"] is None else round(tg["plane"]["z"], 3)})
         vis = frame.color.copy()
@@ -555,27 +659,36 @@ class Brain:
         """Raise from the park pose (position only), reach forward high, lower beside the can at the planned pre-grasp."""
         plan = tg["plan"]; self.arm.psi, self.arm.n, self.arm_d = plan["psi"], plan["n"], plan["d"]; self.grasp_z = plan["grasp"][2]; self.high_z = plan["high"][2]
         self.arms_enable(); self.hand.open(wait=False); self.rb.hands["right"].open(wait=False)
-        self.go_home_safe()                                                      # v1's verified order: tuck first, then raise from the shoulder
+        if not self.at_home() and not self.go_home(): raise motion.SkillFailed("the arm is not at home and the way home is refused")   # v1's order: tuck first
         home = self.arm.palm_cmd(); self.home_x = float(home[0]); self.pre = plan["pre"]
+        self.retreat_ref = (np.array([tg["p"][0], tg["p"][1], plan["grasp"][2]]), tg["diam"] / 2)
         self.say("Raising.")                                                     # straight up beside the body, never over the midline
-        for up in (np.array([home[0] + cv("raise_ahead_m"), max(plan["pre"][1], cv("raise_side_y_m")), plan["high"][2]]), np.array([home[0] + cv("raise_ahead_m"), max(float(home[1]), cv("raise_side_y_m")), plan["high"][2]])):
-            try: self.arm.goto(up, 0.10, "up", psi="free", correct=0, validate=self.keepout); break
-            except motion.SkillFailed as e: print("  up waypoint %s skipped: %s" % (r3(up), e), flush=True)
-        else: raise motion.SkillFailed("no raise waypoint solves")
-        self.up_pos, self.up_yaw = up.copy(), self.arm.yaw_now()               # the retreat retraces the reach back to here
-        self.raise_path = list(self.arm.last_path)                              # home -> up: replayed backwards to go home
+        self.arm.open_trail()                                                    # every target of the raise is recorded AS IT STREAMS (round 2 blocker 2)
+        try:
+            for up in (np.array([home[0] + cv("raise_ahead_m"), max(plan["pre"][1], cv("raise_side_y_m")), plan["high"][2]]), np.array([home[0] + cv("raise_ahead_m"), max(float(home[1]), cv("raise_side_y_m")), plan["high"][2]])):
+                try: self.arm.goto(up, 0.10, "up", psi="free", correct=0, validate=self.keepout); break
+                except motion.SkillFailed as e: print("  up waypoint %s skipped: %s" % (r3(up), e), flush=True)
+            else: raise motion.SkillFailed("no raise waypoint solves")
+        finally: self.raise_trail = self.arm.close_trail()                       # any stop: the sent prefix is retraced from where it stopped
+        self.up_pos, self.up_yaw = up.copy(), self.arm.yaw_now()               # the retreat comes back here at the transit height
         self.sag_baseline("up")
         self.say("Reaching."); self.arm.goto(plan["high"], 0.08, "high", correct=0)   # inward at height, above the cans; uncorrected: the sag baseline
         self.sag_baseline("high")
-        self.say("Lowering beside the can."); m_pre = self.arm.goto(plan["pre"], 0.05, "pre", correct=4, ff=True)   # the sag fed forward, then corrected
+        self.arm.floor_z = plan["table_z"] + cv("palm_half_height_m") + FLOOR_MARGIN   # no goal or command under it from here on (round 2 blocker 4)
+        pre = np.asarray(plan["pre"], float) - self.arm_d * P.pre_offset
+        if P.pre_offset: print("  pre-grasp offset %.3f m back along the forearm (--pre-offset, a logged deviation): the servo's error to remove" % P.pre_offset, flush=True)
+        self.say("Lowering beside the can."); m_pre = self.arm.goto(pre, 0.05, "pre", correct=4, ff=True)   # the sag fed forward, then corrected
         self.o["pre_measured"] = r3(m_pre); self.o["pre_err"] = round(self.arm.last["err"], 4); self.cam3_shot("pregrasp")
+        if self.arm.last.get("blocked"): raise motion.SkillFailed("pre-grasp: %s (contact?)" % self.arm.last["blocked"])
+        if self.arm.last["err"] > P.pre_stop: raise motion.SkillFailed("pre-grasp: the measured palm is %.3f m from its goal (stop over %.3f)" % (self.arm.last["err"], P.pre_stop))
         return m_pre
 
     def sag_baseline(self, label):
         """The uncorrected move's error = the arm's sag at that pose (Tuesday: 1.9-2.6 cm at the raise, 2.5-4.7 cm at the high waypoint)."""
         last = self.arm.last; s = float(last.get("err", 0.0)); self.o.setdefault("sag", {})[label] = round(s, 4)
         self.log.event(ev="sag", stage=self.state, label=label, err=round(s, 4), vector=r3(np.asarray(last["goal"]) - np.asarray(last["measured"])), tracking=round(self.arm.tracking(), 4), tag="sensor gate")
-        print("  sag baseline at %s: %.3f m (expected 0.02-0.05), tracking %.3f rad" % (label, s, self.arm.tracking()), flush=True)
+        print("  sag baseline at %s: %.3f m (recorded; over 0.07 stops), tracking %.3f rad" % (label, s, self.arm.tracking()), flush=True)
+        if s > 0.07: raise motion.SkillFailed("the sag at %s is %.3f m (over 0.07: the model disagrees with the arm)" % (label, s))
 
     def servo(self, tg, iters=None):
         """SERVO: hand features and can axis in one head frame; correct (e_d, e_z) with clipped nudges until both are under the
@@ -584,9 +697,10 @@ class Brain:
         for it in range(iters + 1):
             m = self.measure(tg, "servo%d" % it, gemma_box=(not P.no_gemma_hand) and it == 0); last = m
             if m.get("can") is not None: tg["p"] = np.array([m["can"][0], m["can"][1], tg["p"][2]])
-            if it == 0 and m.get("gemma_vs_blob") is not None and m["gemma_vs_blob"] > 0.03:
-                print("  servo: Gemma's hand box and the depth blob disagree by %.3f m: no servo, the model places the hand" % m["gemma_vs_blob"], flush=True)
-                self.log.event(ev="servo", stage=self.state, it=0, aborted="gemma_vs_blob %.3f" % m["gemma_vs_blob"], tag="sensor gate"); break
+            if it == 0 and m.get("in_view", True) and m.get("gemma_on_blob") is not None and m["gemma_on_blob"] < 0.5:     # a cut-off blob is not used anyway
+                print("  servo: only %.0f%% of Gemma's hand box lies on the depth blob: the hand measurement is not trusted, no approach" % (m["gemma_on_blob"] * 100), flush=True)
+                self.log.event(ev="servo", stage=self.state, it=0, aborted="gemma_on_blob %.2f" % m["gemma_on_blob"], tag="sensor gate")
+                raise motion.SkillFailed("Gemma's hand box and the depth blob disagree (%.0f%% overlap)" % (m["gemma_on_blob"] * 100))
             if "err" not in m: break
             e = np.array(m["err"])
             self.view.event({"ev": "servo", "stage": "SERVO", "kind": "iteration %d" % it, "question": "hand error (d, n, z)", "answer": "%.3f %.3f %.3f m" % tuple(e), "ms": 0, "tag": "sensor gate", "t": time.time()})
@@ -599,6 +713,7 @@ class Brain:
             delta = self.arm_d * float(np.clip(e[0], -P.servo_max, P.servo_max)) + Z * float(np.clip(e[2], -P.servo_max, P.servo_max))
             self.log.event(ev="servo", stage=self.state, it=it, err=r3(e), delta=r3(delta), tag="sensor gate")
             print("  servo %d: correcting by %s" % (it, r3(delta)), flush=True); self.arm.nudge(delta, "servo%d" % it); n_corr += 1; self.counters["corrections"] += 1
+            if self.arm.last.get("blocked"): raise motion.SkillFailed("servo %d: %s (contact?)" % (it, self.arm.last["blocked"]))
         self.o["servo"] = {"iters": it, "corrections": n_corr, "err": last.get("err") if last else None, "off": last.get("off") if last else None, "model_off": last.get("model_off") if last else None, "converged": good >= 1}
         return last
 
@@ -611,41 +726,57 @@ class Brain:
         """From a measurement with K and at least 300 hand points: the near face's remaining distance to the closure pose = K's standoff +
         e_n, with the measured palm at that moment (None otherwise). Near closure the can hides the near face (its points are excluded
         with the can's), which only makes this read long."""
-        if m is None or "err" not in m or (m.get("n_blob") or 0) < 300: return None
+        if m is None or "err" not in m or (m.get("n_blob") or 0) < 300 or not m.get("in_view", True): return None
         return (cv("pregrasp_standoff_m") + float(m["err"][1]), self.arm.palm_meas())
+
+    def visual_ok(self, tg):
+        """A visual reading is taken only while the near face is clear of the can (model gap >= 2 cm): nearer, the can hides the near
+        face and the reading is long (the mock: 1.2 cm at closure). Later readings are logged, the gap is the last clear one minus the
+        measured advance."""
+        return float((self.closure_pose(tg) - self.arm.palm_meas()) @ self.arm.n) >= 0.02
 
     def gap_now(self, tg, vis=None):
         """(gap, model gap, visual gap): the model gap = (closure pose from the measured can axis - measured palm) along n; the visual
-        gap = the last visual reading minus the measured advance since. The smaller wins, but only when they agree within 1.5 cm: a
-        visual reading further off is a perception artefact (occlusion, a cut-off blob) and is logged, not used."""
+        gap = the last clear visual reading minus the measured advance since. The gap is the LARGER of the two when they agree within
+        visual_gap_agree_m; with no visual gap, or a disagreement, it is None: the hand does not close (V2_REVIEW round 2 must-fix).
+        --model-grasp (a logged deviation) closes on the model gap alone."""
         n = self.arm.n; pm = self.arm.palm_meas(); g_model = float((self.closure_pose(tg) - pm) @ n)
         g_vis = None if vis is None else vis[0] - float((pm - vis[1]) @ n)
-        use = g_vis is not None and abs(g_vis - g_model) <= 0.015
-        return (min(g_model, g_vis) if use else g_model), g_model, g_vis
+        if g_vis is None: return (g_model if P.model_grasp else None), g_model, g_vis
+        return (max(g_model, g_vis) if abs(g_vis - g_model) <= GAP_AGREE else None), g_model, g_vis
 
     def approach(self, tg, m):
         """APPROACH along +n to the closure pose in 1 cm steps, each re-applying the measured joint correction (motion.step_along). The
-        gap is MEASURED: the closure pose from the latest measured can axis minus the measured palm, and the visual near-face gap when it
-        is seen (the smaller wins). Half way, a fresh measurement: the can moved > 1.5 cm = pushed (abort); the can axis updated.
-        The hand closes only when the measured gap is under 1 cm. A tracking-error rise to 2x the baseline, or a cumulative lag of
-        P.lag behind the commanded advance, is an ABORT: no close (V2_STRATEGY: tracking error and lag are aborts only).
-        Returns 'ok' | 'pushed' | 'aborted'."""
-        self.set_state("APPROACH"); n = self.arm.n
+        gap is MEASURED: the closure pose from the latest measured can axis minus the measured palm, and the visual near-face gap from
+        the last reading taken clear of the can; the LARGER counts and only while they agree within visual_gap_agree_m (no visual gap,
+        or a disagreement: no close; --model-grasp closes on the model alone). Half way, a fresh measurement: the can moved > 1.5 cm =
+        pushed (abort); the can axis updated. The hand closes only when the measured gap is under 1 cm. A tracking-error rise to 2x the
+        baseline, a cumulative lag of P.lag behind the commanded advance, or an advance beyond the standoff + 1.5 cm is an ABORT: no
+        close (V2_STRATEGY: tracking error and lag are aborts only). Returns 'ok' | 'pushed' | 'aborted'."""
+        self.set_state("APPROACH"); n = self.arm.n; why = ""; steps = 0; adv_cmd = 0.0; half = False
+        vis = self.visual_gap(m) if self.visual_ok(tg) else None; gap, g_model, g_vis = self.gap_now(tg, vis); g0 = gap
+        def fmt(v): return "-" if v is None else "%.3f" % v
+        if gap is None:
+            why = "no measured gap to close on (model %.3f, visual %s%s)" % (g_model, fmt(g_vis), "" if g_vis is None else ": they disagree by more than %.3f" % GAP_AGREE)
+            print("  approach: %s: no approach, no close" % why, flush=True); self.o.update(slide_steps=0, approach="aborted", approach_why=why, gap=None, gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4))
+            self.log.event(ev="approach", stage=self.state, steps=0, result="aborted", why=why, gap=None, gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4), tag="scripted skill")
+            self.m_slide = self.arm.palm_meas(); return "aborted"
         if not P.no_prethumb: self.hand.set(THUMB_PRE); self.say("Thumb first."); self.sleep(1.2)
-        self.say("Approaching."); base = self.arm.tracking(); start = self.arm.palm_meas(); sag_ref = self.arm.sag(); steps = 0; adv_cmd = 0.0; why = ""; half = False
-        vis = self.visual_gap(m); gap, g_model, g_vis = self.gap_now(tg, vis); g0 = gap
-        print("  approach: start gap %.3f (model %.3f, visual %s), tracking base %.3f" % (gap, g_model, "-" if g_vis is None else "%.3f" % g_vis, base), flush=True)
-        while gap > 0.004 and steps < 12:
-            self.check_abort(); step = min(cv("approach_step_m"), gap); before = self.arm.palm_meas(); adv_cmd += step
+        self.say("Approaching."); base = self.arm.tracking(); start = self.arm.palm_meas(); sag_ref = self.arm.sag()
+        print("  approach: start gap %.3f (model %.3f, visual %s), tracking base %.3f" % (gap, g_model, fmt(g_vis), base), flush=True)
+        while gap is not None and gap > 0.004 and steps < 12:
+            self.check_abort(); step = min(cv("approach_step_m"), gap)
+            if adv_cmd + step > P.pre + P.pre_offset + 0.015: why = "the approach would advance %.3f m, beyond the standoff + 1.5 cm" % (adv_cmd + step); break
+            before = self.arm.palm_meas(); adv_cmd += step
             meas, te = self.arm.step_along(n, step, "ap%d" % steps, target=start + n * adv_cmd, sag_ref=sag_ref); steps += 1          # on the line from the start
             moved = float((meas - before) @ n); lag = adv_cmd - float((meas - start) @ n); gap, g_model, g_vis = self.gap_now(tg, vis)
-            self.log.event(ev="ap_step", stage=self.state, step=steps, moved=round(moved, 4), gap=round(gap, 4), gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4),
+            self.log.event(ev="ap_step", stage=self.state, step=steps, moved=round(moved, 4), gap=None if gap is None else round(gap, 4), gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4),
                            lag=round(lag, 4), tracking=round(te, 4), base=round(base, 4), q_cmd=r3(self.arm.q_cmd()), q_meas=r3(self.arm.q_meas()), tag="scripted skill")
-            print("  ap%d: moved %.3f, gap %.3f (model %.3f, visual %s), lag %.3f, tracking %.3f (base %.3f)" % (steps, moved, gap, g_model, "-" if g_vis is None else "%.3f" % g_vis, lag, te, base), flush=True)
+            print("  ap%d: moved %.3f, gap %s (model %.3f, visual %s), lag %.3f, tracking %.3f (base %.3f)" % (steps, moved, fmt(gap), g_model, fmt(g_vis), lag, te, base), flush=True)
             if te > base + max(P.contact, base): why = "tracking error %.3f over 2x the base %.3f" % (te, base); break
             if lag > P.lag: why = "the hand lags the commanded advance by %.3f m" % lag; break
-            if not half and g0 - gap >= g0 / 2 and gap > 0.004:
-                half = True; mm = self.measure(tg, "half")
+            if gap is not None and not half and g0 - gap >= g0 / 2 and gap > 0.004:
+                half = True; clear = self.visual_ok(tg); mm = self.measure(tg, "half")
                 if mm.get("can") is not None:
                     moved_can = float(np.linalg.norm(np.asarray(mm["can"][:2]) - tg["p"][:2]))
                     if moved_can > 0.015:
@@ -654,16 +785,17 @@ class Brain:
                     tg["p"] = np.array([mm["can"][0], mm["can"][1], tg["p"][2]])
                 # no d re-correction here: K holds at the standoff where it was measured; nearer the can the visible hand changes (mock: the
                 # fingertip feature drifted 1.9 cm with the hand still), so e_d at half way is logged for diagnosis only
-                v2 = self.visual_gap(mm); vis = v2 if v2 is not None else vis; gap, g_model, g_vis = self.gap_now(tg, vis)
+                v2 = self.visual_gap(mm) if clear else None; vis = v2 if v2 is not None else vis; gap, g_model, g_vis = self.gap_now(tg, vis)
         self.m_slide = self.arm.palm_meas()
-        final = self.measure(tg, "end", save=True); v3 = self.visual_gap(final); vis = v3 if v3 is not None else vis
+        final = self.measure(tg, "end", save=True)                          # logged: at closure the can hides the near face (reads long)
         gap, g_model, g_vis = self.gap_now(tg, vis)
         if why: res = "aborted"
+        elif gap is None: res = "aborted"; why = "the visual gap %s disagrees with the model %.3f" % (fmt(g_vis), g_model) if g_vis is not None else "no visual gap"
         elif gap < 0.01: res = "ok"
         else: res = "aborted"; why = "the measured gap %.3f m did not close" % gap
-        print("  approach: %d steps, %s (%s), measured gap %.3f (model %.3f, visual %s)" % (steps, res, why or "closing", gap, g_model, "-" if g_vis is None else "%.3f" % g_vis), flush=True)
-        self.o.update(slide_steps=steps, approach=res, approach_why=why, gap=round(gap, 4), gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4), slide_measured=r3(self.m_slide))
-        self.log.event(ev="approach", stage=self.state, steps=steps, result=res, why=why, gap=round(gap, 4), gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4), tag="scripted skill")
+        print("  approach: %d steps, %s (%s), measured gap %s (model %.3f, visual %s)" % (steps, res, why or "closing", fmt(gap), g_model, fmt(g_vis)), flush=True)
+        self.o.update(slide_steps=steps, approach=res, approach_why=why, gap=None if gap is None else round(gap, 4), gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4), slide_measured=r3(self.m_slide))
+        self.log.event(ev="approach", stage=self.state, steps=steps, result=res, why=why, gap=None if gap is None else round(gap, 4), gap_model=round(g_model, 4), gap_visual=None if g_vis is None else round(g_vis, 4), tag="scripted skill")
         self.cam3_shot("slide"); self.sleep(0.3)
         return res
 
@@ -706,6 +838,9 @@ class Brain:
             else: fix = self.arm_d * P.fwd if pat == "forward" else Z * P.up
             self.say("Adjusting."); self.hand.set(THUMB_PRE); self.sleep(1.0)
             self.arm.nudge(fix, "fix-" + pat); self.counters["corrections"] += 1
+            if self.arm.last.get("blocked"):
+                print("  the %s correction was blocked (%s): no second close" % (pat, self.arm.last["blocked"]), flush=True)
+                self.log.event(ev="stall", stage=self.state, pattern="fix_blocked", after=pat, tag="sensor gate"); self.o["fix"] = {"pattern": pat, "after": "blocked"}; return False
             self.close_hand(); pat2, st2 = self.stall_pattern()
             self.log.event(ev="stall", stage=self.state, pattern=pat2, hand=st2, after=pat, fix=r3(fix), tag="sensor gate")
             print("  after the %s correction: %s %s" % (pat, pat2, st2), flush=True); self.o["fix"] = {"pattern": pat, "after": pat2}
@@ -838,47 +973,117 @@ class Brain:
 
     def assist(self, desc):
         """After the misses: hold the open hand out at the offer pose and ask the guest to place the can; verify by the signature."""
-        self.set_state("RECOVER", "assist"); self.hand.set(THUMB_PRE); self.sleep(0.8)
+        self.set_state("RECOVER", "assist")
+        if not self.ahead_clear(self.head_frame(), "assist"): self.o["result"] = "blocked"; return None
+        self.hand.set(THUMB_PRE); self.sleep(0.8)
         if self.arms_on:
             m = self.arm.palm_meas(); self.arm.goto(m - self.arm.n * cv("retreat_out_m") + Z * max(0.0, self.high_z - m[2]), 0.08, "assist-up", psi="free", correct=0)
         else:
-            self.arms_enable(); self.go_home_safe(); home = self.arm.palm_cmd()
-            self.arm.goto(np.array([home[0] + 0.05, self.pre[1], self.high_z]), 0.10, "assist-raise", psi="free", correct=0)
+            self.arms_enable()
+            if not self.at_home() and not self.go_home(): self.o["result"] = "stuck"; return None
+            home = self.arm.palm_cmd(); self.arm.open_trail()                  # a raise from home: recorded as it streams, retraced later
+            try: self.arm.goto(np.array([home[0] + cv("raise_ahead_m"), self.pre[1], self.high_z]), 0.10, "assist-raise", psi="free", correct=0, validate=self.keepout)
+            finally: self.raise_trail = self.arm.close_trail()
         self.m_lift = self.arm.palm_meas() - Z * P.lift; self.m_lift = self.arm.goto(self.offer_pose(), 0.06, "assist-offer", psi="free", correct=0); self.at_offer = True
         self.say("I missed. Please place the %s one in my hand." % desc, wait=P.assist_wait)
         self.close_hand()
         return self.verify()
 
-    def out_over_table(self):
-        """True when the arm is enabled and the measured palm is ahead of the raise waypoint: a joint-space move from there (home, park,
-        or the controller taking the arm back) could sweep the hand through the table or the cans."""
-        return self.arms_on and float(self.arm.palm_meas()[0]) > float(self.home_palm[0]) + cv("raise_ahead_m") + 0.03
+    # --- the way home: planned before any motion, never a joint-space sweep over the table ------------------------------------------
+    def at_home(self, q=None):
+        q = self.arm.q_cmd() if q is None else np.asarray(q, float); return float(np.max(np.abs(q - self.home_q))) <= 0.05
 
-    def lift_out(self):
-        """Up first (away from the can along -n and up to the high waypoint's height, the forearm yaw held), then back to the raise
-        waypoint at that height (the yaw blended back to its value there: the reach retraced), position-only IK as the fallback. A refused
-        move HOLDS the arm where it is (no joint-space move from over the table): the brain is marked stuck and takes no order until the
-        operator's `h` (retry) or `q`. Returns True when the hand is back over the edge."""
-        m = self.arm.palm_meas(); hz = max(getattr(self, "high_z", m[2] + cv("high_rise_m")), m[2] + 0.03)
-        # the planned family, reversed: lift with the forearm yaw held, then back to the raise waypoint with the yaw blended back to its
-        # value there; position-only IK (which drifts toward a joint limit on cross-body reaches) is the fallback
-        back = getattr(self, "up_pos", None); back_yaw = getattr(self, "up_yaw", None)
-        if back is None: back = np.array([float(self.home_palm[0]) + cv("raise_ahead_m"), max(float(m[1]), cv("raise_side_y_m")), hz])
-        else: back = np.array([back[0], back[1], max(back[2], hz)])
-        moves = ((m - self.arm.n * cv("retreat_out_m") + Z * (hz - m[2]), "retreat-up", self.arm.yaw_now()), (back, "retreat-back", back_yaw))
-        for goal, label, yaw in moves:
-            err = None
-            for psi in ((yaw, "free") if yaw is not None else ("free",)):
-                try: self.arm.goto(goal, 0.08, label, psi=psi, n="keep", correct=0); err = None; break
-                except motion.SkillFailed as e: err = e; print("  %s with psi %s refused: %s" % (label, psi, e), flush=True)
-            if err is None: continue
-            if label == "retreat-up":                                         # a smaller safe move: straight up 6 cm
-                try: self.arm.goto(self.arm.palm_meas() + Z * 0.06, 0.05, "retreat-up-short", psi="free", correct=0); continue
-                except motion.SkillFailed as e2: err = e2
-            self.stuck = True
-            if self.log: self.log.event(ev="stuck", stage=self.state, label=label, error=str(err), palm=r3(self.arm.palm_meas()), tag="scripted skill")
-            print("  %s refused (%s): the arm holds over the table; press h to retry, q to quit" % (label, err), flush=True)
-            self.say("My arm stopped over the table. Press h to retry, or q to quit."); return False
+    def table_top(self):
+        """The table height for the keep-out and the home region: the fitted plane of this order, the taped one in --air, else
+        NO_TABLE_Z (before any table is known: below the pelvis origin)."""
+        return self.table_z if self.table_z is not None else (P.air_table if P.air and P.air_table is not None else NO_TABLE_Z)
+
+    def home_region(self, q):
+        """The hand below the table-top height and behind the raise waypoint: a joint-space move to home cannot reach the table."""
+        s = geom.arm_segments(np.asarray(q, float)); top = self.table_top() - 0.02
+        return all(s[k][2] < top for k in ("wrist", "palm")) and float(s["palm"][0]) <= float(self.home_palm[0]) + cv("raise_ahead_m") + 0.03
+
+    def trail_index(self, q):
+        """The index of the recorded raise target the command sits on (a stop during the raise or the retraced descent), or None."""
+        tr = self.raise_trail
+        if not tr: return None
+        d = np.max(np.abs(np.asarray(tr) - np.asarray(q, float)[None, :]), axis=1); k = int(np.argmin(d))
+        return k if float(d[k]) <= 2 * self.arm.joint_cap() + 1e-6 else None
+
+    def joint_line(self, qa, qb):
+        """Joint targets from qa to qb, at most one joint step (x speed) per target."""
+        qa, qb = np.asarray(qa, float), np.asarray(qb, float); k = max(1, int(np.ceil(float(np.max(np.abs(qb - qa))) / self.arm.joint_cap() - 1e-9)))
+        return [qa + (qb - qa) * (i / k) for i in range(1, k + 1)]
+
+    def plan_line(self, q0, goal, yaws, label):
+        """A straight line of the palm from q0's palm to goal, roll kept, trying the forearm yaws in order (a number: the yaw blended from
+        q0's; "free": position only). Returns the joint targets; raises SkillFailed if none solves."""
+        p0 = self.arm.palm(q0); yaw0 = float(geom.forearm_yaw_pitch(geom.arm_segments(q0)["d"])[0]); err = None
+        for psi in yaws:
+            try: return [q for q, _ in self.arm.path(p0, goal, psi, "keep", 0.08 * P.speed * self.arm.step_s, None if psi == "free" else yaw0, q_start=q0)]
+            except motion.SkillFailed as e: err = e; print("  %s with psi %s refused: %s" % (label, psi, e), flush=True)
+        raise motion.SkillFailed("%s: %s" % (label, err))
+
+    def plan_retreat(self):
+        """The way home from where the arm is, solved and keep-out checked before any motion: [(label, how, joint targets)].
+        On the recorded raise (a stop during the raise or the descent): the raise retraced from there. Over the table: up first to the
+        transit height (out along -n only until retreat_out_m from the can: a retry never walks further), back to the raise end at that
+        height, a short joint-space bridge onto it, the raise retraced. Below the table-top height and behind the raise: joint space.
+        Anything else raises SkillFailed (the arm holds; the operator decides): never a joint-space move from above the table."""
+        q = self.arm.q_cmd(); segs = []
+        if self.at_home(q): return segs
+        tr = self.raise_trail; k = self.trail_index(q)
+        if k is None and self.home_region(q):
+            segs.append(("home", "joint space", self.joint_line(q, self.home_q)))
+        else:
+            if k is None:
+                if not tr: raise motion.SkillFailed("the arm is away from home with no recorded raise: no automatic way home")
+                p = self.arm.palm(q); end = self.arm.palm(tr[-1]); hz = max(float(end[2]), self.high_z or 0.0)
+                if p[2] < hz - 0.01:
+                    goal = np.array([p[0], p[1], hz])
+                    if self.retreat_ref is not None:                       # away from the can along -n, only up to retreat_out_m beyond the pre-grasp line
+                        c, r = self.retreat_ref; s = float((c - p) @ self.arm.n); want = r + cv("palm_to_axis_m") + cv("retreat_out_m")
+                        goal = goal - self.arm.n * max(0.0, want - s)
+                    qs = self.plan_line(q, goal, (self.arm.yaw_now(), "free"), "retreat-up"); segs.append(("retreat-up", "up first", qs)); q = qs[-1]; p = self.arm.palm(q)
+                goal = np.array([end[0], end[1], max(float(end[2]), float(p[2]))])
+                if float(np.linalg.norm(goal - p)) > 0.005:
+                    qs = self.plan_line(q, goal, ((self.up_yaw,) if self.up_yaw is not None else ()) + ("free",), "retreat-back"); segs.append(("retreat-back", "back over the edge", qs)); q = qs[-1]
+                if float(np.linalg.norm(self.arm.palm(q) - end)) > 0.05: raise motion.SkillFailed("the retreat ends %.3f m from the raise end" % float(np.linalg.norm(self.arm.palm(q) - end)))
+                segs.append(("bridge", "onto the raise end", self.joint_line(q, tr[-1]))); k = len(tr) - 1
+            down = [np.asarray(v, float) for v in reversed(tr[:k])]
+            if not self.at_home(tr[0]):
+                if not self.home_region(tr[0]): raise motion.SkillFailed("the recorded raise does not start at home")
+                down += self.joint_line(tr[0], self.home_q)
+            elif down: down += self.joint_line(down[-1], self.home_q)
+            else: down = self.joint_line(q if k is None else tr[k], self.home_q)
+            segs.append(("home", "the raise retraced", down))
+        for label, how, qs in segs: self.keepout(qs, "%s (%s)" % (label, how))
+        return segs
+
+    def describe_retreat(self, segs):
+        parts = []
+        for label, how, qs in segs:
+            a, b = self.arm.palm(qs[0]), self.arm.palm(qs[-1]); parts.append("%s %d centimetres" % (label.replace("-", " "), round(float(np.linalg.norm(b - a)) * 100)))
+        return ", then ".join(parts) if parts else "nothing, the arm is home"
+
+    def run_retreat(self, segs):
+        """Stream the planned way home, announced; a or q (or Ctrl-C) during it stops the arm where it is: stuck. True when home."""
+        if not segs: return True
+        self.retreating = True; said = False
+        try:
+            for label, how, qs in segs:
+                if label in ("retreat-up", "retreat-back") and not said: self.say("Up and back."); said = True
+                if label == "home": self.say("Home.")
+                self.arm.replay(qs, label)
+                m = self.arm.palm_meas()
+                if self.log: self.log.event(ev="move" if label != "home" else "home", stage=self.state, label=label, how=how, measured=r3(m), q_cmd=r3(self.arm.q_cmd()), tag="scripted skill")
+                print("  %s (%s): measured palm %s" % (label, how, r3(m)), flush=True)
+        except Stop as e:
+            self.set_stuck("stopped during the retreat (%s)" % type(e).__name__); return False
+        except motion.SkillFailed as e:
+            self.set_stuck("retreat refused: %s" % e); return False
+        finally: self.retreating = False
+        self.raise_trail = []; self.retreat_ref = None; self.arm.floor_z = None
         return True
 
     def low_reach(self, qs, below):
@@ -891,67 +1096,55 @@ class Brain:
         return worst
 
     def keepout(self, qs, label):
-        """The table keep-out on a path, before it moves: below the table top + 3 cm the hand must stay behind the table's near edge.
-        The edge comes from calib table_edge_m (the owner's tape); without it the reach is printed and logged for the owner to compare."""
-        tz = getattr(self, "table_z", None); below = (tz if tz is not None else 0.075) + 0.03; reach = self.low_reach(qs, below); edge = cv("table_edge_m")
+        """The table keep-out on a transit path (raise, retreat, home, park), before it moves: below the table top + 3 cm the hand must
+        stay 2 cm behind the table's near edge (--table-edge / calib table_edge_m, required to enable the arm)."""
+        below = self.table_top() + 0.03 if (self.table_z is not None or P.air) else float("inf"); reach = self.low_reach(qs, below); edge = P.table_edge   # no table known yet: every point counts
         if self.log: self.log.event(ev="keepout", stage=self.state, label=label, below_z=round(below, 3), reach_x=round(reach, 3), edge_x=edge, tag="scripted skill")
         print("  %s path: below z %.3f the hand stays behind x %.3f%s" % (label, below, reach, "" if edge is None else " (taped table edge %.3f)" % edge), flush=True)
+        if edge is None and not P.mock: raise motion.SkillFailed("%s: no table edge (--table-edge): the keep-out cannot be checked" % label)
         if edge is not None and reach > edge - 0.02: raise motion.SkillFailed("%s: the hand would pass x %.3f below the table top; the taped edge is %.3f" % (label, reach, edge))
 
-    def go_home_safe(self, duration=2.0):
-        """Home, announced: from over the table only after lift_out (else it raises). From the raise waypoint the descent RETRACES the
-        recorded raise (a short joint-space bridge onto its end, high above the table, then its joint targets backwards): a plain
-        joint-space move from there swings the forearm down through horizontal with the fingertips at the table-top height 38 cm ahead,
-        over the slots (FK of the 2d4f1ca path). Without a recorded raise, the joint-space move, keep-out checked. Both are refused before
-        any motion if they cross the taped table edge."""
-        if self.out_over_table() and not self.lift_out(): raise motion.SkillFailed("the arm is stuck over the table; not moving home")
-        q_now = self.arm.q_cmd()
-        if float(np.max(np.abs(q_now - self.home_q))) <= 0.05: return
-        rp = getattr(self, "raise_path", None) or []
-        if rp and float(np.linalg.norm(self.arm.palm(q_now) - self.arm.palm(rp[-1]))) < 0.05:
-            k = max(1, int(np.ceil(float(np.max(np.abs(rp[-1] - q_now))) / 0.02)))
-            path = [q_now + (rp[-1] - q_now) * (i / k) for i in range(1, k + 1)] + list(reversed(rp[:-1])) + [self.home_q.copy()]; how = "the raise retraced"
-        else:
-            k = max(1, int(np.ceil(float(np.max(np.abs(self.home_q - q_now))) / 0.01)))
-            path = [q_now + (self.home_q - q_now) * (i / k) for i in range(1, k + 1)]; how = "joint space"
-        self.keepout(path, "home (%s)" % how)
-        self.say("Home."); self.arm.replay(path, "home")
-        if self.log: self.log.event(ev="home", stage=self.state, how=how, palm=r3(self.arm.palm_meas()), tag="scripted skill")
+    def go_home(self):
+        """Home from wherever the arm is, planned first (plan_retreat), announced; a refusal or a stop holds the arm (stuck). True when home."""
+        try: segs = self.plan_retreat()
+        except motion.SkillFailed as e: self.set_stuck("no way home: %s" % e); return False
+        return self.run_retreat(segs)
 
     def retreat(self):
-        """Up first, back over the table edge (position only), home, park, each announced. A refused move holds the arm (stuck)."""
+        """RECOVER: up first, back over the table edge, the raise retraced, home; each announced. A refusal or a stop: stuck."""
         self.set_state("RECOVER", "retreat")
-        if not self.arms_on: self.park(); return
-        if self.out_over_table() and not self.lift_out(): return
-        self.go_home_safe(2.5); self.park()
+        if not self.arms_on or self.stuck: return not self.stuck
+        if self.go_home(): self.park_release(); return True
+        return False
+
+    def park_release(self):
+        """--park release: at home only, announced (g1-fetch ramps the arm_sdk weight to 0 and the controller takes the arm)."""
+        if P.park == "release" and self.arms_on and self.at_home():
+            self.say("Releasing my arm."); self.arms_disable()
 
     def park(self):
-        """Between orders: the park pose (default home: the real palm beside the hip, below the table top), announced. Never under --dry;
-        from over the table only after lift_out; a failed park holds the arm rather than letting the controller take it from there."""
-        if P.dry: return
-        if P.park == "release":
-            if self.out_over_table() and not self.lift_out(): return
-            self.arms_disable(); return
-        try:
-            self.arms_enable()
-            if self.out_over_table() and not self.lift_out(): return
-            if float(np.max(np.abs(self.arm.q_cmd() - self.park_q))) > 0.02:
-                self.say("Parking."); self.rb.arms.move_to("left", self.park_q.copy(), 2.5 / P.speed); self.rb.arms.wait_settled("left", tol=0.08, timeout=3.0)
-            if self.log: self.log.event(ev="park", stage=self.state, pose=P.park, q=self.park_q.tolist(), palm=r3(self.arm.palm(self.park_q)), tag="scripted skill")
-        except Exception as e:
-            print("park failed:", e, flush=True)
-            if self.arms_on and not self.out_over_table(): self.arms_disable()
-            else: self.stuck = True
+        """At start (never under --dry): the arm must already hang below the table top behind the raise (the measured joints, before the
+        streamer takes it), then a joint-space move to home, announced. Returns False (nothing enabled, nothing moved) otherwise."""
+        if P.dry: return True
+        q = np.asarray(self.rb.arms.measured("left"), float)
+        if not (self.at_home(q) or self.home_region(q)):
+            print("park refused: the left arm is not at the side (palm %s): lower it (remote, or L2+B) and restart; the streamer is not enabled" % r3(self.arm.palm(q)), flush=True)
+            self.say("My arm is not at my side. I will not move it."); return False
+        self.arms_enable()
+        if not self.at_home():
+            self.say("Parking."); ok = self.go_home()
+            if not ok: return False
+        if self.log: self.log.event(ev="park", stage=self.state, pose="home", q=self.home_q.tolist(), palm=r3(self.arm.palm(self.home_q)), tag="scripted skill")
+        self.park_release(); return True
 
     def recover_fast(self):
-        """Abort or failure: open the hand (thumb last), then the safe retreat (up first, back over the edge, home, park); never a
-        joint-space park from beside the can (V2_REVIEW blocker 2)."""
+        """Abort or failure: open the hand (thumb last), then the safe retreat (up first, back over the edge, the raise retraced home);
+        a refusal or a stop holds the arm, announced (stuck)."""
         try: self.hand.set(THUMB_PRE); time.sleep(0.8); self.hand.open(wait=True)
         except Exception as e: print("hand open failed:", e)
         try: self.retreat()
-        except Exception as e:
-            print("retreat failed: %s; the arm holds where it is" % e, flush=True); self.stuck = True
-            if self.log: self.log.event(ev="stuck", stage=self.state, error=str(e), tag="scripted skill")
+        except Stop as e: self.set_stuck("stopped during the recovery (%s)" % type(e).__name__)
+        except Exception as e: self.set_stuck("retreat failed: %s" % (e or type(e).__name__))
 
     # --- one order ---------------------------------------------------------------------------------
     def order(self):
@@ -977,23 +1170,29 @@ class Brain:
             if P.dry:
                 self.say("Dry run. I would pick the %s one, %d centimetres ahead and %d to my left, forearm yaw %d degrees." % (tg["desc"], round(tg["p"][0] * 100), round(tg["p"][1] * 100), tg["plan"]["psi"]), wait=4.0)
                 return self.finish("dry")
+            if P.K is None and not P.model_grasp:                             # V2_REVIEW round 2: no model-only grasp unless asked for and logged
+                self.say("I have no hand constant yet, so I do not grasp. The kill test measures it.", wait=2.0); return self.finish("no_K")
+            if P.K is None: self.log.event(ev="deviation", key="model_grasp", calib=None, cli=True, tag="scripted skill")
             grasped = self.pick(tg) and self.lift(tg)
             if not grasped:
-                self.say("Missed. Let me try once more."); self.hand.open(wait=True); self.retreat()
+                self.say("Missed. Let me try once more."); self.hand.open(wait=True)
+                if not self.retreat(): return self.finish("stuck")
                 tg = self.locate(idx, scene)
-                grasped = tg is not None and self.pick(tg) and self.lift(tg)
+                if tg is None: return self.finish(self.o["result"])             # a refused locate ends the order: no assist (V2_REVIEW round 2)
+                grasped = self.pick(tg) and self.lift(tg)
                 if not grasped:
-                    if tg is not None: self.hand.open(wait=True)
+                    self.hand.open(wait=True)
                     grasped = self.assist(scene[idx]["desc"])
+                    if grasped is None: return self.finish(self.o["result"] or "blocked")
                     if not grasped:
                         self.say("Sorry, I could not hold the can. Let us try another order."); self.hand.open(wait=True); self.retreat(); return self.finish("missed")
                     self.o["assisted"] = True
             self.check()
             self.handover()
-            try: self.retreat()
-            except (OrderAborted, Abort): raise
-            except Exception as e: print("retreat failed after the handover:", e, flush=True); self.log.event(ev="error", stage=self.state, error="retreat: %s" % e); self.recover_fast()
+            if not self.retreat(): return self.finish("stuck")
             return self.finish("assisted" if self.o["assisted"] else "success")
+        except Frozen:
+            self.set_stuck("stopped"); return self.finish("stuck")
         except OrderAborted:
             self.say("Order cancelled."); self.recover_fast(); return self.finish("aborted")
         except SkillFailed as e:
@@ -1001,6 +1200,8 @@ class Brain:
         except Abort: raise
         except Exception as e:
             traceback.print_exc(); self.say("Something went wrong. Resetting."); self.log.event(ev="error", stage=self.state, error=traceback.format_exc()); self.recover_fast(); return self.finish("error: %s" % e)
+        finally:
+            if self.o is not None and self.stuck: self.o["stuck"] = self.stuck
 
     def probe(self, scene):
         """--probe (the kill test, experiment 2): the chosen can, the plan, the pre-grasp at the model, 5 measurements of the hand
@@ -1011,17 +1212,19 @@ class Brain:
         self.set_state("PICK", "probe"); self.to_pregrasp(tg); self.say("Measuring."); self.sleep(P.pause)
         m = self.measure(tg, "probe", frames=max(5, P.frames), gemma_box=not P.no_gemma_hand)
         if P.probe_servo and P.K: self.servo(tg)
-        self.o["probe"] = {k: (r3(v) if isinstance(v, np.ndarray) else v) for k, v in m.items() if k in ("can", "blob", "model_palm", "off", "model_off", "feat", "err", "n_blob", "scatter", "gemma_vs_blob")}
+        self.o["probe"] = {k: (r3(v) if isinstance(v, np.ndarray) else v) for k, v in m.items() if k in ("can", "blob", "model_palm", "off", "model_off", "feat", "err", "n_blob", "scatter", "gemma_vs_blob", "gemma_on_blob", "edge_px", "win_edge_px", "in_view")}
         if "off" in m: self.say("Measured. Fingertip %d, near face %d, height %d millimetres from the can axis; the model palm %d, %d, %d." % tuple(round(v * 1000) for v in (list(m["off"]) + list(m["model_off"]))), wait=3.0)
         else: self.say("I could not see my hand and the can together.", wait=2.0)
-        self.retreat(); return self.finish("probe")
+        if not self.retreat(): return self.finish("stuck")
+        return self.finish("probe")
 
     def table_at(self, frame, p):
-        """Table plane fitted in a depth window around the projected point p (pelvis frame) with p's z as the hint; None if not seen."""
+        """Table plane fitted in a depth window around the projected point p (pelvis frame), WITHOUT a height hint (a hint would hide
+        a tape error over 6 cm behind the fit's own gate); None if no level plane is seen."""
         uv = geom.pelvis_to_pixel(self.rb.frames, frame.intrinsics, p)
         if uv is None: return None
         pts, uu, vv = geom.cloud_in_window(frame, self.rb.frames, uv[0], uv[1], 70, 50, 3)
-        return geom.table_plane(pts, z_hint=float(p[2])) if pts.shape[0] else None
+        return geom.table_plane(pts, z_hint=None) if pts.shape[0] else None
 
     def air(self):
         """--air (experiment 3, no can). One head frame first: the 0.30 m rule (refused as locate refuses) and the table under the
@@ -1034,37 +1237,46 @@ class Brain:
         print("  air target: axis z = table %.3f + half can height %.3f + margin %.3f = %.3f; the planned palm centre z = axis - %.3f, its lowest point table + %.3f" % (
               P.air_table, h / 2, margin, z_axis, P.grasp_below, z_axis - P.grasp_below - cv("palm_half_height_m") - P.air_table), flush=True)
         frame = self.head_frame(); self.bundle("air_check", frame, {"air_can": P.air_can, "air_table": P.air_table})
-        if geom.obstacle_ahead(frame, self.rb.frames, x_max=P.near, z_lo=0.15, y_half=0.12):
-            self.log.event(ev="safety", stage=self.state, reason="obstacle within %.2f m ahead" % P.near, tag="sensor gate")
-            self.say("Something is too close in front of me. Please step back.", wait=4.0); return self.finish("blocked")
+        if not self.ahead_clear(frame, "air"): return self.finish("blocked")
         seen = self.table_at(frame, np.array([P.air_can[0], P.air_can[1], P.air_table]))
         self.log.event(ev="plane", stage=self.state, plane=None if seen is None else {"z": round(seen["z"], 3), "n_in": seen["n_in"], "tilt_deg": round(seen["tilt_deg"], 1)}, tape=P.air_table, tag="sensor gate")
-        if seen is not None and abs(seen["z"] - P.air_table) > 0.02:
+        if seen is None:
+            print("  table under the air target: not fitted from depth (tape %.3f): no motion" % P.air_table, flush=True)
+            self.say("I cannot see the table under the air target. I stop.", wait=3.0); return self.finish("air_table_not_seen")
+        if abs(seen["z"] - P.air_table) > 0.02:
             print("  table under the air target: depth %.3f vs tape %.3f: more than 2 cm apart" % (seen["z"], P.air_table), flush=True)
             self.say("The table I see is not where the tape says. I stop.", wait=3.0); return self.finish("air_table_mismatch")
-        print("  table under the air target: %s (tape %.3f)" % ("not fitted from depth" if seen is None else "depth %.3f" % seen["z"], P.air_table), flush=True)
+        print("  table under the air target: depth %.3f (tape %.3f)" % (seen["z"], P.air_table), flush=True)
+        self.table_z = P.air_table                                               # the REAL table for the keep-out and the floor, not the virtual one
         zt = z_axis - h / 2
         tg = {"p": np.array([P.air_can[0], P.air_can[1], z_axis]), "diam": 0.066, "h": h, "box": [0, 0, 1, 1], "others": [], "desc": "air target",
               "plane": {"z": zt, "n": np.array([0.0, 0.0, 1.0]), "d": zt, "n_in": 0, "tilt_deg": 0.0}}     # the virtual table 3 cm above the real one
         plan = self.plan(tg, pre=max(P.pre, 0.05))
         if "psi" not in plan: self.say("No plan for the air target."); return self.finish("air_no_plan")
-        tg["plan"] = plan
-        if P.dry: self.say("Dry run. The air target plans at forearm yaw %d degrees." % plan["psi"], wait=3.0); return self.finish("dry")
+        tg["plan"] = plan; plan["table_z"] = P.air_table                       # the floor from the real table (the virtual one is 3 cm higher)
+        if P.dry:
+            q_up = self.home_q; up = self.arm.palm(q_up) + np.array([cv("raise_ahead_m"), 0.0, 0.0]); up = np.array([up[0], max(plan["pre"][1], cv("raise_side_y_m")), plan["high"][2]])
+            try:
+                qs = [q for q, _ in self.arm.path(self.arm.palm(q_up), up, "free", None, 0.10 * P.speed * self.arm.step_s, q_start=q_up)]
+                print("  dry raise from home: below z %.3f the hand stays behind x %.3f%s" % (P.air_table + 0.03, self.low_reach(qs, P.air_table + 0.03), "" if P.table_edge is None else " (taped table edge %.3f)" % P.table_edge), flush=True)
+            except motion.SkillFailed as e: print("  dry raise from home does not solve: %s" % e, flush=True)
+            self.say("Dry run. The air target plans at forearm yaw %d degrees." % plan["psi"], wait=3.0); return self.finish("dry")
         self.set_state("PICK", "air"); m_pre = self.to_pregrasp(tg); self.say("Pre-grasp. Baseline."); self.sleep(P.pause)
         base = self.arm.tracking(); self.log.event(ev="baseline", stage=self.state, tracking=round(base, 4), tag="sensor gate"); print("  tracking baseline %.3f rad" % base, flush=True)
         try: self.measure(tg, "air")
         except Exception as e: print("  measure in air failed:", e)
-        start = self.arm.palm_meas()
+        start = self.arm.palm_meas(); self.say("Sliding.")
         for k in range(5):
             before = self.arm.palm_meas(); m, te = self.arm.step_along(plan["n"], 0.01, "air%d" % k, target=start + plan["n"] * 0.01 * (k + 1)); moved = float((m - before) @ plan["n"])
             self.log.event(ev="ap_step", stage=self.state, step=k, moved=round(moved, 4), measured=r3(m), tracking=round(te, 4), base=round(base, 4), q_cmd=r3(self.arm.q_cmd()), q_meas=r3(self.arm.q_meas()), tag="scripted skill")
             print("  air%d: moved %.3f along n (commanded 0.010), tracking %.3f (base %.3f)" % (k, moved, te, base), flush=True)
         end_p = self.arm.palm_meas(); want = start + plan["n"] * 0.05; slide_err = float(np.linalg.norm(end_p - want))
         print("  slide end: measured palm %s, expected %s, error %.3f (pass under 0.010)" % (r3(end_p), r3(want), slide_err), flush=True); self.sleep(1.0)
-        back0 = self.arm.palm_meas()
+        back0 = self.arm.palm_meas(); self.say("Back.")
         for k in range(5): self.arm.step_along(-plan["n"], 0.01, "back%d" % k, target=back0 - plan["n"] * 0.01 * (k + 1))
         self.o["air"] = {"psi": plan["psi"], "sag": self.o.get("sag"), "pre_err": self.o.get("pre_err"), "tracking_base": round(base, 4), "slide_err": round(slide_err, 4)}
-        self.retreat(); return self.finish("air")
+        if not self.retreat(): return self.finish("stuck")
+        return self.finish("air")
 
     def finish(self, result):
         self.o["result"] = result; self.o["stages"].append({"stage": self.state, "ms": int((time.time() - self.stage_t0) * 1000)})
@@ -1083,17 +1295,29 @@ class Brain:
         return result
 
     def shutdown(self):
-        print("== shutting down: hand open, arm streamer off, arm service on", flush=True)
+        """Quit: the arm comes home first (announced; q, a or Ctrl-C during it stops it there: stuck), then the hand opens and the arm is
+        released, announced. The arm is NEVER released away from home (g1-fetch ramps the arm_sdk weight to 0 and the controller takes
+        it back in a joint-space move): stuck means hold until h + y bring it home, or quit! (after L2+B) exits without releasing."""
+        print("== shutting down: the arm comes home first; it is released only at home", flush=True)
+        self.in_shutdown = True; self.quit = True; self.abort = False; self.freeze_req = False
         self.state = "OFF"; self.view.update(state="OFF", message="brain stopped")
         try:
-            if self.out_over_table():
-                self.say("Moving my arm back before I stop."); self.quit = False; self.abort = False
-                if self.lift_out(): self.go_home_safe(2.5)
-        except Exception as e: print("retreat at shutdown failed:", e)
-        if self.arms_on and self.out_over_table():                          # releasing hands the arm to the controller, which moves it in joint space
-            print("== the arm is still over the table: the controller takes it back in 3 s", flush=True)
-            self.say("I am releasing my arm over the table. Please hold it."); time.sleep(3.0)
-        for step in (lambda: self.hand.set(THUMB_PRE), lambda: time.sleep(0.8), lambda: self.hand.open(wait=True), self.arms_disable, self.rb.close, self.cam3.close):
+            if self.arms_on and not self.stuck and not self.at_home():
+                self.say("Moving my arm back before I stop."); self.go_home()
+            if self.stuck: self.stuck_loop()
+        except BaseException as e:
+            print("retreat at shutdown failed: %r" % e, flush=True)
+            if not self.stuck: self.set_stuck("retreat at shutdown failed: %r" % e)
+        try: home = (not self.arms_on) or self.at_home()
+        except Exception as e: print("arm state unreadable at shutdown: %s" % e, flush=True); home = False
+        if not home:
+            print("== the arm is NOT at home: it is NOT released (the controller would take it back in a joint-space move); exiting with the"
+                  " streamer's last target held until the process ends: the robot must be in damping (L2+B)", flush=True)
+            if self.log: self.log.event(ev="exit_holding", palm=(self.stuck or {}).get("palm"), tag="scripted skill"); self.log.close()
+            return
+        steps = [] if P.dry else [lambda: self.hand.set(THUMB_PRE), lambda: time.sleep(0.8), lambda: self.hand.open(wait=True)]
+        if self.arms_on: self.say("Releasing my arm.")
+        for step in steps + [self.arms_disable, self.rb.close, self.cam3.close]:
             try: step()
             except Exception as e: print("shutdown step failed:", e)
         try: print("arm service on ->", set_arm_action_service(True), flush=True)
@@ -1114,6 +1338,12 @@ def run_preflight():
 
 def main():
     print(calibmod.table(CAL), flush=True)
+    if P.expect_calib is not None:                                      # DEV_WORKFLOW: calib hash mismatch or a dirty tree = the robot does not move
+        dirty = calibmod.git_dirty()
+        if CAL["_sha256"] != P.expect_calib or dirty:
+            print("CALIB IDENTITY FAILED: calib.json sha %s, expected %s%s: the robot does not move" % (CAL["_sha256"], P.expect_calib, "; the tree is dirty" if dirty else "")); sys.exit(1)
+        print("calib identity: sha %s as expected, tree clean" % CAL["_sha256"], flush=True)
+    elif not P.mock: print("WARNING: no --expect-calib: the calib identity is not enforced (every run-plan command carries it)", flush=True)
     st = calibmod.stale(CAL)
     if st and not P.accept_calib: print("STALE calibration entries: %s. Re-measure, or start with --accept-calib." % st); sys.exit(1)
     dev = calibmod.deviations(CAL, P, CALIB_ARGS)
@@ -1121,16 +1351,17 @@ def main():
     if not P.no_preflight: run_preflight()
     brain = Brain()
     def on_signal(signum, frame):
+        if brain.retreating or brain.in_shutdown or brain.stuck: brain.stop_request("ctrl-c"); return    # stays live: a stop holds the arm
         brain.quit = True; raise Abort()
     for s in (signal.SIGINT, signal.SIGTERM): signal.signal(s, on_signal)
     try:
         if P.dry: print("--dry: the arm is not enabled and does not move (no park)", flush=True)
-        elif P.park != "release": brain.park(); print("left arm parked (%s): real palm at %s" % (P.park, r3(brain.arm.palm(brain.park_q))), flush=True)
-        brain.say("Ready.")
+        elif not brain.park(): print("startup park refused", flush=True); brain.quit = True
+        else: print("left arm at home: real palm at %s%s" % (r3(brain.arm.palm(brain.home_q)), " (released: --park release)" if P.park == "release" else ""), flush=True)
+        if not brain.quit: brain.say("Ready.")
         while not brain.quit and (not P.orders or brain.counters["orders"] < P.orders): brain.order()
-    except Abort: print("abort requested", flush=True)
+    except Stop as e: print("stop requested (%s)" % type(e).__name__, flush=True)
     finally:
-        for s in (signal.SIGINT, signal.SIGTERM): signal.signal(s, signal.SIG_IGN)
         brain.shutdown()
 
 

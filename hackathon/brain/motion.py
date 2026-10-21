@@ -3,10 +3,15 @@ roll axis, 4-joint IK with the forearm yaw held, wrist roll from the palm normal
 targets. The arm sags under gravity: on Tuesday the measured palm sat 1.9-2.6 cm below the command at the raise and 2.5-4.7 cm at the
 high waypoint. So (1) a move can feed the current sag forward (command = goal + the sag measured at rest before the move), which keeps
 the measured palm on the line when lowering toward the table; (2) the remaining error is corrected by streaming the command in capped
-sub-steps until the MEASURED palm is within 6 mm (never one jump: the per-target cap of 2 cm would refuse it); (3) an approach step
-carries the sag and gets one correction unless the hand did not follow (blocked: no harder push, the caller's lag check decides).
-Safety: IK error <= tol per target, joint-limit margin, a 2 cm per-target displacement cap, a cross-check of each goal against
-g1-fetch's pinocchio FK. Also used by mock_robot (the same code path)."""
+sub-steps until the MEASURED palm is within 6 mm, and a round the hand did not follow ends the rounds (contact: no harder push);
+(3) an approach step carries the sag and gets one correction unless the hand did not follow (the caller's lag check decides).
+Safety per streamed target (Arm.set): the palm may not jump more than max_step (refused before it is sent), and no joint may change by
+more than joint_step x speed_scale (the target is split into joint-interpolated sub-targets, one per step_s; g1-fetch's streamer clips
+at max_joint_vel 1.2 rad/s = 0.024 rad per 20 ms tick, so the brain's own cap keeps the streamed command equal to the target). A path's
+wrist roll is blended from where it is to the planned roll over the path (V2_REVIEW round 2 blocker 1: no snap at its first target).
+Every target sent is appended to the open `trail` (the raise is retraced from wherever it stopped, blocker 2). Near the table every goal
+and every command is floored at floor_z = table + palm half-height + margin (blocker 4). Also IK error <= tol, joint-limit margin, a
+cross-check of each goal against g1-fetch's pinocchio FK. Also used by mock_robot (the same code path)."""
 import math, time
 import numpy as np
 import geom
@@ -17,13 +22,17 @@ class SkillFailed(RuntimeError): pass
 
 class Arm:
     def __init__(self, rb, cfg, log=None, tol=None, step_s=0.02, max_step=0.02, sub_step=0.01, corr_tol=0.006, corr_speed=0.04,
-                 speed_scale=1.0, roll_inward=0.0, check_abort=None, kin_check=True):
+                 speed_scale=1.0, roll_inward=0.0, check_abort=None, kin_check=True, joint_step=0.02, step_speed=0.05):
         self.rb, self.cfg, self.log, self.step_s, self.max_step, self.roll_inward = rb, cfg, log, step_s, max_step, roll_inward
         self.tol = geom.IK_TOL if tol is None else tol
         self.sub_step, self.corr_tol, self.corr_speed, self.speed_scale = sub_step, corr_tol, corr_speed, speed_scale
+        self.joint_step, self.step_speed = joint_step, step_speed       # rad per target at speed 1; approach-step speed (m/s at speed 1)
         self.check_abort = check_abort or (lambda: None); self.kin_check = kin_check; self.psi = 0.0; self.n = np.array([0.0, -1.0, 0.0]); self.last = {}
         self.trace = None                                                  # optional callback(label) after each streamed target (tests)
-        self.last_path = []                                                # the joint targets of the last goto (the raise is replayed backwards to go home)
+        self.last_path = []                                                # the joint targets of the last goto
+        self.trail = None                                                  # open: every target sent is appended (the raise, as it streams)
+        self.floor_z = None                                                # table + palm half-height + margin while a table is known
+        self.sent = 0                                                      # targets streamed (logged)
 
     # --- model -------------------------------------------------------------------------------------------------------------------------
     def palm(self, q): return geom.fk_chain_side(np.asarray(q, float))[5][:3, 3]
@@ -33,8 +42,21 @@ class Arm:
     def palm_meas(self): return self.palm(self.q_meas())
     def sag(self): return self.palm_cmd() - self.palm_meas()        # where the command sits relative to the measured hand (the sag)
     def tracking(self): return float(self.rb.arms.tracking_error("left"))
+    def joint_cap(self): return self.joint_step * self.speed_scale
 
     def yaw_now(self): return float(geom.forearm_yaw_pitch(geom.arm_segments(self.q_cmd())["d"])[0])
+
+    def open_trail(self): self.trail = [self.q_cmd()]
+    def close_trail(self):
+        t, self.trail = self.trail, None
+        return t or []
+
+    def floored(self, p, what=""):
+        """p with its z raised to floor_z (table + palm half-height + margin) when a table is known; printed when it binds."""
+        p = np.asarray(p, float)
+        if self.floor_z is None or p[2] >= self.floor_z: return p
+        print("  %s: z %.3f raised to the table floor %.3f" % (what, p[2], self.floor_z), flush=True)
+        return np.array([p[0], p[1], self.floor_z])
 
     def solve(self, p, psi=None, n=None, q_seed=None):
         """q5 for the real palm at p with the forearm yaw psi ("free" = position only, for the raise) and the palm normal n ("keep" =
@@ -60,62 +82,91 @@ class Arm:
         return e
 
     def set(self, q, label=""):
-        """One streamed target with the displacement cap (the commanded palm may not jump more than max_step per target)."""
-        self.check_abort(); q = np.asarray(q, float)
-        jump = float(np.linalg.norm(self.palm(q) - self.palm_cmd()))
+        """One target: refused when the commanded palm would jump more than max_step; a joint change above joint_step x speed_scale is
+        split into joint-interpolated sub-targets, one per step_s (the caller sleeps after the last). Each sent target joins the trail."""
+        self.check_abort(); q = np.asarray(q, float); q0 = self.q_cmd()
+        jump = float(np.linalg.norm(self.palm(q) - self.palm(q0)))
         if jump > self.max_step: raise SkillFailed("%s: a single target would move the palm %.1f cm" % (label, jump * 100))
-        self.rb.arms.set_target("left", q)
-        if self.trace: self.trace(label)
+        k = max(1, int(math.ceil(float(np.max(np.abs(q - q0))) / self.joint_cap() - 1e-9)))
+        for i in range(1, k + 1):
+            qi = q0 + (q - q0) * (i / k)
+            if i > 1: time.sleep(self.step_s); self.check_abort()
+            self.rb.arms.set_target("left", qi); self.sent += 1
+            if self.trail is not None: self.trail.append(qi.copy())
+            if self.trace: self.trace(label)
 
-    def path(self, start, end, psi, n, step, psi_from=None):
+    def path(self, start, end, psi, n, step, psi_from=None, q_start=None):
         """The joint targets of the straight line start -> end in pieces of at most `step` metres, each solved from the previous one,
-        the forearm yaw blended from psi_from to psi (numeric psi): computed BEFORE any motion, so a line that fails anywhere (IK, joint
-        margin) is refused with the arm still. Returns [(q, pitch)]."""
+        the forearm yaw blended from psi_from to psi (numeric psi) and the wrist roll from q_start's to the planned one: computed BEFORE
+        any motion, so a line that fails anywhere (IK, joint margin) is refused with the arm still. Returns [(q, pitch)]."""
         start, end = np.asarray(start, float), np.asarray(end, float)
-        k = max(1, int(math.ceil(float(np.linalg.norm(end - start)) / max(1e-4, min(step, self.sub_step))))); q_prev = self.q_cmd(); out = []
+        k = max(1, int(math.ceil(float(np.linalg.norm(end - start)) / max(1e-4, min(step, self.sub_step)))))
+        q_prev = self.q_cmd() if q_start is None else np.asarray(q_start, float).copy(); roll0 = float(q_prev[4]); out = []
         for i in range(1, k + 1):
             a = i / k; psi_i = psi if (psi in (None, "free") or psi_from is None) else psi_from + (psi - psi_from) * a
-            q, err, pitch = self.solve(start + (end - start) * a, psi_i, n, q_seed=q_prev); out.append((q, pitch)); q_prev = q
+            q, err, pitch = self.solve(start + (end - start) * a, psi_i, n, q_seed=q_prev)
+            q[4] = roll0 + (float(q[4]) - roll0) * a                         # the roll blended along the path (V2_REVIEW round 2 blocker 1)
+            out.append((q, pitch)); q_prev = q
         return out
 
     def stream(self, start, end, psi, n, label, step, psi_from=None):
         """Stream the COMMANDED palm along the straight line start -> end (the whole path solved first), one target per step_s; every
-        target passes the per-target cap. Returns the last (q, pitch)."""
+        target passes the per-target caps. Returns the last (q, pitch)."""
         qs = self.path(start, end, psi, n, step, psi_from)
         for q, _ in qs: self.set(q, label); time.sleep(self.step_s)
         return qs[-1]
 
     # --- moves -------------------------------------------------------------------------------------------------------------------------
     def replay(self, qs, label):
-        """Stream given joint targets (a recorded path, reversed), one per step_s, each through the per-target cap."""
+        """Stream given joint targets (a recorded path, reversed), one per step_s, each through the per-target caps."""
         for q in qs: self.set(np.asarray(q, float), label); time.sleep(self.step_s)
 
-    def goto(self, p_goal, speed=0.08, label="", psi=None, n=None, correct=2, settle=0.4, ff=False, validate=None):
-        """Move the palm to p_goal: the COMMANDED palm streams along a straight line (to p_goal + the current sag when ff), then up to
-        `correct` correction rounds, each streaming the command by the measured error in capped sub-steps, until the MEASURED palm is
-        within corr_tol. Returns the measured palm. Logs a `move` event with the arrival error (before corrections) and the final one."""
-        p_goal = np.asarray(p_goal, float); psi = self.psi if psi is None else psi; n = self.n if n is None else n
+    def line(self, p_goal, speed, label, psi, n, ff, validate=None):
+        """One planned straight line of the commanded palm to p_goal (+ the sag measured now when ff), solved and validated before it
+        streams. Returns (sag fed forward, pitch at the end)."""
         psi0 = None if psi == "free" else geom.forearm_yaw_pitch(geom.arm_segments(self.q_cmd())["d"])[0]   # blend the yaw from where the forearm points now
         step = speed * self.speed_scale * self.step_s; sag0 = self.sag() if ff else np.zeros(3)
-        try: qs = self.path(self.palm_cmd(), p_goal + sag0, psi, n, step, psi0)
+        try: qs = self.path(self.palm_cmd(), self.floored(p_goal + sag0, label + " command"), psi, n, step, psi0)
         except SkillFailed:
-            if not ff: raise
+            if not ff or self.floor_z is not None: raise                     # near the table no fallback: without the sag fed forward the hand lands a full sag (4-5 cm) low
             sag0 = np.zeros(3); qs = self.path(self.palm_cmd(), p_goal, psi, n, step, psi0)   # near the reach limit: no feed-forward, the corrections close the gap
-        pitch = qs[-1][1]; self.cross_check(qs[-1][0], label)
+        self.cross_check(qs[-1][0], label)
         if validate: validate([q for q, _ in qs], label)                # e.g. the table keep-out, before any motion
         self.last_path = [self.q_cmd()] + [q for q, _ in qs]
         for q, _ in qs: self.set(q, label); time.sleep(self.step_s)
+        return sag0, qs[-1][1]
+
+    def goto(self, p_goal, speed=0.08, label="", psi=None, n=None, correct=2, settle=0.4, ff=False, validate=None, above=0.02):
+        """Move the palm to p_goal (floored near the table): the COMMANDED palm streams along a straight line (to p_goal + the current
+        sag when ff), then up to `correct` correction rounds, each streaming the command by the measured error in capped sub-steps, until
+        the MEASURED palm is within corr_tol. Near the table (ff, a goal within `above` of the floor) the line stops `above` higher first
+        and the last part carries the sag measured there: the sag grows with the reach, so one long line dips mid-path (4.5-6.4 mm for a
+        3 cm servo nudge, V2_REVIEW round 2). A round the hand did not follow (moved under half the commanded change) or that did not
+        shrink the error ends the rounds: last['blocked'] (contact; the caller decides). Returns the measured palm. Logs a `move` event."""
+        p_goal = self.floored(p_goal, label + " goal"); psi = self.psi if psi is None else psi; n = self.n if n is None else n
+        if ff and self.floor_z is not None and p_goal[2] < self.floor_z + above and self.palm_meas()[2] > p_goal[2] + above * 0.5:
+            self.line(p_goal + np.array([0.0, 0.0, above]), speed, label + "-above", psi, n, True, validate)
+            try: self.rb.arms.wait_settled("left", tol=0.08, timeout=2.0)
+            except Exception: pass
+            time.sleep(settle)
+        sag0, pitch = self.line(p_goal, speed, label, psi, n, ff, validate)
         try: self.rb.arms.wait_settled("left", tol=0.08, timeout=2.0)
         except Exception: pass
-        time.sleep(settle); arrival = float(np.linalg.norm(p_goal - self.palm_meas())); rounds = 0
+        time.sleep(settle); arrival = float(np.linalg.norm(p_goal - self.palm_meas())); rounds = 0; blocked = ""; e_prev = None
         while rounds < correct:
-            e = p_goal - self.palm_meas()
-            if np.linalg.norm(e) < self.corr_tol: break
-            c0 = self.palm_cmd(); self.stream(c0, c0 + e, psi, n, label + "-corr", self.corr_speed * self.speed_scale * self.step_s)
-            time.sleep(0.5); rounds += 1
+            m0 = self.palm_meas(); e = p_goal - m0; en = float(np.linalg.norm(e))
+            if en < self.corr_tol: break
+            if e_prev is not None and en > e_prev - 0.001: blocked = "the error did not shrink (%.3f after %.3f)" % (en, e_prev); break
+            c0 = self.palm_cmd(); c1 = self.floored(c0 + e, label + "-corr command"); dc = float(np.linalg.norm(c1 - c0))
+            if dc < 1e-4: blocked = "the table floor stops the correction"; break
+            self.stream(c0, c1, psi, n, label + "-corr", self.corr_speed * self.speed_scale * self.step_s)
+            time.sleep(0.5); rounds += 1; e_prev = en
+            moved = float((self.palm_meas() - m0) @ (c1 - c0)) / dc
+            if moved < 0.5 * dc: blocked = "the hand followed %.3f of a %.3f correction" % (moved, dc); break
         m = self.palm_meas(); e = float(np.linalg.norm(p_goal - m))
-        self.last = {"label": label, "goal": p_goal, "measured": m, "err": e, "arrival": arrival, "rounds": rounds, "sag_ff": sag0, "q_cmd": self.q_cmd(), "q_meas": self.q_meas(), "psi": psi, "pitch": pitch}
-        if self.log: self.log(ev="move", label=label, goal=np.round(p_goal, 3).tolist(), measured=np.round(m, 3).tolist(), err=round(e, 4), arrival=round(arrival, 4), rounds=rounds,
+        if blocked: print("  %s: correction stopped: %s (contact: no harder push)" % (label, blocked), flush=True)
+        self.last = {"label": label, "goal": p_goal, "measured": m, "err": e, "arrival": arrival, "rounds": rounds, "sag_ff": sag0, "q_cmd": self.q_cmd(), "q_meas": self.q_meas(), "psi": psi, "pitch": pitch, "blocked": blocked}
+        if self.log: self.log(ev="move", label=label, goal=np.round(p_goal, 3).tolist(), measured=np.round(m, 3).tolist(), err=round(e, 4), arrival=round(arrival, 4), rounds=rounds, blocked=blocked,
                               sag_ff=np.round(sag0, 3).tolist(), psi=psi if psi == "free" else float(psi), pitch=round(float(pitch), 1), q_cmd=np.round(self.q_cmd(), 3).tolist(), q_meas=np.round(self.q_meas(), 3).tolist(), tag="scripted skill")
         print("  %s: goal %s measured %s err %.3f (arrival %.3f, %d correction rounds%s; psi %s, pitch %.1f)" % (label, np.round(p_goal, 3).tolist(), np.round(m, 3).tolist(), e, arrival, rounds,
               ", sag fed forward %.3f" % float(np.linalg.norm(sag0)) if ff else "", psi, pitch), flush=True)
@@ -128,14 +179,16 @@ class Arm:
     def step_along(self, direction, dist, label="step", settle=0.25, target=None, tol=0.003, sag_ref=None):
         """One approach step: the measured palm should reach `target` (default: dist along direction from where it is; a caller on a line
         passes the absolute point so the residuals do not accumulate); the command carries the current sag so the measured hand lands there
-        (V2_STRATEGY: re-apply the measured correction every step), then one correction above `tol`, unless the hand followed less than
-        half the step (blocked: no harder push; the caller's lag check decides). With sag_ref (the sag at rest before the approach), a
-        "sag" more than 1 cm away from it is contact, not gravity: it is not fed forward. Returns (measured palm, tracking error)."""
+        (V2_STRATEGY: re-apply the measured correction every step), streamed at step_speed x speed_scale; then one correction above `tol`,
+        unless the hand followed less than half the step (blocked: no harder push; the caller's lag check decides). With sag_ref (the sag
+        at rest before the approach), a "sag" more than 1 cm away from it is contact, not gravity: it is not fed forward. Target and
+        command are floored near the table. Returns (measured palm, tracking error)."""
         direction = np.asarray(direction, float); before = self.palm_meas(); sag = self.sag()
         if sag_ref is not None and float(np.linalg.norm(sag - np.asarray(sag_ref))) > 0.01: sag = np.asarray(sag_ref, float)
-        target = before + direction * dist if target is None else np.asarray(target, float); cmd = target + sag
-        self.stream(self.palm_cmd(), cmd, None, None, label, self.sub_step); time.sleep(settle)
+        target = self.floored(before + direction * dist if target is None else target, label + " target"); cmd = self.floored(target + sag, label + " command")
+        step = self.step_speed * self.speed_scale * self.step_s
+        self.stream(self.palm_cmd(), cmd, None, None, label, step); time.sleep(settle)
         e = target - self.palm_meas(); want = float((target - before) @ direction)
         if np.linalg.norm(e) > tol and float((self.palm_meas() - before) @ direction) > 0.5 * want:
-            c0 = self.palm_cmd(); self.stream(c0, c0 + e, None, None, label + "-corr", self.sub_step); time.sleep(0.2)
+            c0 = self.palm_cmd(); self.stream(c0, self.floored(c0 + e, label + "-corr command"), None, None, label + "-corr", self.corr_speed * self.speed_scale * self.step_s); time.sleep(0.2)
         return self.palm_meas(), self.tracking()

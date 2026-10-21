@@ -1,25 +1,44 @@
-"""Offline checks for motion.py on the mock arm with the gravity sag fitted to Tuesday's logs (no robot). Run: python test_motion.py
-Blocker 1 of V2_REVIEW.md: the pre-grasp correction must stream in capped sub-steps (a 3-5 cm error in one target hits the 2 cm cap),
-and the lowering to the pre-grasp must not dip below the target (the table is 4-5 cm under the palm there).
-MOTION_MODULE=/path/to/old/motion.py runs the same checks on another version (the regression check: the 2d4f1ca version fails)."""
+"""Offline checks for motion.py on the mock arm with the gravity sag fitted to Tuesday's logs (no robot). Run: python test_motion.py [names]
+MOTION_MODULE=/path/to/other/motion.py runs the same checks on another version (the regression check: c39a468's fails the round-2 ones).
+The mock here has no model error (ERR 0.096 = the real-palm model, ERRK 0, ERRZ 0), so the model palm is the hand the table meets.
+- V2_REVIEW blocker 1: the pre-grasp correction streams in capped sub-steps (a 3-5 cm error in one target hits the 2 cm cap).
+- round 2 blocker 1: no joint changes by more than joint_step x speed in one streamed target, on every move (the wrist roll of the
+  high move snapped 0.59 rad in one target), at speed 1.0 and 0.5.
+- round 2 blocker 4 and its must-fixes: the measured palm's bottom (palm z - 0.045) stays above the table at every target, for the
+  12.2 and the 13.5 cm can and for a 3 cm servo nudge toward the table; with the depth plane 5/10/20 mm low (the hand meets the real
+  table above its goal) the correction rounds stop and the command never goes below the floor (c39a468 drove it 1.7-7.9 cm down)."""
 import importlib.util, os, sys, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
-os.environ.setdefault("BRAIN_MOCK_SCENE", "mid"); os.environ.setdefault("BRAIN_MOCK_SLEEP", "0.02")
+for k, v in (("BRAIN_MOCK_SCENE", "mid"), ("BRAIN_MOCK_SLEEP", "0.02"), ("BRAIN_MOCK_ERR", "0.096"), ("BRAIN_MOCK_ERRK", "0"), ("BRAIN_MOCK_ERRZ", "0")): os.environ.setdefault(k, v)
 import geom, mock_robot as M
 M.install(None)                                                    # fake g1_fetch modules, scaled time.sleep
 if os.environ.get("MOTION_MODULE"):
     spec = importlib.util.spec_from_file_location("motion", os.environ["MOTION_MODULE"]); motion = importlib.util.module_from_spec(spec); spec.loader.exec_module(motion)
 else:
     import motion
+HALF_H, MARGIN = 0.045, 0.005                                      # calib palm_half_height_m; the floor margin (calib table_floor_margin_m)
 
 
-def setup():
-    rb = M.build_robot(M.load_config("")); rb.arms.enable(); arm = motion.Arm(rb, None)
-    c = M.SCENE[0]; plan, tried = geom.plan_reach([c["p"][0], c["p"][1], M.TABLE_Z + c["h"] / 2 - 0.015], c["diam"] / 2, table_z=M.TABLE_Z)
+def setup(h=0.135, xy=None, speed=1.0, table_z=M.TABLE_Z):
+    """The mock arm at home and the plan for a can of height h at xy (default: the scene's can) on a table believed at table_z."""
+    rb = M.build_robot(M.load_config("")); rb.arms.enable(); arm = motion.Arm(rb, None, speed_scale=speed)
+    c = M.SCENE[0]; p = c["p"] if xy is None else np.array([xy[0], xy[1], 0.0])
+    plan, tried = geom.plan_reach([p[0], p[1], table_z + h / 2 - 0.015], c["diam"] / 2, table_z=table_z)
     assert plan is not None, tried[:3]
-    arm.psi, arm.n = plan["psi"], plan["n"]
+    arm.psi, arm.n = plan["psi"], plan["n"]; arm.floor_z = table_z + HALF_H + MARGIN
     return rb, arm, plan
+
+
+def trace_into(arm, rec):
+    """Record (label, commanded q, measured palm) at every streamed target."""
+    arm.trace = lambda label: rec.append((label, arm.q_cmd(), arm.palm_meas()))
+
+
+def to_pre(arm, plan, correct=4):
+    home = arm.palm_cmd(); up = np.array([home[0] + 0.05, max(plan["pre"][1], 0.18), plan["high"][2]])
+    arm.goto(up, 0.10, "up", psi="free", correct=0); arm.goto(plan["high"], 0.08, "high", correct=0)
+    return arm.goto(plan["pre"], 0.05, "pre", correct=correct, ff=True)
 
 
 def test_sag_matches_the_logs():
@@ -30,32 +49,56 @@ def test_sag_matches_the_logs():
     assert 0.04 <= float(np.max(np.abs(dq))) <= 0.08                 # tracking-error baselines 0.044-0.069 rad on Tuesday
 
 
-def test_pregrasp_correction_streams_and_never_dips():
-    rb, arm, plan = setup(); low = []
-    arm.trace = lambda label: low.append((label, float(arm.palm_meas()[2])))
-    home = arm.palm_cmd(); up = np.array([home[0] + 0.05, max(plan["pre"][1], 0.18), plan["high"][2]])
-    arm.goto(up, 0.10, "up", psi="free", correct=0)
-    m_high = arm.goto(plan["high"], 0.08, "high", correct=0)
-    raw = float(np.linalg.norm(plan["high"] - m_high))
-    assert raw > arm.max_step, "the uncorrected high waypoint must show the logged sag (2.5-4.7 cm), got %.3f" % raw
-    del low[:]
-    kw = {"ff": True} if "ff" in motion.Arm.goto.__code__.co_varnames else {}
-    m_pre = arm.goto(plan["pre"], 0.05, "pre", correct=4, **kw)
-    assert float(np.linalg.norm(plan["pre"] - m_pre)) < 0.006, m_pre
-    dip = plan["pre"][2] - min(z for _, z in low)
-    assert dip < 0.01, "the measured palm dipped %.3f m below the pre-grasp while lowering (the table is under it)" % dip
+def test_pregrasp_correction_streams_and_the_palm_stays_above_the_table():
+    for h in (0.122, 0.135):                                       # the purple La Croix leaves 1 mm under the planned palm, the Chi 7.5 mm
+        rb, arm, plan = setup(h); rec = []; trace_into(arm, rec)
+        home = arm.palm_cmd(); arm.goto(np.array([home[0] + 0.05, max(plan["pre"][1], 0.18), plan["high"][2]]), 0.10, "up", psi="free", correct=0)
+        m_high = arm.goto(plan["high"], 0.08, "high", correct=0)
+        assert float(np.linalg.norm(plan["high"] - m_high)) > arm.max_step, "the uncorrected high waypoint must show the logged sag"
+        m_pre = arm.goto(plan["pre"], 0.05, "pre", correct=4, ff=True)
+        goal = np.array([plan["pre"][0], plan["pre"][1], max(plan["pre"][2], arm.floor_z)])
+        assert float(np.linalg.norm(goal - m_pre)) < 0.006, (h, m_pre, goal)
+        low = min(float(p[2]) for _, _, p in rec if p[0] > M.TABLE_X[0]) - HALF_H - M.TABLE_Z      # over the table
+        assert low >= 0.0, "can %.3f: the palm bottom went %.1f mm under the table top while lowering" % (h, -low * 1000)
+        assert M.STATS["table_contacts"] == 0, M.STATS["table_contacts"]
 
 
-def test_servo_nudge_and_steps():
-    rb, arm, plan = setup()
-    home = arm.palm_cmd(); arm.goto(np.array([home[0] + 0.05, max(plan["pre"][1], 0.18), plan["high"][2]]), 0.10, "up", psi="free", correct=0)
-    arm.goto(plan["high"], 0.08, "high", correct=0); arm.goto(plan["pre"], 0.05, "pre", correct=4, ff=True)
-    m0 = arm.palm_meas(); m1 = arm.nudge(np.array([0.03, 0.0, -0.01]) @ np.eye(3), "servo")   # a 3 cm servo correction: streamed, not one jump
-    assert np.linalg.norm(m1 - (m0 + np.array([0.03, 0.0, -0.01]))) < 0.006, m1 - m0
-    before = arm.palm_meas(); meas, te = arm.step_along(plan["n"], 0.01, "ap0")
-    assert abs(float((meas - before) @ plan["n"]) - 0.01) < 0.004, meas - before
+def test_servo_nudge_toward_the_table_and_steps():
+    for h in (0.122, 0.135):
+        rb, arm, plan = setup(h); to_pre(arm, plan); rec = []; trace_into(arm, rec)
+        m0 = arm.palm_meas(); m1 = arm.nudge(np.array([0.03, 0.0, -0.03]), "servo")      # 3 cm forward and 3 cm down: the servo's largest step
+        goal = m0 + np.array([0.03, 0.0, -0.03]); goal[2] = max(goal[2], arm.floor_z)
+        assert np.linalg.norm(m1 - goal) < 0.006, (m1, goal)
+        low = min(float(p[2]) for _, _, p in rec if p[0] > M.TABLE_X[0]) - HALF_H - M.TABLE_Z
+        assert low >= 0.0, "can %.3f: the servo nudge put the palm bottom %.1f mm under the table top" % (h, -low * 1000)
+        before = arm.palm_meas(); meas, te = arm.step_along(plan["n"], 0.01, "ap0")
+        assert abs(float((meas - before) @ plan["n"]) - 0.01) < 0.004, meas - before
+
+
+def test_joint_step_per_target():
+    for speed in (1.0, 0.5):
+        rb, arm, plan = setup(speed=speed); q_prev = [arm.q_cmd()]; worst = [0.0, ""]
+        def tr(label):
+            q = arm.q_cmd(); m = float(np.max(np.abs(q - q_prev[0]))); q_prev[0] = q
+            if m > worst[0]: worst[:] = [m, label]
+        arm.trace = tr
+        to_pre(arm, plan); arm.nudge(np.array([0.02, 0.0, 0.01]), "servo")
+        for i in range(3): arm.step_along(plan["n"], 0.01, "ap%d" % i)
+        arm.goto(arm.palm_meas() + np.array([0.0, 0.0, 0.06]), 0.04, "lift", correct=2)
+        cap = 0.02 * speed + 1e-9
+        assert worst[0] <= cap, "speed %.1f: %s moved a joint %.3f rad in one target (cap %.3f)" % (speed, worst[1], worst[0], cap)
+
+
+def test_corrections_stop_on_the_table():
+    for bias in (0.005, 0.01, 0.02):                                # the depth plane this much below the real table
+        rb, arm, plan = setup(0.122, table_z=M.TABLE_Z - bias); rec = []; trace_into(arm, rec); M.STATS["push"] = 0.0
+        to_pre(arm, plan)
+        low_cmd = min(float(arm.palm(q)[2]) for _, q, _ in rec if arm.palm(q)[0] > M.TABLE_X[0])
+        assert low_cmd >= arm.floor_z - 0.001, "plane %d mm low: the command went %.1f mm under the floor" % (bias * 1000, (arm.floor_z - low_cmd) * 1000)
+        assert M.STATS["push"] <= 0.03, "plane %d mm low: the settled command sits %.1f mm under the hand on the table" % (bias * 1000, M.STATS["push"] * 1000)
 
 
 if __name__ == "__main__":
+    want = sys.argv[1:]
     for name, fn in list(globals().items()):
-        if name.startswith("test_"): fn(); print("ok", name)
+        if name.startswith("test_") and (not want or any(w in name for w in want)): fn(); print("ok", name, flush=True)

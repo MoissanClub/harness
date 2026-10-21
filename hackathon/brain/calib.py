@@ -23,8 +23,10 @@ def git_sha(cwd=HERE):
 
 
 def git_dirty(cwd=HERE):
-    try: return bool(subprocess.run(["git", "status", "--porcelain", "--", HERE], cwd=cwd, capture_output=True, text=True, timeout=5).stdout.strip())
+    """True when the brain folder has changes or untracked files, or when git cannot tell (not a clone, git missing): unknown = dirty."""
+    try: r = subprocess.run(["git", "status", "--porcelain", "--", HERE], cwd=cwd, capture_output=True, text=True, timeout=5)
     except Exception: return True
+    return r.returncode != 0 or bool(r.stdout.strip())
 
 
 def stale(cal, now=None):
