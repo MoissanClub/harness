@@ -6,7 +6,10 @@ numeric IK, the measured joints sag below the command, and the hand's closure ou
 thumb-0.9 when the can is forward of the palm, pinky-0.9 when the hand is low, all-0.9 when it was pushed). So the servo loop, the
 stall-pattern corrections and the reach search are exercised for real; only the model and the sensors are fake.
 Environment knobs: BRAIN_MOCK_ORDERS=purple,blue,white (default; spoken clips, any text goes through macOS `say`)
-BRAIN_MOCK_SCENE=two|one|none|centre  BRAIN_MOCK_ERR=0.096 (true palm ahead of the model's, m)  BRAIN_MOCK_ERRK=0.03 (its change per rad of elbow)
+BRAIN_MOCK_SCENE=two|one|none|centre|left|mid|near|three  BRAIN_MOCK_ERR=0.096 (true palm along the hand's x from the wrist minus g1-fetch's 0.15,
+m: 0.096 = v2's model)  BRAIN_MOCK_ERRK=0.03 (its change per rad of elbow)  BRAIN_MOCK_ERRZ=0.01 (true palm above the model's, hand frame)
+BRAIN_MOCK_SAG=1 (scale of the gravity sag; 0 = none)  BRAIN_MOCK_OBSTACLE=1 (a box at chest height 15-25 cm ahead)
+BRAIN_MOCK_CONTACT=0.006 (the open hand meets a can this far beyond its radius: 0.02 = 1 cm before the closure pose)
 BRAIN_MOCK_SLEEP=0.25 (time.sleep scale)  BRAIN_MOCK_SAY=1 (speak through macOS say)  BRAIN_MOCK_HAND=auto|grasp,miss,... (force closure outcomes)
 --mock-gemma adds scripted answers so the run needs no server at all."""
 import os, sys, time, types, subprocess, math
@@ -25,10 +28,38 @@ SCENES = {"two": [("purple la croix", "purple", 0.41, 0.21, 0.066, 0.122), ("sil
           "near": [("silver chi sparkling", "silver", 0.42, 0.06, 0.055, 0.135)],
           "three": [("purple la croix", "purple", 0.40, 0.30, 0.066, 0.122), ("silver chi sparkling", "silver", 0.40, 0.12, 0.055, 0.135), ("black coffee", "black", 0.38, -0.08, 0.055, 0.135)]}
 SCENE = [dict(desc=d, colour=c, p=np.array([x, y, TABLE_Z + h / 2]), diam=dm, h=h) for d, c, x, y, dm, h in SCENES[os.environ.get("BRAIN_MOCK_SCENE", "two")]]
-ERR0, ERRK = float(os.environ.get("BRAIN_MOCK_ERR", "0.096")), float(os.environ.get("BRAIN_MOCK_ERRK", "0.03"))
+ERR0, ERRK, ERRZ = float(os.environ.get("BRAIN_MOCK_ERR", "0.096")), float(os.environ.get("BRAIN_MOCK_ERRK", "0.03")), float(os.environ.get("BRAIN_MOCK_ERRZ", "0.01"))
+OBSTACLE = os.environ.get("BRAIN_MOCK_OBSTACLE") == "1"
+CONTACT = float(os.environ.get("BRAIN_MOCK_CONTACT", "0.006"))   # contact starts this far beyond r from the can axis (0.006: 4 mm past the closure pose)
 HAND_SCRIPT = [s for s in os.environ.get("BRAIN_MOCK_HAND", "auto").split(",") if s]
 STATE = {"order": None, "pending": [], "closures": 0, "person": False}
-SAG = np.array([0.015, -0.005, 0.0, 0.01, 0.0])        # measured = cmd + SAG (gravity): the hand sits ~1 cm low until corrected
+# Gravity sag of the left arm: point masses on the URDF chain (upper arm, forearm, hand), joint stiffness k; the measured joints settle at
+# cmd - dV/dq / k. Fitted to Tuesday's 25 uncorrected up/high moves (spikes/office-tue-brain, v1, model palm 0.15): predicted |sag| at
+# the high waypoints 2.7-4.8 cm vs 2.5-4.6 cm logged, at the raise 1.5-1.7 vs 1.9-2.5 cm, rms 9.5 mm (2026-10-20).
+SAG_MASSES, SAG_K, SAG_SCALE = (0.8, 0.5, 0.8), np.array([50.0, 30.0, 40.0, 30.0]), float(os.environ.get("BRAIN_MOCK_SAG", "1"))
+_SAG_CACHE = {}
+
+
+def _potential(q):
+    Ts = geom.fk_chain(q, 0.15); up = (Ts[0][:3, 3] + Ts[3][:3, 3]) / 2; fore = (Ts[3][:3, 3] + Ts[4][:3, 3]) / 2
+    hand = Ts[4][:3, 3] + Ts[4][:3, :3] @ np.array([0.10, 0.0, 0.0])
+    return 9.81 * (SAG_MASSES[0] * up[2] + SAG_MASSES[1] * fore[2] + SAG_MASSES[2] * hand[2])
+
+
+def sag_dq(q_cmd):
+    """Joint deflection under gravity at the commanded pose (fixed point: the torque is evaluated at the sagged pose)."""
+    if SAG_SCALE == 0: return np.zeros(5)
+    key = tuple(np.round(np.asarray(q_cmd, float), 6))
+    if key not in _SAG_CACHE:
+        q_cmd = np.asarray(q_cmd, float); q = q_cmd.copy()
+        for _ in range(3):
+            V0 = _potential(q); dq = np.zeros(5)
+            for j in range(4):
+                e = np.zeros(5); e[j] = 1e-5; dq[j] = -((_potential(q + e) - V0) / 1e-5) / SAG_K[j] * SAG_SCALE
+            q = q_cmd + dq
+        if len(_SAG_CACHE) > 20000: _SAG_CACHE.clear()
+        _SAG_CACHE[key] = q - q_cmd
+    return _SAG_CACHE[key]
 
 
 # --- camera model ---------------------------------------------------------------------------------------------------------------
@@ -42,7 +73,7 @@ class Intrinsics:
 
 
 INTR = Intrinsics(615.0, 615.0, 320.0, 240.0, 640, 480)
-CAM_XYZ, CAM_PITCH = np.array([0.05, 0.0, 0.47]), math.radians(47.0)      # D435i 0.47 m above the pelvis, looking 47 deg down (fits the office logs)
+CAM_XYZ, CAM_PITCH = np.array([0.054, 0.018, 0.474]), 0.8308            # the URDF d435_joint (calib camera_pose): 47.6 deg down (fits the office logs)
 
 
 class Frames:
@@ -96,6 +127,11 @@ def render(true_palm, R_hand, fingers_open=True, cans=None, person=False):
         A = np.sum(dperp * dperp, axis=1); B = 2 * np.sum(dperp * wperp, axis=1); C = wperp @ wperp - 0.03 ** 2; disc = B * B - 4 * A * C
         t = (-B - np.sqrt(np.maximum(disc, 0))) / (2 * np.where(A < 1e-9, 1e-9, A)); s = (w + dirs * t[:, None]) @ ax
         hit(t, (disc > 0) & (s > 0) & (s < L), 31)
+    if OBSTACLE:                                 # a box at chest height straight ahead (a guest leaning in): the 0.30 m rule must refuse
+        lo, hi = np.array([0.15, -0.08, 0.20]), np.array([0.25, 0.08, 0.40])
+        with np.errstate(divide="ignore", invalid="ignore"):
+            t1 = (lo - o) / dirs; t2 = (hi - o) / dirs; tmin = np.max(np.minimum(t1, t2), axis=1); tmax = np.min(np.maximum(t1, t2), axis=1)
+        hit(tmin, (tmax > tmin) & (tmax > 0), 50)
     if person:                                   # a hand-sized box 10 cm beyond the robot's hand (the guest reaching for the can)
         c = (true_palm if true_palm is not None else np.array([0.3, 0.2, 0.2])) + np.array([0.12, -0.05, 0.02])
         t = np.linalg.norm(c - o); p = o + dirs * t; hit(np.full(dirs.shape[0], t), np.linalg.norm(p - c, axis=1) < 0.06, 40)
@@ -104,7 +140,7 @@ def render(true_palm, R_hand, fingers_open=True, cans=None, person=False):
     colour = np.full((H, W, 3), (60, 60, 60), np.uint8); colour[kind == 1] = (190, 215, 235); colour[kind == 2] = (40, 40, 40)
     cols = {"purple": (160, 60, 120), "silver": (210, 210, 210), "black": (30, 30, 30), "red": (40, 40, 200), "green": (60, 160, 60), "blue": (200, 90, 40)}
     for i, c in enumerate(cans if cans is not None else SCENE): colour[kind == 10 + i] = cols.get(c["colour"], (120, 120, 120))
-    colour[kind == 30] = (35, 35, 35); colour[kind == 31] = (90, 90, 90); colour[kind == 40] = (120, 150, 200)
+    colour[kind == 30] = (35, 35, 35); colour[kind == 31] = (90, 90, 90); colour[kind == 40] = (120, 150, 200); colour[kind == 50] = (60, 90, 160)
     noise = (np.random.default_rng(int(time.time() * 1000) % 100000).normal(0, 0.002, depth.shape)).astype(np.float32)
     depth = np.where(depth > 0, depth + noise, 0).astype(np.float32)
     return colour, depth, kind
@@ -136,6 +172,8 @@ class Detector:
         for i, c in enumerate(SCENE):
             ys, xs = np.nonzero(kind == 10 + i)
             if len(xs) < 40: continue
+            # the axis-aligned box of the mask: an off-centre upright can looks slanted from the tilted head camera, so the box is wider
+            # than the can (95 px for 75 px rows at y 0.11), as on the robot (Tuesday: the 58 mm Chi measured 70 mm and classed 66)
             dets.append(Detection("can", 0.9 - 0.05 * i, (xs.min(), ys.min(), xs.max(), ys.max())))
         return dets
 
@@ -181,51 +219,70 @@ class Arms:
     """Streamer mock: cmd per side, measured = cmd + sag, true palm = model palm + a configuration-dependent forward/vertical error."""
     def __init__(self, kin):
         self.kin = kin; self.cmd = {"left": np.array([0.0, 0.25, 0.0, 1.0, 0.0]), "right": np.array([0.0, -0.25, 0.0, 1.0, 0.0])}
-        self.on = False; self.hand_open = True; self.stalled = False     # stalled: the last command was clipped at a can (contact)
+        self.on = False; self.hand_open = True; self.contact_q = None    # contact_q: while the hand presses a can, the measured joints stay at this command
         self.held = None                                                # (can dict, offset from the true palm) while the hand holds it
     def hold_nearest(self):
         tp = self.true_palm(); c = min(SCENE, key=lambda c: np.linalg.norm(c["p"] - tp), default=None)
         if c is not None and np.linalg.norm(c["p"] - tp) < 0.12: self.held = (c, c["p"] - tp); print("  [mock] holding %s" % c["desc"], flush=True)
     def carry(self):
         if self.held is not None: c, off = self.held; c["p"] = self.true_palm() + off
-    def enable(self): self.on = True; time.sleep(0.5)
+    def enable(self): self.on = True; print("  [mock] arm streamer enabled", flush=True); time.sleep(0.5)
     def disable(self): self.on = False; time.sleep(0.3)
-    def measured(self, side): return self.cmd[side] + (SAG if side == "left" else 0.0)
+    def measured(self, side):
+        base = self.contact_q if (side == "left" and self.contact_q is not None) else self.cmd[side]
+        return base + (sag_dq(base) if side == "left" else 0.0)
     def true_R(self): return geom.fk(self.measured("left"))[:3, :3]
+    def true_palm_at(self, q_cmd):
+        """The REAL palm if the arm settled at the command q_cmd (the sagged joints)."""
+        q = np.asarray(q_cmd, float) + sag_dq(q_cmd); T = geom.fk(q); err = ERR0 + ERRK * (float(q[3]) - 1.0)
+        return T[:3, 3] + T[:3, :3] @ np.array([err, 0.0, ERRZ]), T[:3, :3]
     def true_palm(self):
         """The REAL palm centre: the model's palm (at the measured joints) plus the unmodelled offset along the hand's x (ERR0 at elbow
         1.0 rad, changing ERRK per rad) and 1 cm up; this is what the camera sees and what the can meets."""
         q = self.measured("left"); T = geom.fk(q)
         err = ERR0 + ERRK * (float(q[3]) - 1.0)
-        return T[:3, 3] + T[:3, :3] @ np.array([err, 0.0, 0.01])
+        return T[:3, 3] + T[:3, :3] @ np.array([err, 0.0, ERRZ])
     def tracking_error(self, side):
-        e = float(np.max(np.abs(self.measured(side) - self.cmd[side])))
-        return e + (0.05 if (self.stalled or self.blocked()) else 0.0)       # pushing against a can shows as a tracking-error rise
+        return float(np.max(np.abs(self.measured(side) - self.cmd[side])))   # the sag, plus the command running ahead of a hand held at a can
+    def would_block(self, q_cmd):
+        """True when the open hand, settled at q_cmd, would penetrate a can (the geometry of blocked())."""
+        if not self.on or self.held is not None or not self.hand_open: return False
+        tp, R = self.true_palm_at(q_cmd)
+        for c in SCENE:
+            rel = c["p"] - tp; along = float(rel @ R[:, 0]); lat = rel - along * R[:, 0]; lat[2] = 0.0
+            if -0.05 < along < 0.13 and abs(rel[2]) < 0.07 and np.linalg.norm(lat) < c["diam"] / 2 + CONTACT: return True
+        return False
     def blocked(self):
-        """True when the commanded hand would penetrate a can: the hand stalls at the surface (contact)."""
+        """True when the commanded hand would penetrate a can: the open hand stalls at the surface (contact). The palm face is ~1 cm from
+        the palm centre, so contact starts 4 mm PAST the closure pose (palm centre r + 1 cm from the axis); the fingers (up to 13 cm
+        ahead of the palm centre) touch the can when it stands at the fingertips."""
         if not self.on or self.held is not None: return False
         tp = self.true_palm(); R = self.true_R()
         for c in SCENE:
             rel = c["p"] - tp; along = float(rel @ R[:, 0]); lat = rel - along * R[:, 0]; lat[2] = 0.0
-            if -0.05 < along < 0.13 and abs(rel[2]) < 0.07 and np.linalg.norm(lat) < c["diam"] / 2 + 0.02 and self.hand_open: return True
+            if -0.05 < along < 0.13 and abs(rel[2]) < 0.07 and np.linalg.norm(lat) < c["diam"] / 2 + CONTACT and self.hand_open: return True
         return False
     def set_target(self, side, q):
+        """The streamer accepts every command; a hand pressing a can stays at the contact (the measured joints stop at the last command
+        that did not penetrate) while the command runs ahead: the tracking error and the lag grow, as on the robot."""
         q = np.asarray(q, float).copy()
-        if side == "left" and self.on:
-            old = self.cmd[side].copy(); self.cmd[side] = q; self.stalled = False
-            if self.held is not None: self.carry(); return
-            if self.blocked():                                    # stay at the surface: the command is clipped back (stall)
-                self.cmd[side] = old; self.stalled = True; self.push_can(q)
-        else: self.cmd[side] = q
-    def push_can(self, q_wanted):
+        if side != "left" or not self.on: self.cmd[side] = q; return
+        prev = self.cmd[side].copy() if self.contact_q is None else self.contact_q; self.cmd[side] = q
+        if self.held is not None: self.contact_q = None; self.carry(); return
+        if self.would_block(q):
+            self.push_can(q, prev)
+            if self.would_block(q): self.contact_q = prev
+            else: self.contact_q = None
+        else: self.contact_q = None
+    def push_can(self, q_wanted, q_from):
         """If the fingers (not the palm) meet the can, the can slides away by the attempted motion: the push the brief describes."""
-        tp = self.true_palm(); R = self.true_R()
+        tp, R = self.true_palm_at(q_from)
         for c in SCENE:
             rel = c["p"] - tp; along = float(rel @ R[:, 0])
             if along > 0.045:                                     # the can is at the fingers, not the palm
-                want = geom.fk(q_wanted + SAG)[:3, 3] - geom.fk(self.cmd["left"] + SAG)[:3, 3]
+                want = self.true_palm_at(q_wanted)[0] - tp; want[2] = 0.0
                 c["p"] = c["p"] + want * 1.5; print("  [mock] the fingers pushed the can by %s" % np.round(want * 1.5, 3).tolist(), flush=True)
-    def move_to(self, side, q, duration, abort=None): self.cmd[side] = np.asarray(q, float).copy(); self.carry(); time.sleep(duration * 0.3)
+    def move_to(self, side, q, duration, abort=None): self.cmd[side] = np.asarray(q, float).copy(); self.contact_q = None; self.carry(); time.sleep(duration * 0.3)
     def wait_settled(self, side, tol=0.05, timeout=3.0): return True
     def measured_tau(self, side): return np.zeros(5)
     def close(self): pass
@@ -245,7 +302,8 @@ class Hand:
             if abs(lat) < c["diam"] / 2 + 0.04 and abs(up) < 0.08 and -0.06 < along < 0.14: best = (along, up, lat, c)
         if best is None: return [0.9, 0.8, 0.9, 0.9, 0.9, 0.9]
         along, up, lat, c = best
-        print("  [mock] closing: can %+.3f ahead of the true palm, %+.3f above, %+.3f beside" % (along, up, lat), flush=True)
+        print("  [mock] closing: can %+.3f ahead of the true palm, %+.3f above, %+.3f beside (closure pose at %.3f)" % (along, up, lat, c["diam"] / 2 + 0.01), flush=True)
+        if abs(lat) > c["diam"] / 2 + 0.02: return [0.59, 0.77, 0.9, 0.9, 0.9, 0.9]     # palm more than 1 cm short of the closure pose: closes on nothing
         if along > 0.025: return [0.9, 0.8, 0.48, 0.5, 0.5, 0.55]          # can forward of the palm: thumb closes past it
         if up > 0.025: return [0.15, 0.6, 0.5, 0.52, 0.5, 0.9]             # hand low: pinky under the can
         if along < -0.035 or up < -0.04: return [0.9, 0.8, 0.9, 0.9, 0.9, 0.9]   # can behind the palm, or the hand above the can

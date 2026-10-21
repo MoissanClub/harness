@@ -342,6 +342,24 @@
    "date": "2026-10-19",
    "n": 0,
    "valid_days": 365
+  },
+  "speed_scale": {
+   "value": 1.0,
+   "unit": "-",
+   "frame": "multiplies every Cartesian speed (raise 0.10, high 0.08, lower 0.05, corrections 0.04 m/s) and divides every joint-space move duration (home 2.0-2.5 s, park 2.5 s)",
+   "method": "the speeds of every v1 pick (2026-10-19/21, n 14) at 1.0; a run with another value logs a deviation",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 90
+  },
+  "table_edge_m": {
+   "value": null,
+   "unit": "m",
+   "frame": "pelvis x of the table's near edge (the chest front is at x 0.08: tape the chest-to-edge distance and add 0.08)",
+   "method": "NOT MEASURED: the owner's tape. While null, every raise and descent prints how far ahead the hand passes below the table top + 3 cm, for the owner to compare; once set, a path that passes within 2 cm of the edge is refused before it moves",
+   "date": "2026-10-20",
+   "n": 0,
+   "valid_days": 30
   }
  }
 }
