@@ -49,6 +49,8 @@ Still needed: a second G1 battery or a charging window plan; a table and two to 
 
 ## 5. Next milestone: the full end-to-end demo
 
+Status 2026-10-20 (Tuesday): v1 of the brain ran on the robot and was found fragile (hidden constants, a lane guard, a blind slide); the reviewed redesign is `hackathon/brain/V2_STRATEGY.md` (reach by feasibility search instead of a lane, selection by any description of the can, a visual servo loop for the grasp, calibration with provenance) and the development process is `DEV_WORKFLOW.md`. The v2 session works from those two documents; its first three experiments are offline replay, the hand-in-camera kill test, and an air test.
+
 Build `hackathon/brain/` as one program that runs the bench loop repeatedly and is what judges see. Done when it runs ten loops in a row on the robot in the stand with two cans and one absent colour, and a 90-second backup video exists.
 
 1. **Loop.** IDLE, LISTEN (TTS prompt, 4 s record, retry), UNDERSTAND (Gemma colour word), CONFIRM (TTS in the guest's language if verified, else English), LOCATE (YOLOE plus crop colour, depth), PICK (the verified parameters), VERIFY (finger stall), LIFT, CHECK (third-person Gemma), HANDOVER (offer, open on the guest's hand seen by Gemma or after a spoken "take it"), RECOVER (refusal with colours seen; grasp miss: retry once then ask for help; out of lane: ask to move the can). All of this exists in `voice_grab.py` plus `grab_loop.py`; the work is to merge them into one process that keeps the robot, camera and server warm between orders instead of rebuilding per run (20 s today).
