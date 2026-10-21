@@ -277,6 +277,15 @@ LIMIT_MARGIN = math.radians(10.0)
 # acceptance thresholds on the segment centre lines (the link radii are inside them); calibrated on the logged poses in replay_reach.py
 CLEAR_UPPER, CLEAR_FOREARM, CLEAR_HAND, CLEAR_RIGHT, PITCH_MAX_DEG, IK_TOL, TABLE_CLEAR = 0.03, 0.04, 0.06, 0.05, 15.0, 0.005, -0.01   # defaults = calib.json (brain.py overrides them from the file); table: the pinky edge may touch (trial 8)
 HIGH_RISE, FINGERTIP, PALM_HALF_HEIGHT = 0.12, 0.08, 0.045
+HAND_BACK, HAND_HALF_THICK = 0.045, 0.02   # the open hand behind the palm centre and half its thickness (assumed, the mock's box; BrainCo palm 7.6 x 4.1 cm)
+
+
+def hand_lowest(q5, ee=None):
+    """(the open hand's lowest point z, palm z) at q5: the corners of the hand box (HAND_BACK behind to FINGERTIP ahead of the palm
+    centre along the wrist-roll axis, +-HAND_HALF_THICK, +-PALM_HALF_HEIGHT) through the forearm pitch and the wrist roll."""
+    Ts = fk_chain_side(np.asarray(q5, float), "left", PALM_REAL if ee is None else ee); R = Ts[4][:3, :3]; palm = Ts[5][:3, 3]
+    low = min(float((palm + R @ np.array([x, y, z]))[2]) for x in (-HAND_BACK, FINGERTIP) for y in (-HAND_HALF_THICK, HAND_HALF_THICK) for z in (-PALM_HALF_HEIGHT, PALM_HALF_HEIGHT))
+    return low, float(palm[2])
 
 
 def fk_chain_side(q5, side="left", ee=PALM_REAL):

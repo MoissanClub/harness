@@ -22,11 +22,21 @@ def git_sha(cwd=HERE):
     except Exception: return "?"
 
 
+CLIENT = os.path.normpath(os.path.join(HERE, "..", "..", "bench", "client.py"))   # gemma.py's HTTP client, outside the brain folder
+
+
+def git_state(cwd=HERE):
+    """'clean', 'dirty' (changes or untracked files in the brain folder or bench/client.py) or 'not a git clone' (or git missing):
+    anything but clean stops the robot."""
+    try:
+        if subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=cwd, capture_output=True, text=True, timeout=5).returncode != 0: return "not a git clone"
+        r = subprocess.run(["git", "status", "--porcelain", "--", HERE, CLIENT], cwd=cwd, capture_output=True, text=True, timeout=5)
+    except Exception: return "not a git clone"
+    return "dirty" if r.returncode != 0 or r.stdout.strip() else "clean"
+
+
 def git_dirty(cwd=HERE):
-    """True when the brain folder has changes or untracked files, or when git cannot tell (not a clone, git missing): unknown = dirty."""
-    try: r = subprocess.run(["git", "status", "--porcelain", "--", HERE], cwd=cwd, capture_output=True, text=True, timeout=5)
-    except Exception: return True
-    return r.returncode != 0 or bool(r.stdout.strip())
+    return git_state(cwd) != "clean"
 
 
 def stale(cal, now=None):

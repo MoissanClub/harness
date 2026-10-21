@@ -17,15 +17,35 @@ Round 2 blockers, each on a path other than the one the verifiers used (V2_REVIE
 Must-fix cases: nerr (a 2 cm error along the palm normal: no close), gemma (Gemma's hand box 15 cm off the hand: no approach), noK (no K, no
 flag: no grasp, nothing moves), zero and minrange (no valid depth; a box inside the D435i's minimum range: refused), tape and tape8 (the tape
 3 cm high, 8 cm low against the depth plane: refused), assist (a box appears after the miss: the retry's locate refuses, no assist).
+Round 3 (V2_REVIEW.md "Round 3", each on a path other than the fixed one, each failing on 8e226e9):
+  released   1: the kill test starting from a pose a release left (0.05-0.15 rad off home_q): the start-up park accepts it, the probe runs
+  nearhand   2: a hand-sized box 10 cm in front of the chest, inside the D435i's minimum range (--dry): refused (one blind region)
+  qstuck     3: stuck in idle (--orders 2), the operator types q, h, y: the way out still runs, the arm comes home, then the quit
+  wayfail    3: a g1-fetch failure during the confirmed way out, from the idle loop: holds again, no move before the next "The way out"
+  wayfail1   3: the same from the shutdown's stuck loop (--orders 1): never exits or moves by itself with the arm out
+  secondq    3: two q typed at once while lowering: the arm holds there (stuck), no way home on its own, no release
+  killtable  4: the kill probe at the purple can's slot, the plane 2 cm low, the hand 1 cm low, --floor-margin 0.02: push under 1 cm
+  servoblock 4: the servo-residual block (--probe-servo, --pre-offset 0.025, --floor-margin 0.02): the open hand never meets the table
+  reach      5: air (0.35, 0.00) with the mock's 12.5 cm hand: under the table top the commanded hand box stays 2 cm behind the edge
+  lateobst   6: a box appears after "Reaching." in the air test: no lowering, no slide (the arm holds)
+  lateobst2  6: a box appears after "Approaching." in an order: no approach step
+  gemmanone  8: Gemma returns no box of the hand: the servo stops, no approach
+  pause      9: p between orders releases the arm at home (ARM OFF), Enter typed while paused is ignored, p takes it back, no order starts
+  nograsp      --no-grasp: an order stops before the pick, nothing moves
+  air2, air3, airfloor   the plan's air commands at half speed: (0.35, 0.00), (0.40, -0.08), and (0.38, 0.15) with --air-margin 0
+             (the floor-bound lowering the kill test uses, with no can)
 Run: ~/miniforge3/envs/brain/bin/python -B check.py [--cases a,b,..]   (exit 1 on any failure)
 CHECK_TREE=/path/to/other/hackathon/brain runs the mock cases on that brain version with THIS mock (copied in), dropping the flags it
-lacks, and its own kill test for K: how the round-2 cases were shown to fail on c39a468."""
+lacks, and its own kill test for K: how the round-2 cases were shown to fail on c39a468 (which also needs BRAIN_MOCK_TABLE_EDGE=0.27:
+its plane fit fails with the table's edge at 0.30 or beyond) and the round-3 cases on 8e226e9."""
 import glob, json, os, re, shutil, subprocess, sys, tempfile, time
 HERE = os.path.dirname(os.path.abspath(__file__)); PY = sys.executable; ok = True; TMP = tempfile.mkdtemp(prefix="brain-check-")
 TREE = os.environ.get("CHECK_TREE"); RUN_DIR = TREE or HERE; MAXJ = int(os.environ.get("CHECK_JOBS", "8"))
 MOCK = {"BRAIN_MOCK_SCENE": "mid", "BRAIN_MOCK_ORDERS": "silver", "BRAIN_MOCK_SLEEP": "0.05"}
-BASE = [PY, "-B", "brain.py", "--mock", "--mock-gemma", "--no-preflight", "--orders", "1", "--pause", "0.3", "--release-after", "4", "--accept-calib", "--table-edge", "0.34"]
-NEW_FLAGS = {"--table-edge": 1, "--expect-calib": 1, "--model-grasp": 0, "--pre-offset": 1, "--pre-stop": 1, "--stuck-reminder": 1}   # not in c39a468
+BASE = [PY, "-B", "brain.py", "--mock", "--mock-gemma", "--no-preflight", "--orders", "1", "--pause", "0.3", "--release-after", "4", "--accept-calib", "--table-edge", "0.34",
+        "--fingertip", "0.125", "--table-z", "0.075"]                  # the keep-out and the floor model the mock's 12.5 cm hand; the taped table in every mode
+NEW_FLAGS = {"--table-edge": 1, "--expect-calib": 1, "--model-grasp": 0, "--pre-offset": 1, "--pre-stop": 1, "--stuck-reminder": 1,            # not in c39a468
+             "--fingertip": 1, "--palm-half-height": 1, "--floor-margin": 1, "--air-margin": 1, "--no-grasp": 0, "--blind-max": 1, "--table-z": 1}   # not in 8e226e9
 TABLE_Z, HALF_H, MARGIN, JOINT_STEP = 0.075, 0.045, 0.005, 0.02
 want = None
 if "--cases" in sys.argv: want = set(sys.argv[sys.argv.index("--cases") + 1].split(","))
@@ -45,9 +65,10 @@ def run(name, cmd, timeout=300, expect=0):
 
 def args_for_tree(args):
     if not TREE: return args
+    old = open(os.path.join(TREE, "brain.py")).read()
     out, i = [], 0
     while i < len(args):
-        if args[i] in NEW_FLAGS: i += 1 + NEW_FLAGS[args[i]]; continue
+        if args[i] in NEW_FLAGS and '"%s"' % args[i] not in old: i += 1 + NEW_FLAGS[args[i]]; continue
         out.append(args[i]); i += 1
     return out
 
@@ -162,9 +183,79 @@ def c_quit2(out, ev, st):
 
 
 def c_table(out, ev, st):
-    floor = TABLE_Z - 0.02 + HALF_H + MARGIN; low = st.get("min_cmd_z", 0) or 0
-    good = low >= floor - 0.002 and st.get("push", 9) <= 0.03 and result(ev) != "success"
-    return good, "lowest command z %.3f (floor %.3f), push into the table %.3f, %s contacts, result %s" % (low, floor, st.get("push", -1), st.get("table_contacts"), result(ev))
+    good = st.get("push", 9) <= 0.015 and result(ev) != "success"         # the order's default 5 mm margin against a plane 2 cm low: the descent's own push
+    return good, "push into the table %.3f, %s contacts, result %s" % (st.get("push", -1), st.get("table_contacts"), (result(ev) or "")[:70])
+
+
+def c_released(out, ev, st):
+    return result(ev) == "probe" and "park refused" not in out, "result %s; %s" % (result(ev), (re.findall(r"start pose: [^\n]*", out) or ["no start pose line"])[0][:150])
+
+
+def c_nearhand(out, ev, st):
+    return result(ev) == "blocked" and not st.get("targets"), "result %s; %s" % (result(ev), (re.findall(r"safety \(locate\): [^\n]*", out) or [""])[0][:120])
+
+
+def c_home_at_end(out, ev, st):
+    """The arm ends at home and is released only there."""
+    return st.get("end_home_dist", 9) < 0.03 and not st.get("disable_away")
+
+
+def c_qstuck(out, ev, st):
+    good = c_home_at_end(out, ev, st) and "quitting as asked" in out and out.count("== RESULT") == 1
+    return good, "ended %s from home, releases away %s, %d orders, quit after home: %s" % (st.get("end_home_dist"), st.get("disable_away"), out.count("== RESULT"), "quitting as asked" in out)
+
+
+def c_wayfail(out, ev, st):
+    s = (st.get("stops") or [{}, {}])[1] if len(st.get("stops") or []) > 1 else {}
+    good = bool(s) and s.get("moved_before_way_out", 9) <= 1 and c_home_at_end(out, ev, st)
+    return good, "after the failure %s targets before the next way out was said; ended %s from home; releases away %s" % (s.get("moved_before_way_out"), st.get("end_home_dist"), st.get("disable_away"))
+
+
+def c_secondq(out, ev, st):
+    s = (st.get("stops") or [{}])[0]
+    good = bool(s) and s.get("after_targets", 9) <= 1 and not st.get("disable_away")
+    return good, "after the two q: %s targets, releases away %s, ended %s from home" % (s.get("after_targets"), st.get("disable_away"), st.get("end_home_dist"))
+
+
+def c_killtable(out, ev, st):
+    good = st.get("push", 9) <= 0.010
+    return good, "push into the table %.4f, %s contacts, result %s" % (st.get("push", -1), st.get("table_contacts"), (result(ev) or "")[:60])
+
+
+def c_servoblock(out, ev, st):
+    good = not st.get("table_contacts") and "servo 0: correcting" in out and "Correcting." in out
+    return good, "%s table contacts, push %.4f, servo correction %s, announced %s, result %s" % (st.get("table_contacts"), st.get("push", -1), "servo 0: correcting" in out, "Correcting." in out, result(ev))
+
+
+def c_reach(out, ev, st):
+    cmd, true = st.get("raise_cmd_hand_under_table_x", 9), st.get("raise_tip_under_table_x", 9)
+    return result(ev) == "air" and cmd <= 0.34 - 0.02, "under the table top the commanded 12.5 cm hand reached x %s during the raise (the sagged mock hand %s; edge 0.34); result %s" % (cmd, true, result(ev))
+
+
+def c_lateobst(out, ev, st):
+    good = "Lowering beside the can." not in out and "Sliding." not in out and not st.get("disable_away")
+    return good, "lowered %s, slid %s, result %s, releases away %s" % ("Lowering beside the can." in out, "Sliding." in out, result(ev), st.get("disable_away"))
+
+
+def c_lateobst2(out, ev, st):
+    steps = [e for e in ev if e.get("ev") == "ap_step"]
+    return not steps and not st.get("disable_away"), "approach steps %d, result %s" % (len(steps), (result(ev) or "")[:60])
+
+
+def c_gemmanone(out, ev, st):
+    r = result(ev) or ""
+    return r.startswith("skill_failed") and "Gemma" in r and first(ev, "approach") is None, "result %s, approach %s" % (r[:70], first(ev, "approach") is not None)
+
+
+def c_pause(out, ev, st):
+    good = "== LOOK" not in out and "ARM OFF" in out and "[enter] ignored" in out and st.get("disables", 0) >= 2 and not st.get("disable_away")
+    return good, "order started %s, ARM OFF %s, Enter ignored %s, releases %s (away %s)" % ("== LOOK" in out, "ARM OFF" in out, "[enter] ignored" in out, st.get("disables"), st.get("disable_away"))
+
+
+def c_nograsp(out, ev, st): return result(ev) == "no_grasp" and not st.get("targets"), "result %s, targets %s" % (result(ev), st.get("targets"))
+def c_airplan(out, ev, st):
+    o = (first(ev, "result") or {}).get("air") or {}
+    return result(ev) == "air" and c_home_at_end(out, ev, st), "result %s, pre err %s, slide err %s, ended %s from home" % (result(ev), o.get("pre_err"), o.get("slide_err"), st.get("end_home_dist"))
 
 
 def c_fwd(err):
@@ -219,6 +310,24 @@ CASES = {   # name: (args, env, check, needs K)
     "tape": (["--air", "--air-can", "0.38", "0.15", "--air-table", "0.105"], {"BRAIN_MOCK_SCENE": "none"}, c_refused("air_table_mismatch"), False),
     "tape8": (["--air", "--air-can", "0.38", "0.15", "--air-table", "-0.005"], {"BRAIN_MOCK_SCENE": "none"}, c_refused("air_table_mismatch"), False),   # the tape 8 cm LOW: the palm would go into the table
     "assist": ([], dict(HIDDEN, BRAIN_MOCK_HAND="miss,miss,miss,miss", BRAIN_MOCK_OBSTACLE="after:Missed."), c_assist, True),
+    # round 3
+    "released": (["--probe"], dict(NOERR, BRAIN_MOCK_SCENE="slot09", BRAIN_MOCK_ORDERS="purple", BRAIN_MOCK_START_Q="0.06,0.18,0.06,1.12,0.10"), c_released, False),
+    "nearhand": (["--dry"], {"BRAIN_MOCK_NEAR_HAND": "1", "BRAIN_MOCK_MIN_RANGE": "0.28"}, c_nearhand, False),
+    "qstuck": (["--orders", "2"], {"BRAIN_MOCK_ABORT_AT": "APPROACH", STOP: "Order cancelled.;abort;x<0.32", "BRAIN_MOCK_KEYS": "q,h,y"}, c_qstuck, True),
+    "wayfail": (["--orders", "2"], {"BRAIN_MOCK_ABORT_AT": "APPROACH", STOP: "Order cancelled.;abort;x<0.32,The way out;fail;10", "BRAIN_MOCK_KEYS": "h,y,h,y"}, c_wayfail, True),
+    "wayfail1": ([], {"BRAIN_MOCK_ABORT_AT": "APPROACH", STOP: "Order cancelled.;abort;x<0.32,The way out;fail;10", "BRAIN_MOCK_KEYS": "h,y,h,y"}, c_wayfail, True),
+    "secondq": ([], {STOP: "Lowering beside the can.;keys:q+q;20"}, c_secondq, True),
+    "killtable": (["--probe", "--floor-margin", "0.02"], dict(NOERR, BRAIN_MOCK_SCENE="slot12", BRAIN_MOCK_ORDERS="purple", BRAIN_MOCK_TABLE_BIAS="0.02", BRAIN_MOCK_ERRZ="-0.01"), c_killtable, False),
+    "servoblock": (["--probe", "--probe-servo", "--pre-offset", "0.025", "--floor-margin", "0.02"], dict(NOERR, BRAIN_MOCK_SCENE="slot09", BRAIN_MOCK_ORDERS="purple"), c_servoblock, True),
+    "reach": (["--air", "--air-can", "0.35", "0.00", "--air-table", "0.075", "--speed", "0.5"], {"BRAIN_MOCK_SCENE": "none"}, c_reach, False),
+    "lateobst": (AIR, {"BRAIN_MOCK_SCENE": "none", "BRAIN_MOCK_OBSTACLE": "after:Reaching."}, c_lateobst, False),
+    "lateobst2": ([], dict(HIDDEN, BRAIN_MOCK_OBSTACLE="after:Approaching."), c_lateobst2, True),
+    "gemmanone": ([], dict(HIDDEN, BRAIN_MOCK_GEMMA_BOX="none"), c_gemmanone, True),
+    "pause": (["--manual"], {"BRAIN_MOCK_ENTER": "1", "BRAIN_MOCK_SAYKEYS": "Ready.:p", "BRAIN_MOCK_TIMEKEYS": "4:enter+p,10:q"}, c_pause, False),
+    "nograsp": (["--no-grasp"], HIDDEN, c_nograsp, True),
+    "air2": (["--air", "--air-can", "0.35", "0.00", "--air-table", "0.075", "--speed", "0.5"], {"BRAIN_MOCK_SCENE": "none"}, c_airplan, False),
+    "air3": (["--air", "--air-can", "0.40", "-0.08", "--air-table", "0.075", "--speed", "0.5"], {"BRAIN_MOCK_SCENE": "none"}, c_airplan, False),
+    "airfloor": (["--air", "--air-can", "0.38", "0.15", "--air-table", "0.075", "--speed", "0.5", "--air-margin", "0"], {"BRAIN_MOCK_SCENE": "none"}, c_airplan, False),
 }
 
 if not TREE:

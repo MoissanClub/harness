@@ -14,7 +14,10 @@ BRAIN_MOCK_SLEEP=0.25 (time.sleep scale)  BRAIN_MOCK_SAY=1 (speak through macOS 
 BRAIN_MOCK_ERRY=0 (true palm along the hand's y: an error along the palm normal)  BRAIN_MOCK_GEMMA_OFF=0 (Gemma's hand box shifted this far ahead)
 BRAIN_MOCK_TABLE_BIAS=0 (the depth camera sees the table this much LOWER than it is; the hand still meets the real table: the hand's
 bottom, palm z - 0.045, cannot go below the table top, the measured joints stay at the last command that did not penetrate)
-BRAIN_MOCK_TABLE_EDGE=0.34 (the table's near edge, pelvis x)  BRAIN_MOCK_DEPTH=zero (every depth pixel invalid)  BRAIN_MOCK_MIN_RANGE=0.28 (depth nearer than this is invalid, as on the D435i)
+BRAIN_MOCK_TABLE_EDGE=0.34 (the table's near edge, pelvis x)  BRAIN_MOCK_START_Q=q0,..,q4 (the arm's pose at start, e.g. where a
+release left it)  BRAIN_MOCK_GEMMA_BOX=none (Gemma returns no hand box)  BRAIN_MOCK_NEAR_HAND=1 (a hand-sized box 10 cm in front of the
+chest)  BRAIN_MOCK_SAYKEYS="SAY prefix:k+k,..." (the operator types keys into the running brain, any version, after a sentence; `enter`
+= an empty line; a STOP kind `keys:q+q` types at a streamed target)  BRAIN_MOCK_TIMEKEYS="seconds:k+k,...": typed on a clock  BRAIN_MOCK_DEPTH=zero (every depth pixel invalid)  BRAIN_MOCK_MIN_RANGE=0.28 (depth nearer than this is invalid, as on the D435i)
 BRAIN_MOCK_STOP="SAY text;kind;when[,...]": after the robot says a sentence starting with SAY text, raise `kind` at a streamed target,
 before it is sent (abort = the a key, quit = the q key, fail = a g1-fetch exception, sigint = Ctrl-C), `when` = the n-th target, or
 z>Z, z<Z, x<X, x>X on the commanded real palm. The same faults reach any brain version (check.py shows each gate case fails on c39a468).
@@ -22,7 +25,7 @@ At exit the mock prints `[mock] stats {...}`: targets streamed, the largest join
 over the table, the push into the table, arm releases away from home, and after each injected stop the hand's reach below the table
 top + 3 cm and how far the palm went out from where it stopped (check.py reads it).
 --mock-gemma adds scripted answers so the run needs no server at all."""
-import atexit, json, os, signal, sys, time, types, subprocess, math
+import atexit, gc, json, os, signal, sys, threading, time, types, subprocess, math
 import numpy as np, cv2
 import geom
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -37,18 +40,46 @@ SCENES = {"two": [("purple la croix", "purple", 0.41, 0.21, 0.066, 0.122), ("sil
           "centre": [("purple la croix", "purple", 0.40, 0.26, 0.066, 0.122), ("silver chi sparkling", "silver", 0.42, 0.07, 0.055, 0.135)],
           "left": [("purple la croix", "purple", 0.40, 0.17, 0.066, 0.122)], "mid": [("silver chi sparkling", "silver", 0.40, 0.11, 0.055, 0.135)],
           "near": [("silver chi sparkling", "silver", 0.42, 0.06, 0.055, 0.135)],
-          "three": [("purple la croix", "purple", 0.40, 0.30, 0.066, 0.122), ("silver chi sparkling", "silver", 0.40, 0.12, 0.055, 0.135), ("black coffee", "black", 0.38, -0.08, 0.055, 0.135)]}
+          "three": [("purple la croix", "purple", 0.40, 0.30, 0.066, 0.122), ("silver chi sparkling", "silver", 0.40, 0.12, 0.055, 0.135), ("black coffee", "black", 0.38, -0.08, 0.055, 0.135)],
+          "slot12": [("purple la croix", "purple", 0.38, 0.12, 0.066, 0.122)], "slot09": [("purple la croix", "purple", 0.38, 0.09, 0.066, 0.122)],
+          "slot06": [("purple la croix", "purple", 0.38, 0.06, 0.066, 0.122)], "slot17": [("purple la croix", "purple", 0.38, 0.17, 0.066, 0.122)]}   # the run plan's kill-test slots
 SCENE = [dict(desc=d, colour=c, p=np.array([x, y, TABLE_Z + h / 2]), diam=dm, h=h) for d, c, x, y, dm, h in SCENES[os.environ.get("BRAIN_MOCK_SCENE", "two")]]
 ERR0, ERRK, ERRZ = float(os.environ.get("BRAIN_MOCK_ERR", "0.096")), float(os.environ.get("BRAIN_MOCK_ERRK", "0.03")), float(os.environ.get("BRAIN_MOCK_ERRZ", "0.01"))
 ERRY, GEMMA_OFF = float(os.environ.get("BRAIN_MOCK_ERRY", "0")), float(os.environ.get("BRAIN_MOCK_GEMMA_OFF", "0"))
 TABLE_BIAS = float(os.environ.get("BRAIN_MOCK_TABLE_BIAS", "0")); DEPTH_MODE = os.environ.get("BRAIN_MOCK_DEPTH", ""); MIN_RANGE = float(os.environ.get("BRAIN_MOCK_MIN_RANGE", "0"))
 HAND_HALF_H = 0.045                  # the true hand's half height (thumb up): its bottom meets the table top
 HOME_Q = np.array([0.0, 0.25, 0.0, 1.0, 0.0])
+START_Q = np.array([float(v) for v in os.environ["BRAIN_MOCK_START_Q"].split(",")]) if os.environ.get("BRAIN_MOCK_START_Q") else HOME_Q.copy()   # e.g. the pose a release left
+GEMMA_BOX = os.environ.get("BRAIN_MOCK_GEMMA_BOX", "")             # "none": Gemma answers with no box (server down, timeout)
+NEAR_HAND = os.environ.get("BRAIN_MOCK_NEAR_HAND") == "1"            # a hand-sized box 10 cm in front of the chest at belly height
+SAYKEYS = [tuple(s.split(":", 1)) for s in os.environ.get("BRAIN_MOCK_SAYKEYS", "").split(",") if ":" in s]   # "SAY prefix:key+key": the operator types
+TIMEKEYS = [(float(t), k) for t, k in (s.split(":", 1) for s in os.environ.get("BRAIN_MOCK_TIMEKEYS", "").split(",") if ":" in s)]   # "seconds:key+key" after start
+HAND_BOX = ((-0.045, 0.125), (-0.02, 0.02), (-0.045, 0.045))          # the true open hand about the true palm, hand frame (x fingers, y thickness, z thumb)
+
+
+def hand_corners(tp, R):
+    return [tp + R @ np.array([x, y, z]) for x in HAND_BOX[0] for y in HAND_BOX[1] for z in HAND_BOX[2]]
+
+
+def find_brain():
+    """The running brain (any version) for the scripted operator's keys: the object whose class is Brain."""
+    for o in gc.get_objects():
+        try:
+            if type(o).__name__ == "Brain" and hasattr(o, "key"): return o
+        except Exception: pass
+    return None
+
+
+def type_keys(keys, why):
+    b = find_brain()
+    for k in keys:
+        print("  [mock operator] types %r (%s)" % (k, why), flush=True)
+        if b is not None: b.key("" if k == "enter" else k)
 OBSTACLE_SPEC = os.environ.get("BRAIN_MOCK_OBSTACLE", "")          # "1": always; "after:Missed.": from the moment the robot says that
 CONTACT = float(os.environ.get("BRAIN_MOCK_CONTACT", "0.006"))   # contact starts this far beyond r from the can axis (0.006: 4 mm past the closure pose)
 HAND_SCRIPT = [s for s in os.environ.get("BRAIN_MOCK_HAND", "auto").split(",") if s]
 STATE = {"order": None, "pending": [], "closures": 0, "person": False}
-STATS = {"targets": 0, "max_dq": 0.0, "max_dq_joint": None, "max_dq_palm": None, "max_dq_after": "", "min_cmd_z": None, "table_contacts": 0, "push": 0.0,
+STATS = {"targets": 0, "max_dq": 0.0, "max_dq_joint": None, "max_dq_palm": None, "max_dq_after": "", "min_cmd_z": None, "table_contacts": 0, "push": 0.0, "raise_tip_under_table_x": -1.0, "raise_cmd_hand_under_table_x": -1.0,
          "disable_away": [], "disables": 0, "stops": [], "raise_low_reach": -1.0, "says": 0}
 STOPS = []
 for _spec in [s for s in os.environ.get("BRAIN_MOCK_STOP", "").split(",") if s.strip()]:
@@ -71,6 +102,10 @@ def _low_reach(q, below=None):
 
 def on_say(text):
     STATS["says"] += 1; _LAST_SAY[0] = text
+    for rec in STATS["stops"]:
+        if text.startswith("The way out"): rec["way_out_said"] = True
+    for say, keys in SAYKEYS:
+        if text.startswith(say): type_keys(keys.split("+"), "after '%s'" % say)
     if OBSTACLE_SPEC.startswith("after:") and text.startswith(OBSTACLE_SPEC[6:]) and not STATE.get("obstacle"):
         STATE["obstacle"] = True; print("  [mock] a box appears at chest height 15-25 cm ahead", flush=True)
     for st in STOPS:
@@ -95,8 +130,10 @@ def fire(st, q_now):
     rec = {"kind": st["kind"], "say": st["say"], "when": st["when"], "palm": np.round(s["palm"], 3).tolist(), "target": STATS["targets"], "after_targets": 0, "after_low_reach": -1.0, "out_x": 0.0, "out_y": 0.0, "up_z": 0.0}
     # out_x / out_y: how far the palm went ahead / outward of where it stopped while still at that height (a retry that walks the arm
     # out over the table); the retraced descent home leaves the height first and does not count
+    rec["moved_before_way_out"] = 0; rec["way_out_said"] = False
     STATS["stops"].append(rec); print("  [mock] injected stop: %s after '%s' (%s) with the palm at %s" % (st["kind"], st["say"], st["when"], rec["palm"]), flush=True)
     main = sys.modules.get("__main__")
+    if st["kind"].startswith("keys:"): type_keys(st["kind"][5:].split("+"), "at a streamed target"); return
     if st["kind"] == "abort": raise getattr(main, "OrderAborted")()
     if st["kind"] == "quit": raise getattr(main, "Abort")()
     if st["kind"] == "sigint": os.kill(os.getpid(), signal.SIGINT); time.sleep(0.05); return
@@ -108,9 +145,19 @@ def track(q_prev, q):
     q = np.asarray(q, float); dq = np.abs(q - np.asarray(q_prev, float)); m = float(dq.max()); STATS["targets"] += 1; s = _segments(q)
     if m > STATS["max_dq"]: STATS.update(max_dq=round(m, 4), max_dq_joint=int(dq.argmax()), max_dq_palm=np.round(s["palm"], 3).tolist(), max_dq_after=_LAST_SAY[0])
     if s["palm"][0] > TABLE_X[0] and (STATS["min_cmd_z"] is None or s["palm"][2] < STATS["min_cmd_z"]): STATS["min_cmd_z"] = round(float(s["palm"][2]), 4)
-    if _LAST_SAY[0].startswith("Raising."): STATS["raise_low_reach"] = max(STATS["raise_low_reach"], round(_low_reach(q), 4))
+    if _LAST_SAY[0].startswith("Raising."):
+        STATS["raise_low_reach"] = max(STATS["raise_low_reach"], round(_low_reach(q), 4))
+        rb = STATE.get("robot")
+        if rb is not None:                                # any corner of the TRUE open hand under the table top during the raise (the keep-out's reason)
+            tp, R = rb.arms.true_palm_at(q)
+            for c in hand_corners(tp, R):
+                if c[2] < TABLE_Z: STATS["raise_tip_under_table_x"] = max(STATS["raise_tip_under_table_x"], round(float(c[0]), 4))
+            Tc = geom.fk_chain_side(np.asarray(q, float)); pc, Rc = Tc[5][:3, 3], Tc[4][:3, :3]      # where the command puts the hand (no sag): the keep-out's own measure
+            for c in hand_corners(pc, Rc):
+                if c[2] < TABLE_Z: STATS["raise_cmd_hand_under_table_x"] = max(STATS["raise_cmd_hand_under_table_x"], round(float(c[0]), 4))
     for rec in STATS["stops"]:
         rec["after_targets"] += 1; rec["after_low_reach"] = max(rec["after_low_reach"], round(_low_reach(q), 4))
+        if not rec.get("way_out_said", True): rec["moved_before_way_out"] = rec.get("moved_before_way_out", 0) + 1
         p0 = np.array(rec["palm"]); rec["up_z"] = max(rec["up_z"], round(float(s["palm"][2] - p0[2]), 4))
         if s["palm"][2] >= p0[2] - 0.02: rec["out_x"] = max(rec["out_x"], round(float(s["palm"][0] - p0[0]), 4)); rec["out_y"] = max(rec["out_y"], round(float(s["palm"][1] - p0[1]), 4))
 
@@ -220,6 +267,11 @@ def render(true_palm, R_hand, fingers_open=True, cans=None, person=False):
         with np.errstate(divide="ignore", invalid="ignore"):
             t1 = (lo - o) / dirs; t2 = (hi - o) / dirs; tmin = np.max(np.minimum(t1, t2), axis=1); tmax = np.min(np.maximum(t1, t2), axis=1)
         hit(tmin, (tmax > tmin) & (tmax > 0), 50)
+    if NEAR_HAND:                                # a guest's hand 10 cm in front of the chest at belly height: inside the D435i's minimum range
+        lo, hi = np.array([0.18, -0.04, 0.24]), np.array([0.24, 0.04, 0.32])
+        with np.errstate(divide="ignore", invalid="ignore"):
+            t1 = (lo - o) / dirs; t2 = (hi - o) / dirs; tmin = np.max(np.minimum(t1, t2), axis=1); tmax = np.min(np.maximum(t1, t2), axis=1)
+        hit(tmin, (tmax > tmin) & (tmax > 0), 51)
     if person:                                   # a hand-sized box 10 cm beyond the robot's hand (the guest reaching for the can)
         c = (true_palm if true_palm is not None else np.array([0.3, 0.2, 0.2])) + np.array([0.12, -0.05, 0.02])
         t = np.linalg.norm(c - o); p = o + dirs * t; hit(np.full(dirs.shape[0], t), np.linalg.norm(p - c, axis=1) < 0.06, 40)
@@ -308,7 +360,7 @@ class Kin:
 class Arms:
     """Streamer mock: cmd per side, measured = cmd + sag, true palm = model palm + a configuration-dependent forward/vertical error."""
     def __init__(self, kin):
-        self.kin = kin; self.cmd = {"left": np.array([0.0, 0.25, 0.0, 1.0, 0.0]), "right": np.array([0.0, -0.25, 0.0, 1.0, 0.0])}
+        self.kin = kin; self.cmd = {"left": START_Q.copy(), "right": np.array([0.0, -0.25, 0.0, 1.0, 0.0])}
         self.on = False; self.hand_open = True; self.contact_q = None    # contact_q: while the hand presses a can, the measured joints stay at this command
         self.held = None                                                # (can dict, offset from the true palm) while the hand holds it
     def hold_nearest(self):
@@ -316,7 +368,10 @@ class Arms:
         if c is not None and np.linalg.norm(c["p"] - tp) < 0.12: self.held = (c, c["p"] - tp); print("  [mock] holding %s" % c["desc"], flush=True)
     def carry(self):
         if self.held is not None: c, off = self.held; c["p"] = self.true_palm() + off
-    def enable(self): self.on = True; print("  [mock] arm streamer enabled", flush=True); time.sleep(0.5)
+    def enable(self):
+        """g1-fetch ArmStreamer.enable: target = cmd = the measured joints, then the weight ramps to 1 (the arm then sags once more)."""
+        if not self.on: self.cmd["left"] = self.measured("left").copy(); self.contact_q = None
+        self.on = True; print("  [mock] arm streamer enabled", flush=True); time.sleep(0.5)
     def disable(self):
         """g1-fetch ramps the arm_sdk weight to 0: the controller takes the arm back in joint space from wherever it is."""
         STATS["disables"] += 1; palm = _segments(self.cmd["left"])["palm"]; home = _segments(HOME_Q)["palm"]
@@ -340,9 +395,10 @@ class Arms:
     def tracking_error(self, side):
         return float(np.max(np.abs(self.measured(side) - self.cmd[side])))   # the sag, plus the command running ahead of a hand held at a can
     def table_block(self, q_cmd):
-        """True when the hand, settled at q_cmd, would go below the REAL table top (its bottom = true palm z - 0.045) over the table."""
+        """True when the open hand, settled at q_cmd, would put any corner (palm box and fingertips, from its pitch and roll) below the
+        REAL table top over the table."""
         tp, R = self.true_palm_at(q_cmd)
-        return TABLE_X[0] < tp[0] < TABLE_X[1] and abs(tp[1]) < 0.55 and tp[2] - HAND_HALF_H < TABLE_Z
+        return any(TABLE_X[0] < c[0] < TABLE_X[1] and abs(c[1]) < 0.55 and c[2] < TABLE_Z for c in hand_corners(tp, R))
     def would_block(self, q_cmd):
         """True when the open hand, settled at q_cmd, would penetrate a can (the geometry of blocked())."""
         if not self.on or self.held is not None or not self.hand_open: return False
@@ -445,6 +501,8 @@ class Robot:
         self.kin = Kin(); self.arms = Arms(self.kin); self.camera = Camera(); self.camera.arms = self.arms; self.detector = Detector(self.camera)
         self.hands = {"left": Hand("left", self.arms), "right": Hand("right")}; self.frames = FRAMES; self.cfg = cfg
         STATE["robot"] = self; time.sleep(0.5)
+        for t, keys in TIMEKEYS:                                         # the operator types on a clock (a thread, like the brain's key reader)
+            th = threading.Timer(t, type_keys, args=(keys.split("+"), "at %.0f s" % t)); th.daemon = True; th.start()
     def speak(self, text):
         on_say(text)
         if os.environ.get("BRAIN_MOCK_SAY"): subprocess.Popen(["say", "-r", "190", text])
@@ -557,7 +615,8 @@ def mock_gemma(GemmaClass):
         elif "yes or no" in text: ans = "yes"
         elif "Detect" in text:                                                # Gemma's box of the robot's hand: around the TRUE hand (+-6 cm), 0-1000 grid
             rb = STATE.get("robot"); ans = "100, 100, 300, 200]"
-            if rb is not None and rb.arms.on:
+            if GEMMA_BOX == "none": ans = "I cannot see a hand."
+            elif rb is not None and rb.arms.on:
                 tp = rb.arms.true_palm() + np.array([GEMMA_OFF, 0.0, 0.0]); R = rb.arms.true_R()    # the image box of the true open hand's 8 corners
                 corners = [tp + R @ np.array([x, y, z]) for x in (-0.045, 0.125) for y in (-0.02, 0.02) for z in (-0.045, 0.045)]
                 uv = [geom.pelvis_to_pixel(FRAMES, INTR, c) for c in corners]

@@ -387,6 +387,33 @@
    "date": "2026-10-21",
    "n": 0,
    "valid_days": 60
+  },
+  "raise_back_m": {
+   "value": 0.02,
+   "unit": "m",
+   "frame": "pelvis x behind the home palm: the raise first goes up there to the table top + 3 cm, then to the raise waypoint",
+   "method": "V2_REVIEW round 3: the straight raise swept a 12.5 cm hand's fingertips to x 0.347-0.349 under the table top (keep-out reach 0.351 at fingertip 0.125); this waypoint keeps them behind x 0.304-0.306 (mock, eight plan targets, clearances >= 5.6 cm); 0.04 hits the elbow's joint margin at two air targets",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 60
+  },
+  "hand_back_m": {
+   "value": 0.045,
+   "unit": "m",
+   "frame": "the open hand behind the palm centre along the wrist-roll axis (the table floor's hand box)",
+   "method": "assumed: the mock's hand box; BrainCo left hand 15.9 cm long with the palm centre about 4.5 cm from its wrist end (URDF extents). Tape with fingertip_m",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 60
+  },
+  "hand_half_thickness_m": {
+   "value": 0.02,
+   "unit": "m",
+   "frame": "half the open hand's thickness, palm face to back (the table floor's hand box)",
+   "method": "assumed: BrainCo palm 7.6 x 4.1 cm (URDF extents); the owner tapes the hand thickness (the run plan)",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 60
   }
  }
 }

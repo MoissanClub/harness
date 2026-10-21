@@ -96,7 +96,7 @@ class Gemma:
         return any(w in ans for w in TAKE_WORDS), ans, rec
 
     def box(self, img_bgr, what, stage="LOCATE", media=None):
-        """Diagnostic only: Gemma box_2d of `what` in 640x480 pixel coordinates, or None. grab_loop.py gemma_box payload."""
+        """Gemma box_2d of `what` in the image's pixel coordinates, or None (the servo's cross-check fails on None). grab_loop.py gemma_box payload."""
         q = "Detect " + what + ". Output only JSON: [{\"box_2d\": [ymin, xmin, ymax, xmax], \"label\": \"can\"}] with coordinates normalized to 0-1000."
         msgs = [{"role": "user", "content": [image_part(img_bgr), {"type": "text", "text": q}]},
                 {"role": "assistant", "content": "```json\n[\n  {\"box_2d\": ["}]
@@ -104,7 +104,8 @@ class Gemma:
         nums = [int(n) for n in re.findall(r"\d+", ans[ans.rindex("[") + 1:] if "[" in ans else ans)][:4]
         if len(nums) != 4: return None, rec
         y1, x1, y2, x2 = nums
-        return (x1 / 1000 * 640, y1 / 1000 * 480, x2 / 1000 * 640, y2 / 1000 * 480), rec
+        H, W = img_bgr.shape[:2]                                            # the frame's own size (the head stream on PC2 need not be 640x480)
+        return (x1 / 1000 * W, y1 / 1000 * H, x2 / 1000 * W, y2 / 1000 * H), rec
 
     def describe_crop(self, crop_bgr, stage="LOOK", media=None):
         """One detected can's crop -> a short description ("purple la croix", "chi sparkling water"), lowercase, at most 4 words."""
