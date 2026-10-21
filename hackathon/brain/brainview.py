@@ -48,7 +48,7 @@ PAGE = r"""<!doctype html><html><head><meta charset="utf-8"><title>G1 brain</tit
 header{display:flex;align-items:center;gap:18px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
 header h1{font-size:18px;margin:0;font-weight:600}header .sub{color:var(--dim);font-size:13px}
 #state{font-size:34px;font-weight:700;letter-spacing:.04em;padding:4px 16px;border-radius:8px;background:#1f2a3a;min-width:220px;text-align:center}
-#state.IDLE{background:#1f2a3a}#state.LISTEN,#state.UNDERSTAND{background:#2c3f6b}#state.LOCATE,#state.CHECK{background:#2a4a6b}#state.PICK,#state.LIFT,#state.VERIFY{background:#4a3b6b}
+#state.IDLE{background:#1f2a3a}#state.LISTEN,#state.UNDERSTAND{background:#2c3f6b}#state.LOCATE,#state.CHECK{background:#2a4a6b}#state.PICK,#state.LIFT,#state.VERIFY,#state.SERVO,#state.APPROACH{background:#4a3b6b}#state.LOOK{background:#2a4a6b}
 #state.HANDOVER{background:#2f5a3b}#state.RECOVER{background:#6b4a1e}#state.OFF,#state.BOOT{background:#3a3a3a}
 .counter{margin-left:auto;text-align:right}.counter b{font-size:30px;color:var(--ok)}.counter span{color:var(--dim);font-size:12px;display:block}
 main{display:grid;grid-template-columns:minmax(320px,660px) 1fr;gap:16px;padding:16px}@media(max-width:900px){main{grid-template-columns:1fr}}

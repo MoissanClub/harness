@@ -180,8 +180,16 @@ def c_assistant():
     return "PASS" if not msgs else "WARN", "rt/audio_msg: %d messages in 3 s%s" % (len(msgs), " e.g. " + msgs[0][:60] if msgs else ""), "put the factory assistant to sleep in the app (close interaction)"
 
 
+def c_geom():
+    """geom.py's URDF chain against g1-fetch's pinocchio FK (reach_test.py print of 2026-10-18); the torso box the planner uses."""
+    import numpy as np
+    sys.path.insert(0, HERE); import geom
+    e = float(np.linalg.norm(geom.fk([-0.5, 0.25, 0.0, 0.6, 0.0])[:3, 3] - np.array([0.356, 0.190, 0.109])))
+    return e < 0.003, "FK error %.1f mm vs the logged pose; torso box y +-%.2f, margin %.2f" % (e * 1000, geom.TORSO_BOX[1][1], geom.FOREARM_RADIUS), "geom.py chain differs from the URDF g1-fetch loads"
+
+
 def main():
-    check("server", c_server); check("warmup", c_warmup)
+    check("server", c_server); check("warmup", c_warmup); check("geom", c_geom)
     if A.mock:
         for n in ("cam_services", "d435i", "c922_video", "c922_mic", "power", "clocks", "fsm", "hands", "arm_service", "assistant"):
             CHECKS.append({"name": n, "status": "SKIP", "detail": "mock", "hint": "", "ms": 0})

@@ -24,6 +24,12 @@ VISION_SYSTEM = "You are a robot's vision module. Image left/right are robot lef
 CROP_Q = "What is the main colour of this can? Answer with one colour word."
 IN_HAND_Q = "Is the robot holding the soda can in its hand, off the table?"
 HUMAN_HAND_Q = "Is a human hand touching the soda can that the robot is holding? The robot's own white hand does not count."
+DESCRIBE_SYSTEM = "You label drink cans. Reply with two or three words only: the colour, then the brand or flavour if readable."
+DESCRIBE_Q = "Identify this drink can in two or three words (colour and brand)."   # Mac, office crops: "Purple Sprite" / "Silver Chi" in 210-250 ms; a flat crop gives "Grey, unknown" (no sentence)
+CHOOSE_SYSTEM = ("You are a drinks host robot. The cans on the table are numbered: {cans}. The guest says which can they want, in any "
+                 "language; they may name its colour, brand, flavour, picture, size or position. Answer with the number of that can only, "
+                 "or none if no listed can matches.")
+CHOOSE_Q = "Which can does the guest want?"
 
 
 def jpeg_b64(img, size=(480, 336), quality=85):
@@ -99,6 +105,23 @@ class Gemma:
         if len(nums) != 4: return None, rec
         y1, x1, y2, x2 = nums
         return (x1 / 1000 * 640, y1 / 1000 * 480, x2 / 1000 * 640, y2 / 1000 * 480), rec
+
+    def describe_crop(self, crop_bgr, stage="LOOK", media=None):
+        """One detected can's crop -> a short description ("purple la croix", "chi sparkling water"), lowercase, at most 4 words."""
+        msgs = [{"role": "system", "content": DESCRIBE_SYSTEM}, {"role": "user", "content": [image_part(crop_bgr, size=None), {"type": "text", "text": DESCRIBE_Q}]}]
+        ans, rec = self.ask("describe", DESCRIBE_Q, msgs, 10, stage, media=media)
+        words = [w for w in re.findall(r"[a-z0-9]+", ans) if w not in ("a", "an", "the", "of", "can", "this", "is", "it", "unknown", "brand", "colour", "color")]
+        return " ".join(words[:4]) or "unknown can", rec
+
+    def hear_choice(self, wav_bytes, descriptions, stage="UNDERSTAND"):
+        """Spoken order (any language) + the numbered descriptions in the system prompt -> index into descriptions, or None.
+        Returns (index or None, raw answer, record); the answer is a number or none (max 4 tokens)."""
+        cans = "; ".join("%d: %s" % (i + 1, d) for i, d in enumerate(descriptions))
+        msgs = [{"role": "system", "content": CHOOSE_SYSTEM.format(cans=cans)},
+                {"role": "user", "content": [{"type": "text", "text": CHOOSE_Q}, audio_part(wav_bytes)]}]
+        ans, rec = self.ask("hear_choice", CHOOSE_Q, msgs, 4, stage, media="audio")
+        m = re.search(r"\d+", ans); idx = int(m.group()) - 1 if m else None
+        return (idx if idx is not None and 0 <= idx < len(descriptions) else None), ans, rec
 
     def warmup(self, img_bgr=None, stage="PREFLIGHT"):
         """One request that fills the cached prefix of the vision path (or a text turn without an image)."""
