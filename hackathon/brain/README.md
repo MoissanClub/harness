@@ -20,7 +20,7 @@ IDLE > LOOK > LISTEN > UNDERSTAND > CONFIRM > LOCATE > PICK (SERVO, APPROACH) > 
 | CONFIRM | TTS "The silver chi one. Coming up." | scripted |
 | LOCATE | fresh frame, the chosen can matched to the new boxes (IoU, else by description), axis = box depth (front surface) + half the classified diameter (55 / 66 mm), the table plane from the depth band beside and under the can (level RANSAC on the points within 6 cm of the can base, the height read from the inliers: `geom.table_plane`), the hard safety (nothing within 0.30 m straight ahead at chest height, at least 70% valid depth or it refuses, the robot's own arm not counted), then the plan | code (geometry) |
 | plan | `geom.plan_reach`: the real palm (0.246 m along the wrist-roll axis) at the can axis minus (r + 1 cm) along the palm normal n = d x z, 1.5 cm below the mid-height from the table plane; forearm yaw psi from -30 to 60 deg in 5 deg steps visited outward from the preferred yaw; a 4-joint IK with the yaw held hard (pitch is an outcome); every pose (grasp, pre-grasp 3 cm out, each 1 cm approach pose, the high waypoint) must solve within 5 mm, keep the lower upper arm / forearm / hand 1.5 / 4 / 6 cm from the torso bands (mesh extents per height band), the hand 5 cm from the right arm, every joint 10 deg from its limit, the forearm within 15 deg of level, the palm's lowest point at the table; the smallest pitch wins, ties to the smaller yaw; refusals name the constraint | code |
-| PICK | tuck (home), raise from the shoulder (position-only IK, the hand's roll kept; every target recorded as it streams), reach high (the wrist roll blended along the path): both uncorrected, their error logged as the sag baseline (Tuesday 1.9-2.6 / 2.5-4.7 cm; over 7 cm refuses); lower to the pre-grasp with the sag fed forward (stopping 2 cm above, then the last part with the sag measured there), then corrections streamed in capped sub-steps until the measured real palm is within 6 mm; nothing below the table plane + palm half-height + 5 mm; a correction the hand does not follow, or a corrected error over 2 cm, refuses (`motion.Arm`); every path solved before it moves; no joint changes more than 0.02 rad x speed in one 20 ms target | scripted skill |
+| PICK | tuck (home), raise from the shoulder (position-only IK, the hand's roll kept; first up 2 cm behind the hip to the table top + 3 cm so the open fingers pass the table-top height behind the edge, then the raise waypoint; every target recorded as it streams), the 0.30 m rule again, reach high (the wrist roll blended along the path): both uncorrected, their error logged as the sag baseline (Tuesday 1.9-2.6 / 2.5-4.7 cm; over 7 cm refuses); the 0.30 m rule again, lower to the pre-grasp with the sag fed forward (stopping 2 cm above, then the last part with the sag measured there), then corrections streamed in capped sub-steps until the measured real palm is within 6 mm; the open hand's lowest point (palm box and fingertips, through the orientation predicted on arrival) never below the table plane + the floor margin (5 mm; 2 cm in the kill test); a hand resting above its goal near the table is contact: no correction is streamed onto it, the move refuses; a corrected error over 2 cm refuses (`motion.Arm`); every path solved before it moves; no joint changes more than 0.02 rad x speed in one 20 ms target | scripted skill |
 | SERVO | one head frame gives the can (YOLOE + depth) and the hand (depth blob above the table plane, the cans' own points removed by 3D distance, the front 12 cm of the arm blob along d) in the pelvis frame; features = fingertip front along d, nearest face along n, median z; with the hand constant K (measured once at an owner-approved aligned pre-grasp) the error e = (axis + K) - features drives (e_d, e_z) with clipped 3 cm nudges until both are under 1 cm on two frames (budget 3); a blob touching the image border, its search window (200 x 170 px around the hand, grown once) or its radius is not used; Gemma's box of the robot's hand on the first frame must lie on the blob (50% overlap) or the order ends; without K it measures and logs only, and an order refuses to grasp unless `--model-grasp` | sensor gate |
 | APPROACH | thumb opposed, then along +n in 1 cm steps on the line from the start, each re-applying the measured joint correction; the gap is measured: the closure pose from the latest measured can axis minus the measured palm, and the visual near-face gap from the last reading taken clear of the can (model gap >= 2 cm) minus the measured advance; the larger counts and only while they agree within 1 cm: no visual gap or a disagreement means no close; half way, a fresh frame (the can moved > 1.5 cm = pushed, abort); the hand closes only when the measured gap is under 1 cm; a tracking-error rise to 2x the baseline, a cumulative lag of 1.2 cm or an advance beyond the standoff + 1.5 cm is an abort, never a close | code + sensor |
 | close | fingers 0.9, thumb lock 0.9 (`--no-thumb-lock` keeps the thumb opposed only); the hand state logged after each stage | scripted |
@@ -31,13 +31,17 @@ IDLE > LOOK > LISTEN > UNDERSTAND > CONFIRM > LOCATE > PICK (SERVO, APPROACH) > 
 | HANDOVER | offer pose = the calibrated delta from the lift moved forward / toward the midline / up until the real palm projects inside the head camera's view; release on a tug (a stalled finger closing 0.03 further on two cycles with the setpoint re-sent), a new depth cluster within 6 cm of the can on two frames confirmed by one Gemma yes/no, a let-go transcript (never within 2 s of the robot's own sentence), the `r` key or `--release-after` | sensor gate + Gemma |
 | RECOVER | unknown order: honest negative, no motion. No plan: the constraint spoken. A can cut off by the image border: refused ("move it toward my centre"). Miss: one mapped correction, retry once (a refused locate ends the order), then the assisted placement verified by the signature. Every failure, abort and quit goes home on a path planned and keep-out checked before any motion: on the recorded raise, the raise retraced from where the arm stopped; over the table, up (only until 5 cm from the can), back to the raise end, the raise retraced; joint space only from below the table top behind the raise. A refused or stopped move holds the arm (stuck): a spoken reminder every 30 s, `h` plans the way out and says it, `y` runs it, `quit!` exits without releasing (after L2+B) | scripted |
 
+`p` between orders releases the arm at home for a can reset (ARM OFF) and takes it back with the start-up checks; the start-up check
+accepts an arm at home or hanging below the taped table height behind the raise waypoint (palm and fingertips), as a release leaves it.
 Every order ends with the arm held at home (g1-fetch's home_q, the real palm at (0.194, 0.267, -0.174) beside the hip, below the
 table top; `--park release` releases it there, announced). The arm is enabled only with `--table-edge` (the keep-out on every raise,
 retreat, home and park path) and only when it hangs below the table top behind the raise at start; it is never released away from
 home (g1-fetch then ramps the arm_sdk weight to 0 and the controller takes the arm back in a joint-space move). Every move is announced
 ("Raising.", "Reaching.", "Lowering beside the can.", "Up and back.", "Home.", "Releasing my arm."); `--dry` never enables the arm.
 The arm service is switched off once at start and on at exit. `q` / Ctrl-C / SIGTERM bring the arm home first, then open the hand
-(thumb last) and release it; a second `q`, `a` or Ctrl-C during that stops the arm where it is (stuck).
+(thumb last) and release it; a second `q`, `a` or Ctrl-C during that (or two at once) stops the arm where it is (stuck). While stuck,
+`q` / Ctrl-C only ask to quit once a confirmed way out (`h`, then `y`) has brought the arm home; any failure during a way out holds the
+arm again; the shutdown never exits or moves by itself with the arm out; `quit!` (after L2+B) exits without moving or releasing anything.
 
 ## Files
 
@@ -61,10 +65,10 @@ The arm service is switched off once at start and on at exit. `q` / Ctrl-C / SIG
   the brain prints the table at start, logs the sha and the git SHA into every order, logs CLI overrides as deviations, refuses stale
   entries without `--accept-calib`. `hand_feature_K` is null until the kill test measures it.
 - `replay_reach.py`: experiment 1 (no robot): the 18 logged can positions of Oct 19-21 through the planner.
-- `test_geom.py`, `test_motion.py`, `check.py`: the desk gate (`python -B check.py`, 33 checks in about 75 s): compile, geometry and
-  motion tests against values logged on the robot, the replay, calib freshness, the CLI refusals, and 25 mock runs, each checking the
-  joint step per target, with the round-1 cases (failing on 2d4f1ca) and the round-2 cases (failing on c39a468; `CHECK_TREE=<tree>`
-  runs a case on another version with this mock); see `HANDOFF.md`.
+- `test_geom.py`, `test_motion.py`, `check.py`: the desk gate (`python -B check.py`, 50 of 50 pass in 95 s): compile, geometry and motion tests
+  against values logged on the robot, the replay, calib freshness, the CLI refusals, and 41 mock runs, each checking the joint step per
+  target, with the round-1 cases (failing on 2d4f1ca), the round-2 cases (failing on c39a468) and the round-3 cases (failing on 8e226e9;
+  `CHECK_TREE=<tree>` runs a case on another version with this mock); see `HANDOFF.md`.
 - `gemma.py`: the Gemma calls, each returned as a logged record (`describe_crop`, `hear_choice`, yes/no, transcript, box).
 - `preflight.py`: pass/fail table (server, warm-up, geometry self-check, cameras, mic, services, FSM, hands, power, no-cloud).
 - `brainview.py`: the page for the laptop, stdlib HTTP + server-sent events, port 8000.
@@ -76,8 +80,10 @@ The arm service is switched off once at start and on at exit. `q` / Ctrl-C / SIG
   `BRAIN_MOCK_CONTACT`, `BRAIN_MOCK_OBSTACLE` (`1` or `after:TEXT`), `BRAIN_MOCK_ABORT_AT` (the `a` key at a state), `BRAIN_MOCK_STOP`
   (a, q, Ctrl-C or a g1-fetch failure at a streamed target after a sentence), `BRAIN_MOCK_KEYS` (the operator's keys while stuck),
   `BRAIN_MOCK_TABLE_BIAS` / `_EDGE` (the depth plane low; the table's near edge), `BRAIN_MOCK_DEPTH=zero`, `BRAIN_MOCK_MIN_RANGE`,
-  `BRAIN_MOCK_GEMMA_OFF`; the hand meets the real table; `[mock] stats` at exit (joint steps, releases away from home, the reach after
-  a stop).
+  `BRAIN_MOCK_GEMMA_OFF`, `BRAIN_MOCK_GEMMA_BOX=none`, `BRAIN_MOCK_START_Q` (the start pose), `BRAIN_MOCK_NEAR_HAND`, the kill-test scenes
+  `slot06/09/12/17`, `BRAIN_MOCK_SAYKEYS` / `BRAIN_MOCK_TIMEKEYS` (the operator typing into any brain version); the open hand box meets the
+  real table; enable takes the measured pose (g1-fetch); `[mock] stats` at exit (joint steps, releases away from home, the reach after a
+  stop, the hand under the table top during the raise, the push into the table).
 - `runs/` (git-ignored): `live/` for the view; per session `order_NN.jsonl`, frames, clips and replayable frame bundles
   (`bundle_<label>_color.jpg`, `_depth.png` uint16 mm, `_meta.json` with intrinsics, optical-to-pelvis, q_cmd, q_meas, hand state).
 
@@ -119,6 +125,8 @@ tmux new -s brain "python brain.py --K D N Z --manual --park home --expect-calib
 | `--speed` | 1.0 | in (0, 1]: scales every Cartesian speed, the approach steps and the joint step per target; an override is logged as a deviation |
 | `--table-edge` | none (calib `table_edge_m`) | pelvis x of the table's near edge from the tape; required to enable the arm; the keep-out refuses a path whose hand passes within 2 cm of it below the table top + 3 cm |
 | `--expect-calib SHA16` | none | refuse to start unless calib.json has this sha16 and the brain tree is clean (every run-plan command) |
+| `--table-z` (`--air-table`), `--fingertip`, `--palm-half-height`, `--floor-margin` | none, calib 0.08, 0.045, 0.005 | the owner's tape: the table height (every mode), the palm-to-fingertip length and the palm half-height (the keep-out's and the floor's hand), the floor margin (0.02 in the kill test); overrides are logged |
+| `--no-grasp`, `--air-margin`, `--blind-max` | off, 0.03, 0.08 | stop an order before the pick (every plan command); the air test's virtual can above the table (0: a floor-bound pre-grasp); the largest blind depth region the 0.30 m rule accepts |
 | `--model-grasp`, `--pre-offset`, `--pre-stop`, `--stuck-reminder` | off, 0, 0.02, 30 | grasp without K on the model gap (a deviation); the pre-grasp moved back along the forearm (a deviation, for the servo-residual block); the corrected pre-grasp error that refuses; seconds between the stuck reminders |
 | `--air-can X Y`, `--air-table T` | 0.38 0.15, none | the air test's virtual can (axis at T + 0.061 + 0.03) and the taped table height in the pelvis frame |
 | `--seconds`, `--retries`, `--assist-wait`, `--hold-reminder`, `--release-after`, `--hand-q`, `--orders`, `--manual`, `--probe`, `--probe-can`, `--probe-servo`, `--air`, `--air-can`, `--dry`, `--accept-calib`, `--mock`, `--mock-gemma` | | as in v1 plus the experiment modes |
@@ -139,6 +147,12 @@ moves along +n. psi 0 is v1's lateral slide along -y.
 `measure_<label>.jpg`, `cam3_<stage>.jpg`, `hold_NN.jpg`, the `bundle_*` frame bundles; clips `order_N.wav`, `hold_NN.wav`.
 
 ## Validation so far
+
+After the third review (`V2_REVIEW.md` round 3, fixed in 13bff01, `HANDOFF.md` has the details): 50 of 50 pass in 95 s; each in-plan item has a case
+on another path that fails on 8e226e9 (the kill test refused after a release; a hand 10 cm from the chest not seen; q while stuck
+breaking every way out; a failure in the way out homing without confirmation or exiting with the arm out; two q homing the arm; a 26 mm
+push at the kill slot; table contact in the servo block; the commanded hand under the table top at x 0.338 during the raise; no
+re-check before the lowering, the slide or the approach; no check when Gemma returns no box; Enter latched through a pause).
 
 After the second review (`V2_REVIEW.md` round 2, fixed in 8e226e9, `HANDOFF.md` has the details): the desk gate passes 33 of 33 in about
 75 s; each of the five round-2 blockers has a case on a path the verifiers did not use, and each fails on c39a468 with the same mock (a
