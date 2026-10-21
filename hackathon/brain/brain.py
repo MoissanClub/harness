@@ -22,7 +22,7 @@ THUMB_PRE, OPEN6 = [0.0, 0.8, 0.0, 0.0, 0.0, 0.0], [0.0] * 6
 PARK_ZERO = [0.0, 0.0, 0.0, 0.0, 0.0]        # Unitree joint zero for the 5 left-arm joints (g1-docs 00_about_G1: 关节零点)
 PROMPTS = {"ask": "Tell me which one you'd like.", "listening": "Listening."}
 OWN_WORDS = ("holding the", "say take", "please take")       # the robot's own handover sentences, heard through the C922 (self-release on 2026-10-21)
-CALIB_ARGS = {"pre": "pregrasp_standoff_m", "grasp_below": "grasp_below_mid_m", "lift": "lift_m", "K": "hand_feature_K", "pitch_max": "pitch_max_deg", "ik_tol": "ik_tol_m", "contact": "contact_rise_rad", "palm_real": "palm_real_m"}
+CALIB_ARGS = {"pre": "pregrasp_standoff_m", "grasp_below": "grasp_below_mid_m", "lift": "lift_m", "K": "hand_feature_K", "pitch_max": "pitch_max_deg", "ik_tol": "ik_tol_m", "contact": "contact_rise_rad", "palm_real": "palm_real_m", "clear": "clearance_m", "near": "near_ahead_m"}
 
 
 def parse():
@@ -34,7 +34,7 @@ def parse():
     g.add_argument("--K", type=float, nargs=3, default=cv("hand_feature_K"), metavar=("D", "N", "Z"), help="hand feature constant (front along the forearm, near face along the palm normal, median z) relative to the can axis at the centred pose; none = measure only")
     g.add_argument("--servo-iters", type=int, default=3); g.add_argument("--servo-tol", type=float, default=0.01); g.add_argument("--servo-max", type=float, default=0.03)
     g.add_argument("--frames", type=int, default=2, help="head frames per measurement (median)")
-    g.add_argument("--gemma-hand", action="store_true", help="also ask Gemma for the box of the robot's hand (cross-check, ~0.8 s)")
+    g.add_argument("--no-gemma-hand", action="store_true", help="skip Gemma's box of the robot's hand on the first servo frame (the cross-check: a disagreement over 3 cm with the depth blob aborts the servo)")
     g.add_argument("--contact", type=float, default=cv("contact_rise_rad"), help="tracking-error rise over the per-pose baseline that aborts the approach (safety)")
     g.add_argument("--lag", type=float, default=0.012, help="hand lag behind the command that aborts the approach (safety)")
     g.add_argument("--no-fix", action="store_true", help="no stall-pattern correction after a miss")
@@ -49,7 +49,7 @@ def parse():
     g.add_argument("--psi", default="-30:60:5", help="forearm yaw candidates lo:hi:step (degrees inward), visited outward from the preferred one")
     g.add_argument("--pitch-max", type=float, default=cv("pitch_max_deg")); g.add_argument("--ik-tol", type=float, default=cv("ik_tol_m"))
     g.add_argument("--clear", type=float, nargs=4, default=cv("clearance_m"), metavar=("UPPER", "FOREARM", "HAND", "RIGHT"))
-    g.add_argument("--near", type=float, default=0.30, help="hard safety: nothing within this distance straight ahead at chest height")
+    g.add_argument("--near", type=float, default=cv("near_ahead_m"), help="hard safety: nothing within this distance straight ahead at chest height")
     g = ap.add_argument_group("voice and handover")
     g.add_argument("--seconds", type=float, default=4.0); g.add_argument("--mic", default="auto"); g.add_argument("--cam3", default="auto")
     g.add_argument("--retries", type=int, default=3); g.add_argument("--assist-wait", type=float, default=8.0); g.add_argument("--hold-reminder", type=float, default=15.0)
@@ -91,7 +91,9 @@ from g1_fetch.skills.common import go_home, SkillFailed as G1SkillFailed
 from g1_fetch.control.robot_state import set_arm_action_service
 SkillFailed = (motion.SkillFailed, G1SkillFailed)
 geom.PALM_REAL = P.palm_real; geom.TORSO_BANDS = tuple(tuple(b) for b in cv("torso_bands")); geom.PITCH_MAX_DEG = P.pitch_max; geom.IK_TOL = P.ik_tol
-THRESH = {"upper": P.clear[0], "forearm": P.clear[1], "hand": P.clear[2], "right": P.clear[3], "pitch": P.pitch_max}
+geom.TABLE_CLEAR = cv("table_clear_m"); geom.CLEAR_UPPER, geom.CLEAR_FOREARM, geom.CLEAR_HAND, geom.CLEAR_RIGHT = P.clear
+geom.HIGH_RISE, geom.FINGERTIP, geom.PALM_HALF_HEIGHT = cv("high_rise_m"), cv("fingertip_m"), cv("palm_half_height_m")
+THRESH = {"upper": P.clear[0], "forearm": P.clear[1], "hand": P.clear[2], "right": P.clear[3], "pitch": P.pitch_max, "table": cv("table_clear_m")}
 _lo, _hi, _st = ([int(v) for v in P.psi.split(":")] + [5])[:3]; PSIS = list(range(_lo, _hi + 1, _st))
 SIG = cv("hold_signature"); Z = np.array([0.0, 0.0, 1.0])
 
@@ -462,8 +464,9 @@ class Brain:
     def plan(self, tg):
         """Reach plan (geom.plan_reach): the real palm at the can axis minus (r + 1 cm) along the palm normal, grasp_below under the
         mid-height; psi outward from the preferred yaw; every pose checked. Logs every candidate."""
-        mid_z = tg["plane"]["z"] + tg["h"] / 2 if tg.get("plane") else float(tg["p"][2])
-        target = np.array([tg["p"][0], tg["p"][1], mid_z - P.grasp_below]); table_z = tg["plane"]["z"] if tg.get("plane") else None
+        if not tg.get("plane"): return {"reason": "no_table"}                          # the grasp height comes from the table plane, never from the box-centre depth
+        mid_z = tg["plane"]["z"] + tg["h"] / 2; table_z = tg["plane"]["z"]
+        target = np.array([tg["p"][0], tg["p"][1], mid_z - P.grasp_below])
         right_q = None
         try: right_q = np.asarray(self.rb.arms.measured("right"), float)
         except Exception: pass
@@ -516,7 +519,8 @@ class Brain:
         plan = self.plan(tg)
         if "psi" not in plan:
             msg = {"unreachable": "The %s one is out of my reach. Please move it a little closer to me.", "torso": "The %s one is too close to my body for my left hand. Please move it a little to my left or further away.",
-                   "neighbour": "The %s one has another can too close beside it. Please move it a little.", "table": "The %s one is too low for my hand. Please move it closer."}[plan["reason"]] % want["desc"]
+                   "neighbour": "The %s one has another can too close beside it. Please move it a little.", "table": "The %s one is too low for my hand. Please move it closer.",
+                   "no_table": "I cannot see the table under the %s one. Please move it a little."}[plan["reason"]] % want["desc"]
             self.say(msg, wait=4.0); self.o["result"] = "no_plan_" + plan["reason"]; return None
         tg["plan"] = plan; self.o["plan"] = {"psi": plan["psi"], "pitch": round(plan["pitch"], 1), "checks": {k: round(v, 3) for k, v in plan["checks"]["grasp"].items() if isinstance(v, float)}}
         self.tg_last = tg
@@ -529,7 +533,7 @@ class Brain:
         go_home(self.rb, "left", duration=2.0)                                  # v1's verified order: tuck first, then raise from the shoulder
         home = self.arm.palm_cmd(); self.home_x = float(home[0]); self.pre = plan["pre"]
         self.say("Raising.")                                                     # straight up beside the body, never over the midline
-        for up in (np.array([home[0] + 0.05, max(plan["pre"][1], 0.18), plan["high"][2]]), np.array([home[0] + 0.05, max(float(home[1]), 0.2), plan["high"][2]])):
+        for up in (np.array([home[0] + cv("raise_ahead_m"), max(plan["pre"][1], cv("raise_side_y_m")), plan["high"][2]]), np.array([home[0] + cv("raise_ahead_m"), max(float(home[1]), cv("raise_side_y_m")), plan["high"][2]])):
             try: self.arm.goto(up, 0.10, "up", psi="free", correct=0); break
             except motion.SkillFailed as e: print("  up waypoint %s skipped: %s" % (r3(up), e), flush=True)
         else: raise motion.SkillFailed("no raise waypoint solves")
@@ -543,8 +547,11 @@ class Brain:
         tolerance on two frames (budget 3). Without K it measures only. Returns the last measurement."""
         self.set_state("SERVO"); iters = P.servo_iters if iters is None else iters; last = None; good = 0; it = 0
         for it in range(iters + 1):
-            m = self.measure(tg, "servo%d" % it, gemma_box=P.gemma_hand and it == 0); last = m
+            m = self.measure(tg, "servo%d" % it, gemma_box=(not P.no_gemma_hand) and it == 0); last = m
             if m.get("can") is not None: tg["p"] = np.array([m["can"][0], m["can"][1], tg["p"][2]])
+            if it == 0 and m.get("gemma_vs_blob") is not None and m["gemma_vs_blob"] > 0.03:
+                print("  servo: Gemma's hand box and the depth blob disagree by %.3f m: no servo, the model places the hand" % m["gemma_vs_blob"], flush=True)
+                self.log.event(ev="servo", stage=self.state, it=0, aborted="gemma_vs_blob %.3f" % m["gemma_vs_blob"], tag="sensor gate"); break
             if "err" not in m: break
             e = np.array(m["err"])
             self.view.event({"ev": "servo", "stage": "SERVO", "kind": "iteration %d" % it, "question": "hand error (d, n, z)", "answer": "%.3f %.3f %.3f m" % tuple(e), "ms": 0, "tag": "sensor gate", "t": time.time()})
@@ -573,7 +580,7 @@ class Brain:
         for h in range(2):
             seg = max(0.0, remaining) / (2 - h)
             while seg > 0.004:
-                self.check_abort(); step = min(0.01, seg); before = self.arm.palm_meas()
+                self.check_abort(); step = min(cv("approach_step_m"), seg); before = self.arm.palm_meas()
                 meas, te = self.arm.step_along(n, step, "ap%d" % steps); steps += 1
                 moved = float((meas - before) @ n); seg -= step; remaining -= step
                 self.log.event(ev="ap_step", stage=self.state, step=steps, moved=round(moved, 4), remaining=round(remaining, 4), tracking=round(te, 4), base=round(base, 4), q_cmd=r3(self.arm.q_cmd()), q_meas=r3(self.arm.q_meas()), tag="scripted skill")
@@ -674,7 +681,7 @@ class Brain:
             self.bundle("lift", f1, {"rise": rise})
             self.view.frame(f1.color, "after the lift: can rose %s" % (None if rise is None else "%.3f m" % rise))
         except Exception as e: print("  lift check failed:", e)
-        seen = None if rise is None else bool(abs(rise - P.lift) <= 0.02)
+        seen = None if rise is None else bool(abs(rise - P.lift) <= cv("lift_rise_tol_m"))
         self.o["lift_rise"] = None if rise is None else round(rise, 3); self.o["lift_seen"] = seen
         self.log.event(ev="lift_check", stage=self.state, rise=self.o["lift_rise"], seen=seen, tag="sensor gate")
         print("  lift check: can rose %s -> %s" % (self.o["lift_rise"], {True: "seen", False: "NOT with the hand: a miss", None: "not measured"}[seen]), flush=True)
@@ -691,7 +698,8 @@ class Brain:
         """The calibrated offer delta from the lifted hand, moved forward / toward the midline / up until the real palm projects inside
         the head camera's view and the IK solves."""
         base = self.m_lift + np.asarray(cv("offer_delta_m"), float); intr = self.rb.camera.intrinsics if hasattr(self.rb.camera, "intrinsics") else self.head_frame(1).intrinsics
-        cands = sorted([np.array([dx, dy, dz]) for dx in (0.0, 0.05, 0.10, 0.15, 0.20) for dy in (0.0, -0.05, -0.10) for dz in (0.0, 0.04, 0.08)], key=lambda d: float(np.linalg.norm(d)))
+        sx, sy, sz = cv("offer_search_m")
+        cands = sorted([np.array([dx, dy, dz]) for dx in np.arange(0.0, sx + 1e-9, 0.05) for dy in np.arange(0.0, sy - 1e-9, -0.05) for dz in np.arange(0.0, sz + 1e-9, 0.04)], key=lambda d: float(np.linalg.norm(d)))
         for d in cands:
             c = base + d
             try: self.arm.solve(c, "free")
@@ -707,7 +715,7 @@ class Brain:
         if uv is None: return 0, np.zeros((0, 3))
         pts, uu, vv = geom.cloud_in_window(frame, self.rb.frames, uv[0], uv[1], 110, 90, 3)
         if pts.shape[0] == 0: return 0, pts[:0]
-        near = pts[np.linalg.norm(pts - can_p, axis=1) < 0.06]
+        near = pts[np.linalg.norm(pts - can_p, axis=1) < cv("cluster_radius_m")]
         if ref is None or ref.shape[0] == 0: return int(near.shape[0]), near
         dmin = np.min(np.linalg.norm(near[:, None, :] - ref[None, ::4, :], axis=2), axis=1) if near.shape[0] else np.zeros(0)
         return int(np.sum(dmin > 0.02)), near
@@ -771,7 +779,7 @@ class Brain:
         """After the misses: hold the open hand out at the offer pose and ask the guest to place the can; verify by the signature."""
         self.set_state("RECOVER", "assist"); self.hand.set(THUMB_PRE); self.sleep(0.8)
         if self.arms_on:
-            m = self.arm.palm_meas(); self.arm.goto(m - self.arm.n * 0.05 + Z * max(0.0, self.high_z - m[2]), 0.08, "assist-up", psi="free", correct=0)
+            m = self.arm.palm_meas(); self.arm.goto(m - self.arm.n * cv("retreat_out_m") + Z * max(0.0, self.high_z - m[2]), 0.08, "assist-up", psi="free", correct=0)
         else:
             self.arms_enable(); go_home(self.rb, "left", duration=2.0); home = self.arm.palm_cmd()
             self.arm.goto(np.array([home[0] + 0.05, self.pre[1], self.high_z]), 0.10, "assist-raise", psi="free", correct=0)
@@ -786,7 +794,7 @@ class Brain:
         try:
             if self.arms_on:
                 m = self.arm.palm_meas(); hz = max(getattr(self, "high_z", m[2] + 0.12), m[2])
-                for goal, label in ((m - self.arm.n * 0.05 + Z * (hz - m[2]), "retreat-up"), (np.array([getattr(self, "home_x", 0.18) + 0.05, m[1] + 0.03, hz]), "retreat-back")):
+                for goal, label in ((m - self.arm.n * cv("retreat_out_m") + Z * (hz - m[2]), "retreat-up"), (np.array([getattr(self, "home_x", 0.18) + cv("raise_ahead_m"), max(m[1], cv("raise_side_y_m")), hz]), "retreat-back")):
                     try: self.arm.goto(goal, 0.08, label, psi="free", correct=0)
                     except motion.SkillFailed as e: print("  %s skipped: %s" % (label, e), flush=True); self.log.event(ev="error", stage=self.state, error="%s: %s" % (label, e))
                 go_home(self.rb, "left", duration=2.5)
@@ -815,7 +823,7 @@ class Brain:
         self.counters["orders"] += 1; n = self.counters["orders"]
         self.log = OrderLog(self.dir, n); self.o = {"n": n, "t": time.strftime("%Y-%m-%d %H:%M:%S"), "result": None, "assisted": False, "stages": [], "release": None}
         self.view.update(order=n, events=[], stages=[])
-        self.log.event(ev="order", n=n, params={k: getattr(P, k) for k in ("pre", "grasp_below", "palm_real", "K", "servo_iters", "servo_tol", "psi", "clear", "pitch_max", "ik_tol", "contact", "lag", "lift", "verify", "seconds", "probe", "air")}, session=self.session, tag="scripted skill")
+        self.log.event(ev="order", n=n, params={k: getattr(P, k) for k in ("pre", "grasp_below", "palm_real", "K", "servo_iters", "servo_tol", "psi", "clear", "pitch_max", "ik_tol", "contact", "lag", "lift", "verify", "seconds", "probe", "air", "no_gemma_hand")}, session=self.session, tag="scripted skill")
         self.log.event(ev="calib", calib_sha=CAL["_sha256"], git=calibmod.git_sha(), dirty=calibmod.git_dirty(), tag="scripted skill")
         for key, c, v in calibmod.deviations(CAL, P, CALIB_ARGS): self.log.event(ev="deviation", key=key, calib=c, cli=v, tag="scripted skill")
         try:
@@ -864,7 +872,7 @@ class Brain:
         idx = min(max(0, P.probe_can), len(scene) - 1); tg = self.locate(idx, scene)
         if tg is None: return self.finish(self.o["result"])
         self.set_state("PICK", "probe"); self.to_pregrasp(tg); self.say("Measuring."); self.sleep(P.pause)
-        m = self.measure(tg, "probe", frames=max(5, P.frames), gemma_box=P.gemma_hand)
+        m = self.measure(tg, "probe", frames=max(5, P.frames), gemma_box=not P.no_gemma_hand)
         if P.probe_servo and P.K: self.servo(tg)
         self.o["probe"] = {k: (r3(v) if isinstance(v, np.ndarray) else v) for k, v in m.items() if k in ("can", "blob", "model_palm", "off", "model_off", "feat", "err", "n_blob", "scatter", "gemma_vs_blob")}
         if "off" in m: self.say("Measured. Fingertip %d, near face %d, height %d millimetres from the can axis; the model palm %d, %d, %d." % tuple(round(v * 1000) for v in (list(m["off"]) + list(m["model_off"]))), wait=3.0)
@@ -874,7 +882,8 @@ class Brain:
     def air(self):
         """--air (experiment 3): plan for a virtual can, move high, pre-grasp, 5 cm along the palm normal in 1 cm corrected steps, back,
         and retreat; log the tracking baseline per pose and the measured palm per step. No can on the table."""
-        tg = {"p": np.asarray(P.air_can, float), "diam": 0.066, "h": 0.122, "box": [0, 0, 1, 1], "plane": None, "others": [], "desc": "air target"}
+        tg = {"p": np.asarray(P.air_can, float), "diam": 0.066, "h": 0.122, "box": [0, 0, 1, 1], "others": [], "desc": "air target",
+              "plane": {"z": float(P.air_can[2]) - 0.061, "n": np.array([0.0, 0.0, 1.0]), "d": float(P.air_can[2]) - 0.061, "n_in": 0, "tilt_deg": 0.0}}   # a virtual table 6.1 cm under the virtual can's axis
         self.set_state("LOCATE", "air"); plan = self.plan(tg)
         if "psi" not in plan: self.say("No plan for the air target."); return self.finish("air_no_plan")
         tg["plan"] = plan; self.set_state("PICK", "air"); self.to_pregrasp(tg); self.say("Pre-grasp. Baseline."); self.sleep(P.pause)

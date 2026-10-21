@@ -239,7 +239,8 @@ TORSO_BANDS = ((-0.15, 0.00, -0.049, 0.049, 0.064), (0.00, 0.05, -0.058, 0.059, 
                (0.30, 0.38, -0.066, 0.063, 0.101), (0.38, 0.50, -0.060, 0.060, 0.090))
 LIMIT_MARGIN = math.radians(10.0)
 # acceptance thresholds on the segment centre lines (the link radii are inside them); calibrated on the logged poses in replay_reach.py
-CLEAR_UPPER, CLEAR_FOREARM, CLEAR_HAND, CLEAR_RIGHT, PITCH_MAX_DEG, IK_TOL, TABLE_CLEAR = 0.015, 0.04, 0.06, 0.05, 15.0, 0.005, -0.01   # table: the pinky edge may touch (trial 8, the deepest wrap, had it at the table)
+CLEAR_UPPER, CLEAR_FOREARM, CLEAR_HAND, CLEAR_RIGHT, PITCH_MAX_DEG, IK_TOL, TABLE_CLEAR = 0.03, 0.04, 0.06, 0.05, 15.0, 0.005, -0.01   # defaults = calib.json (brain.py overrides them from the file); table: the pinky edge may touch (trial 8)
+HIGH_RISE, FINGERTIP, PALM_HALF_HEIGHT = 0.12, 0.08, 0.045
 
 
 def fk_chain_side(q5, side="left", ee=PALM_REAL):
@@ -253,7 +254,7 @@ def fk_chain_side(q5, side="left", ee=PALM_REAL):
 def arm_segments(q5, side="left", ee=PALM_REAL):
     """Named points: shoulder (pitch origin), upper (yaw origin = the lower upper arm's top), elbow, wrist, palm, tip (fingers +8 cm)."""
     Ts = fk_chain_side(q5, side, ee); palm = Ts[5][:3, 3]; d = Ts[4][:3, :3][:, 0]
-    return {"shoulder": Ts[0][:3, 3], "upper": Ts[2][:3, 3], "elbow": Ts[3][:3, 3], "wrist": Ts[4][:3, 3], "palm": palm, "tip": palm + d * 0.08, "d": d, "R": Ts[4][:3, :3]}
+    return {"shoulder": Ts[0][:3, 3], "upper": Ts[2][:3, 3], "elbow": Ts[3][:3, 3], "wrist": Ts[4][:3, 3], "palm": palm, "tip": palm + d * FINGERTIP, "d": d, "R": Ts[4][:3, :3]}
 
 
 def torso_distance(p):
@@ -330,7 +331,7 @@ def pose_checks(q5, table_z=None, right_q=None):
                                  "hand": segment_torso_clearance(s["wrist"], s["tip"]), "pitch": forearm_yaw_pitch(s["d"])[1],
                                  "psi": forearm_yaw_pitch(s["d"])[0], "margin": float(np.min(np.minimum(np.asarray(q5) - Q_LOWER, Q_UPPER - np.asarray(q5)))),
                                  "elbow": s["elbow"], "palm": s["palm"]}
-    out["table"] = None if table_z is None else float(s["palm"][2] - 0.045 - table_z)
+    out["table"] = None if table_z is None else float(s["palm"][2] - PALM_HALF_HEIGHT - table_z)
     if right_q is not None:
         r = arm_segments(right_q, "right", ee=0.15)
         out["right"] = min(segment_segment_distance(s["wrist"], s["tip"], r["elbow"], r["wrist"]), segment_segment_distance(s["wrist"], s["tip"], r["wrist"], r["palm"]),
@@ -359,7 +360,7 @@ def plan_reach(can, r, table_z=None, q_seed=None, right_q=None, pre=0.03, thresh
     for psi in (psis if psis is not None else psi_order(can[1])):
         d, n = grasp_frame(psi); P = can - n * (r + 0.01); poses = [("grasp", P), ("pre", P - n * pre)]
         k = int(math.ceil(pre / 0.01))
-        poses += [("slide%d" % i, P - n * (pre - i * pre / k)) for i in range(1, k)] + [("high", P - n * pre + np.array([0, 0, 0.12]))] + list(extra_points)
+        poses += [("slide%d" % i, P - n * (pre - i * pre / k)) for i in range(1, k)] + [("high", P - n * pre + np.array([0, 0, HIGH_RISE]))] + list(extra_points)
         seed = q_seed.copy(); rec = {"psi": psi, "ok": True, "why": "", "poses": {}}
         for name, p in poses:
             q, err, pitch, dd = ik4(p, psi, seed, ee); seed = q
@@ -373,6 +374,6 @@ def plan_reach(can, r, table_z=None, q_seed=None, right_q=None, pre=0.03, thresh
                 rec["ok"] = False; rec["why"] = "%s: " % name + ", ".join(k2 for k2, v in (("upper", c["upper"] < t.get("upper", CLEAR_UPPER)), ("forearm", c["forearm"] < t.get("forearm", CLEAR_FOREARM)), ("hand", c["hand"] < t.get("hand", CLEAR_HAND)), ("pitch", abs(c["pitch"]) > t["pitch"]), ("limit", c["margin"] < t.get("margin", LIMIT_MARGIN)), ("table", c.get("table") is not None and c["table"] < t.get("table", TABLE_CLEAR)), ("right", c.get("right", 1.0) < t.get("right", CLEAR_RIGHT))) if v); break
         g = rec["poses"].get("grasp"); rec["pitch"] = None if g is None else g["pitch"]; tried.append(rec)
         if rec["ok"] and (best is None or (abs(g["pitch"]), abs(psi)) < (abs(best["pitch"]), abs(best["psi"]))):
-            best = {"psi": psi, "pitch": g["pitch"], "d": d, "n": n, "grasp": P, "pre": P - n * pre, "high": P - n * pre + np.array([0, 0, 0.12]),
+            best = {"psi": psi, "pitch": g["pitch"], "d": d, "n": n, "grasp": P, "pre": P - n * pre, "high": P - n * pre + np.array([0, 0, HIGH_RISE]),
                     "q": {name: c["q"] for name, c in rec["poses"].items()}, "checks": {name: {k2: v for k2, v in c.items() if k2 not in ("q", "elbow", "palm")} for name, c in rec["poses"].items()}}
     return best, tried

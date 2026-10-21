@@ -1,22 +1,347 @@
 {
-  "about": "Every measured number the brain uses, with provenance (V2_STRATEGY.md rule 1, DEV_WORKFLOW.md). Runtime quantities (table plane, can size, palm-to-can offset, tracking baseline) are measured per order and logged, never stored here. Frames: pelvis = x ahead, y left, z up, metres; forearm = along the wrist-roll axis.",
-  "entries": {
-    "palm_real_m": {"value": 0.246, "unit": "m", "frame": "forearm", "method": "g1-fetch ee_offset_x 0.15 (URDF wrist-roll origin to the model palm) + 0.096 from jog_x.py step 4 chosen by the owner's eye (hand beside the can, 2 cm steps); re-measured 2026-10-21 as -0.097", "date": "2026-10-21", "pose": "pre-grasp y 0.23 z 0.14, forearm +x", "can": "slim 55 mm and standard 66 mm", "n": 2, "log": "spikes/2026-10-19-office-grab.md line 31; spikes/office-tue-brain/jog_today.log", "valid_days": 30},
-    "palm_half_height_m": {"value": 0.045, "unit": "m", "frame": "hand", "method": "assumed from the BrainCo hand's palm width; the pinky edge sat at the table on trial 8 (dz -0.02) with no harm. MEASURE with the tape", "date": "2026-10-20", "n": 0, "valid_days": 60},
-    "grasp_below_mid_m": {"value": 0.015, "unit": "m", "frame": "pelvis z", "method": "palm centre below the can mid-height: trial 8 at -0.02 was the deepest wrap, trials 5-7 at +0.03/+0.01/0 held; V2_STRATEGY.md section 5", "date": "2026-10-19", "can": "slim 55 mm", "n": 4, "log": "spikes/office-mon/grab_trials.jsonl", "valid_days": 60},
-    "palm_to_axis_m": {"value": 0.01, "unit": "m", "frame": "palm normal", "method": "palm face r + 1 cm from the can axis (g1-fetch grab_can, kept through 12 holds)", "date": "2026-10-19", "n": 12, "valid_days": 90},
-    "pregrasp_standoff_m": {"value": 0.03, "unit": "m", "frame": "palm normal", "method": "V2_STRATEGY.md section 5 (v1 used 0.05 with a blind slide; the servo frame needs the hand near the can)", "date": "2026-10-21", "n": 0, "valid_days": 60},
-    "can_diameters_m": {"value": [0.055, 0.066], "unit": "m", "frame": "-", "method": "slim / standard, classified from the box width at the box depth with a 60 mm threshold (73 mm measured for a 66 mm can)", "date": "2026-10-19", "n": 9, "log": "spikes/2026-10-19-office-grab.md", "valid_days": 365},
-    "torso_bands": {"value": [[-0.15, 0.0, -0.049, 0.049, 0.064], [0.0, 0.05, -0.058, 0.059, 0.066], [0.05, 0.1, -0.061, 0.063, 0.088], [0.1, 0.16, -0.063, 0.068, 0.098], [0.16, 0.22, -0.069, 0.079, 0.1], [0.22, 0.3, -0.071, 0.08, 0.108], [0.3, 0.38, -0.066, 0.063, 0.101], [0.38, 0.5, -0.06, 0.06, 0.09]], "unit": "m", "frame": "pelvis (z0, z1, x_min, x_max, y_half)", "method": "torso_link.STL, waist_support_link.STL, pelvis.STL vertex extents per height band, placed by the g1_body23.urdf joints (stdlib STL reader)", "date": "2026-10-20", "n": 1, "valid_days": 365},
-    "clearance_m": {"value": [0.015, 0.04, 0.06, 0.05], "unit": "m", "frame": "segment centre lines to the torso bands: lower upper arm, forearm, hand (wrist to fingertips), hand to the right arm", "method": "V2_STRATEGY.md section 3 thresholds; the upper-arm value from the logged poses (grasps 1.7-3.4 cm, the 030059 misses 0.7-1.0, the Oct 19 block inside); re-check with replay_reach.py", "date": "2026-10-21", "n": 14, "valid_days": 60},
-    "pitch_max_deg": {"value": 15.0, "unit": "deg", "frame": "forearm", "method": "V2_STRATEGY.md section 3: beyond 15 deg of droop the real palm drops 1-2 cm below the level-forearm assumption", "date": "2026-10-21", "n": 0, "valid_days": 90},
-    "ik_tol_m": {"value": 0.005, "unit": "m", "frame": "real palm", "method": "V2_STRATEGY.md: the hard-yaw IK either solves or not; v1's 0.035 accepted a full can radius of error", "date": "2026-10-21", "n": 0, "valid_days": 90},
-    "lift_m": {"value": 0.06, "unit": "m", "frame": "pelvis z", "method": "6 cm lift with correction reached within 3-7 mm on every grasp", "date": "2026-10-21", "n": 6, "valid_days": 90},
-    "offer_delta_m": {"value": [-0.12, 0.03, 0.06], "unit": "m", "frame": "pelvis, from the lifted hand", "method": "the offer pose used on every v1 handover (grab_loop back-up, 2026-10-19/21); moved forward/inward/up until the hand is inside the head camera's view", "date": "2026-10-21", "n": 6, "valid_days": 90},
-    "camera_pose": {"value": [0.054, 0.018, 0.474, 47.6], "unit": "m, deg", "frame": "pelvis: x, y, z of the D435 link and its pitch down", "method": "g1_body23.urdf d435_joint (0.0576, 0.0175, 0.41987 from torso_link, rpy 0 0.8308 0) + torso_link at (-0.004, 0, 0.054)", "date": "2026-10-20", "n": 1, "valid_days": 365},
-    "pelvis_height_m": {"value": 0.84, "unit": "m", "frame": "floor to the pelvis origin", "method": "g1-fetch floor_height 0.98 m for a can point at z 0.14 (2026-10-21 logs)", "date": "2026-10-21", "n": 3, "valid_days": 365},
-    "contact_rise_rad": {"value": 0.015, "unit": "rad", "frame": "joint tracking error above the per-pose baseline", "method": "v1 contact stop; in v2 a safety abort only (fired once wrongly 6.6 cm from the can, live7.log)", "date": "2026-10-21", "n": 14, "valid_days": 60},
-    "hold_signature": {"value": [0.3, 0.25, 0.70], "unit": "-", "frame": "BrainCo finger q: thumb below, fingers between", "method": "12 holds: thumb 0.07-0.22, at least three fingers 0.41-0.61 (V2_STRATEGY.md section 5)", "date": "2026-10-21", "n": 12, "log": "spikes/office-mon/grab_trials.jsonl, spikes/office-tue-brain", "valid_days": 90},
-    "hand_feature_K": {"value": null, "unit": "m", "frame": "hand feature offsets from the can axis along (forearm d, palm normal n, z): fingertip front, nearest face, median height", "method": "NOT MEASURED: step 1 of the v2 plan (the kill test). Measure at the ALIGNED PRE-GRASP (palm centred on the can in d and z by the owner's eye, the standoff along n): the servo compares like with like there; at the closure pose the can hides part of the hand from the head camera (mock: the front feature shifts 0.9 cm). Until then the brain measures and logs the offsets but does not servo", "date": "2026-10-21", "n": 0, "valid_days": 30}
+ "about": "Every measured number the brain uses, with provenance (V2_STRATEGY.md rule 1, DEV_WORKFLOW.md). Runtime quantities (table plane, can size, palm-to-can offset, tracking baseline) are measured per order and logged, never stored here. Frames: pelvis = x ahead, y left, z up, metres; forearm = along the wrist-roll axis.",
+ "entries": {
+  "palm_real_m": {
+   "value": 0.246,
+   "unit": "m",
+   "frame": "forearm",
+   "method": "g1-fetch ee_offset_x 0.15 (URDF wrist-roll origin to the model palm) + 0.096 from jog_x.py step 4 chosen by the owner's eye (hand beside the can, 2 cm steps); re-measured 2026-10-21 as -0.097",
+   "date": "2026-10-21",
+   "pose": "pre-grasp y 0.23 z 0.14, forearm +x",
+   "can": "slim 55 mm and standard 66 mm",
+   "n": 2,
+   "log": "spikes/2026-10-19-office-grab.md line 31; spikes/office-tue-brain/jog_today.log",
+   "valid_days": 30
+  },
+  "palm_half_height_m": {
+   "value": 0.045,
+   "unit": "m",
+   "frame": "hand",
+   "method": "assumed from the BrainCo hand's palm width; the pinky edge sat at the table on trial 8 (dz -0.02) with no harm. MEASURE with the tape",
+   "date": "2026-10-20",
+   "n": 0,
+   "valid_days": 60
+  },
+  "grasp_below_mid_m": {
+   "value": 0.015,
+   "unit": "m",
+   "frame": "pelvis z",
+   "method": "palm centre below the can mid-height: trial 8 at -0.02 was the deepest wrap, trials 5-7 at +0.03/+0.01/0 held; V2_STRATEGY.md section 5",
+   "date": "2026-10-19",
+   "can": "slim 55 mm",
+   "n": 4,
+   "log": "spikes/office-mon/grab_trials.jsonl",
+   "valid_days": 60
+  },
+  "palm_to_axis_m": {
+   "value": 0.01,
+   "unit": "m",
+   "frame": "palm normal",
+   "method": "palm face r + 1 cm from the can axis (g1-fetch grab_can, kept through 12 holds)",
+   "date": "2026-10-19",
+   "n": 12,
+   "valid_days": 90
+  },
+  "pregrasp_standoff_m": {
+   "value": 0.03,
+   "unit": "m",
+   "frame": "palm normal",
+   "method": "V2_STRATEGY.md section 5 (v1 used 0.05 with a blind slide; the servo frame needs the hand near the can)",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 60
+  },
+  "can_diameters_m": {
+   "value": [
+    0.055,
+    0.066
+   ],
+   "unit": "m",
+   "frame": "-",
+   "method": "slim / standard, classified from the box width at the box depth with a 60 mm threshold (73 mm measured for a 66 mm can)",
+   "date": "2026-10-19",
+   "n": 9,
+   "log": "spikes/2026-10-19-office-grab.md",
+   "valid_days": 365
+  },
+  "torso_bands": {
+   "value": [
+    [
+     -0.15,
+     0.0,
+     -0.049,
+     0.049,
+     0.064
+    ],
+    [
+     0.0,
+     0.05,
+     -0.058,
+     0.059,
+     0.066
+    ],
+    [
+     0.05,
+     0.1,
+     -0.061,
+     0.063,
+     0.088
+    ],
+    [
+     0.1,
+     0.16,
+     -0.063,
+     0.068,
+     0.098
+    ],
+    [
+     0.16,
+     0.22,
+     -0.069,
+     0.079,
+     0.1
+    ],
+    [
+     0.22,
+     0.3,
+     -0.071,
+     0.08,
+     0.108
+    ],
+    [
+     0.3,
+     0.38,
+     -0.066,
+     0.063,
+     0.101
+    ],
+    [
+     0.38,
+     0.5,
+     -0.06,
+     0.06,
+     0.09
+    ]
+   ],
+   "unit": "m",
+   "frame": "pelvis (z0, z1, x_min, x_max, y_half)",
+   "method": "torso_link.STL, waist_support_link.STL, pelvis.STL vertex extents per height band, placed by the g1_body23.urdf joints (stdlib STL reader)",
+   "date": "2026-10-20",
+   "n": 1,
+   "valid_days": 365
+  },
+  "clearance_m": {
+   "value": [
+    0.03,
+    0.04,
+    0.06,
+    0.05
+   ],
+   "unit": "m",
+   "frame": "segment centre lines to the torso bands: lower upper arm, forearm, hand (wrist to fingertips), hand to the right arm",
+   "method": "V2_STRATEGY.md section 3 (lower upper arm 3, forearm 4, hand 6, right arm 5 cm on the segment centre lines to the torso bands); replay_reach.py: the planner's chosen poses keep the upper arm 4.4-10.6 cm clear on the 18 logged positions",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 60
+  },
+  "pitch_max_deg": {
+   "value": 15.0,
+   "unit": "deg",
+   "frame": "forearm",
+   "method": "V2_STRATEGY.md section 3: beyond 15 deg of droop the real palm drops 1-2 cm below the level-forearm assumption",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 90
+  },
+  "ik_tol_m": {
+   "value": 0.005,
+   "unit": "m",
+   "frame": "real palm",
+   "method": "V2_STRATEGY.md: the hard-yaw IK either solves or not; v1's 0.035 accepted a full can radius of error",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 90
+  },
+  "lift_m": {
+   "value": 0.06,
+   "unit": "m",
+   "frame": "pelvis z",
+   "method": "6 cm lift with correction reached within 3-7 mm on every grasp",
+   "date": "2026-10-21",
+   "n": 6,
+   "valid_days": 90
+  },
+  "offer_delta_m": {
+   "value": [
+    -0.12,
+    0.03,
+    0.06
+   ],
+   "unit": "m",
+   "frame": "pelvis, from the lifted hand",
+   "method": "the offer pose used on every v1 handover (grab_loop back-up, 2026-10-19/21); moved forward/inward/up until the hand is inside the head camera's view",
+   "date": "2026-10-21",
+   "n": 6,
+   "valid_days": 90
+  },
+  "camera_pose": {
+   "value": [
+    0.054,
+    0.018,
+    0.474,
+    47.6
+   ],
+   "unit": "m, deg",
+   "frame": "pelvis: x, y, z of the D435 link and its pitch down",
+   "method": "g1_body23.urdf d435_joint (0.0576, 0.0175, 0.41987 from torso_link, rpy 0 0.8308 0) + torso_link at (-0.004, 0, 0.054)",
+   "date": "2026-10-20",
+   "n": 1,
+   "valid_days": 365
+  },
+  "pelvis_height_m": {
+   "value": 0.84,
+   "unit": "m",
+   "frame": "floor to the pelvis origin",
+   "method": "g1-fetch floor_height 0.98 m for a can point at z 0.14 (2026-10-21 logs)",
+   "date": "2026-10-21",
+   "n": 3,
+   "valid_days": 365
+  },
+  "contact_rise_rad": {
+   "value": 0.015,
+   "unit": "rad",
+   "frame": "joint tracking error above the per-pose baseline",
+   "method": "v1 contact stop; in v2 a safety abort only (fired once wrongly 6.6 cm from the can, live7.log)",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 60
+  },
+  "hold_signature": {
+   "value": [
+    0.3,
+    0.25,
+    0.7
+   ],
+   "unit": "-",
+   "frame": "BrainCo finger q: thumb below, fingers between",
+   "method": "12 holds: thumb 0.07-0.22, at least three fingers 0.41-0.61 (V2_STRATEGY.md section 5)",
+   "date": "2026-10-21",
+   "n": 12,
+   "log": "spikes/office-mon/grab_trials.jsonl, spikes/office-tue-brain",
+   "valid_days": 90
+  },
+  "hand_feature_K": {
+   "value": null,
+   "unit": "m",
+   "frame": "hand feature offsets from the can axis along (forearm d, palm normal n, z): fingertip front, nearest face, median height",
+   "method": "NOT MEASURED: step 1 of the v2 plan (the kill test). Measure at the ALIGNED PRE-GRASP (palm centred on the can in d and z by the owner's eye, the standoff along n): the servo compares like with like there; at the closure pose the can hides part of the hand from the head camera (mock: the front feature shifts 0.9 cm). Until then the brain measures and logs the offsets but does not servo",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 30
+  },
+  "table_clear_m": {
+   "value": -0.01,
+   "unit": "m",
+   "frame": "palm lowest point (palm z - palm_half_height_m) above the table plane",
+   "method": "the memo asks for +0.01, but with grasp z = table + h/2 - 0.015 and a 4.5 cm palm half-height the pinky edge of a 12-13.5 cm can ends 0-0.8 cm above the table; trial 8 (2026-10-19, the deepest wrap) had it at the table with no harm. -0.01 allows touching; MEASURE the palm half-height with the tape to settle it",
+   "date": "2026-10-20",
+   "n": 1,
+   "log": "spikes/2026-10-19-office-grab.md trial 8",
+   "valid_days": 60
+  },
+  "high_rise_m": {
+   "value": 0.12,
+   "unit": "m",
+   "frame": "pelvis z above the pre-grasp",
+   "method": "the high waypoint of every v1 pick (raise, reach high, lower), 2026-10-19/21",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 90
+  },
+  "raise_ahead_m": {
+   "value": 0.05,
+   "unit": "m",
+   "frame": "pelvis x ahead of the home palm",
+   "method": "v1 'up' waypoint (home x + 5 cm), every pick 2026-10-19/21",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 90
+  },
+  "raise_side_y_m": {
+   "value": 0.18,
+   "unit": "m",
+   "frame": "pelvis y, the least leftward y of the raise",
+   "method": "the raise goes up beside the body; v1 raised at the pre-grasp y (0.16-0.26 on the logged picks); 0.18 keeps the hand clear of the chest for right-of-centre plans (mock)",
+   "date": "2026-10-20",
+   "n": 0,
+   "valid_days": 60
+  },
+  "retreat_out_m": {
+   "value": 0.05,
+   "unit": "m",
+   "frame": "along -n (away from the can) before the retreat up",
+   "method": "v1 retreat-up (y + 5 cm), every pick 2026-10-19/21",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 90
+  },
+  "approach_step_m": {
+   "value": 0.01,
+   "unit": "m",
+   "frame": "along +n per corrected step",
+   "method": "v1 slide step, 2026-10-19/21",
+   "date": "2026-10-21",
+   "n": 14,
+   "valid_days": 90
+  },
+  "lift_rise_tol_m": {
+   "value": 0.02,
+   "unit": "m",
+   "frame": "the can's rise in the head frame vs lift_m",
+   "method": "V2_STRATEGY.md section 5 (YOLOE points repeat within 7 mm, live4.log)",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 90
+  },
+  "offer_search_m": {
+   "value": [
+    0.2,
+    -0.1,
+    0.08
+   ],
+   "unit": "m",
+   "frame": "largest shift of the offer pose ahead, toward the midline, up, searched in 5 / 5 / 4 cm steps until the palm is in the head camera's view",
+   "method": "V2_STRATEGY.md section 5 (offer inside the view); mock: in view at (+0.05, -0.10, 0) to (0, -0.10, 0)",
+   "date": "2026-10-20",
+   "n": 0,
+   "valid_days": 60
+  },
+  "fingertip_m": {
+   "value": 0.08,
+   "unit": "m",
+   "frame": "open fingertips ahead of the palm centre",
+   "method": "g1-fetch hand.finger_reach_m 0.08",
+   "date": "2026-10-16",
+   "n": 0,
+   "valid_days": 365
+  },
+  "cluster_radius_m": {
+   "value": 0.06,
+   "unit": "m",
+   "frame": "around the held can: new depth points within it count as the guest's hand",
+   "method": "V2_STRATEGY.md section 5",
+   "date": "2026-10-21",
+   "n": 0,
+   "valid_days": 90
+  },
+  "near_ahead_m": {
+   "value": 0.3,
+   "unit": "m",
+   "frame": "pelvis x: nothing within it at chest height (z 0.15-0.50, |y| < 0.12) moves the arm",
+   "method": "the hard safety kept from v1 (ROBOT_RULES.md, Oct 19)",
+   "date": "2026-10-19",
+   "n": 0,
+   "valid_days": 365
   }
+ }
 }

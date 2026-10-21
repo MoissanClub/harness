@@ -25,6 +25,17 @@ def test_clearance():
     for p in ([0.30, 0.23, 0.14], [0.30, 0.18, 0.146], [0.373, 0.175, 0.144]):
         q_ok, _ = M.solve_pose(rb, "left", p, [1, 0, 0], [0, -1, 0]); assert geom.clearance(q_ok) >= 0.04, (p, geom.clearance(q_ok))
 
+def test_plan_memo_example():
+    # V2_STRATEGY section 3 worked example: can (0.35, 0, 0.13), psi 30 -> IK 0, pitch ~1.4 deg, elbow (0.069, 0.205, 0.130), q (-16, 22, -29, 2) deg
+    d, n = geom.grasp_frame(30); P = np.array([0.35, 0.0, 0.13]) - n * 0.043
+    q, err, pitch, _ = geom.ik4(P, 30, [0.0, 0.25, 0.0, 1.0, 0.0]); c = geom.pose_checks(q)
+    assert err < 0.001 and abs(pitch) < 2.5 and np.linalg.norm(c["elbow"] - np.array([0.069, 0.205, 0.130])) < 0.005, (err, pitch, c["elbow"])
+    assert np.allclose(np.degrees(q[:4]), [-16, 22, -29, 2], atol=1.5), np.degrees(q[:4])
+    plan, tried = geom.plan_reach([0.35, 0.0, 0.13], 0.033, table_z=0.075)
+    assert plan is not None and 20 <= plan["psi"] <= 40, (plan and plan["psi"], [t["psi"] for t in tried if t["ok"]])
+    q0, err0, _, _ = geom.ik4(np.array([0.35, 0.0, 0.13]) - geom.grasp_frame(0)[1] * 0.043, 0, [0.0, 0.25, 0.0, 1.0, 0.0])
+    assert geom.pose_checks(q0)["upper"] == 0.0            # psi 0: the elbow inside the torso
+
 def test_plane_and_blob():
     rb = M.build_robot(M.load_config("")); rb.arms.enable()
     can = M.SCENE[0]["p"]; R = M.SCENE[0]["diam"] / 2; xdir, palm = geom.grasp_vectors(0)

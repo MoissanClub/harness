@@ -277,7 +277,7 @@ class Robot:
     def __init__(self, cfg):
         self.kin = Kin(); self.arms = Arms(self.kin); self.camera = Camera(); self.camera.arms = self.arms; self.detector = Detector(self.camera)
         self.hands = {"left": Hand("left", self.arms), "right": Hand("right")}; self.frames = FRAMES; self.cfg = cfg
-        time.sleep(0.5)
+        STATE["robot"] = self; time.sleep(0.5)
     def speak(self, text):
         if os.environ.get("BRAIN_MOCK_SAY"): subprocess.Popen(["say", "-r", "190", text])
     def check_abort(self): pass
@@ -387,7 +387,13 @@ def mock_gemma(GemmaClass):
         elif "colour of this can" in text: ans = STATE["pending"].pop(0) if STATE["pending"] else "unknown"
         elif "human hand" in text: ans = "yes" if STATE["person"] else "no"
         elif "yes or no" in text: ans = "yes"
-        elif "Detect" in text: ans = "100, 100, 300, 200]"
+        elif "Detect" in text:                                                # Gemma's box of the robot's hand: around the TRUE hand (+-6 cm), 0-1000 grid
+            rb = STATE.get("robot"); ans = "100, 100, 300, 200]"
+            if rb is not None and rb.arms.on:
+                tp = rb.arms.true_palm(); uv = [geom.pelvis_to_pixel(FRAMES, INTR, tp + dd) for dd in (np.array([0.0, 0.06, 0.05]), np.array([0.10, -0.03, -0.05]))]
+                if all(uv):
+                    (u1, v1), (u2, v2) = uv; xs, ys = sorted([u1, u2]), sorted([v1, v2])
+                    ans = "%d, %d, %d, %d]" % (ys[0] / 480 * 1000, xs[0] / 640 * 1000, ys[1] / 480 * 1000, xs[1] / 640 * 1000)
         else: ans = "ready"
         time.sleep(0.05)
         return {"content": ans, "timings": {"prompt_n": 100, "prompt_ms": 200.0, "predicted_n": 2, "predicted_ms": 50.0, "cache_n": 80}, "total_s": 0.3}
