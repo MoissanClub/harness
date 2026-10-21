@@ -337,7 +337,10 @@ class Mic:
         os.makedirs(CLIPS, exist_ok=True); wav = os.path.join(CLIPS, "".join(ch if ch.isalnum() else "_" for ch in text)[:40] + ".wav")
         if not os.path.exists(wav):
             aiff = wav[:-4] + ".aiff"; spoken = text if " " in text else "the %s can please" % text
-            subprocess.run(["say", "-o", aiff, spoken], check=True); subprocess.run(["afconvert", "-f", "WAVE", "-d", "LEI16@16000", "-c", "1", aiff, wav], check=True)
+            try:
+                subprocess.run(["say", "-o", aiff, spoken], check=True); subprocess.run(["afconvert", "-f", "WAVE", "-d", "LEI16@16000", "-c", "1", aiff, wav], check=True)
+            except (FileNotFoundError, subprocess.CalledProcessError):            # no macOS `say` (PC2): the office clip stands in; --mock-gemma answers from the scripted order anyway
+                return os.path.join(MEDIA, office["purple"])
         return wav
     def record(self, seconds, path):
         if seconds <= 2.5: src = self.clip("take it"); STATE["taken"] = True
