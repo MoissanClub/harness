@@ -1,0 +1,11 @@
+{
+  "tag": "mac-e2b",
+  "thinking": false,
+  "passed": 2,
+  "lenient_passed": 4,
+  "n": 9,
+  "total_s_p50": 1.58,
+  "total_s_max": 2.28,
+  "output_tokens_p50": 166,
+  "ms_per_output_token_p50": 9.2
+}

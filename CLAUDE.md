@@ -8,6 +8,7 @@ Goal: a Unitree G1 autonomously **fetches a drink from the fridge** (walk there,
 - `bench/` — latency/accuracy benchmark. Findings: **`LATENCY_RESULTS.md`**.
   - `make_dataset.py` → 78 labeled fridge views + 14 fridge-free views. Needs macOS `sips`; `bench/images*/` is git-ignored, so regenerate on the Mac or copy the folders to Linux.
   - `variants.py` — every prompt / tool / grammar / image-size variant. `run_bench.py` — serial sweep → `experiments/<ts>-latency-<tag>/{requests.jsonl,summary.json}`. `report.py` — Markdown tables.
+  - `codegen_probe.py` — the model writes `task(robot)` for an unseen task against a mock robot API; graded on 2-3 table layouts (`--set basic|hard`). Model code runs where the script runs, so run it on the Mac through an ssh tunnel to PC2. Orin E2B/E4B/12B results: `hackathon/spikes/2026-10-22-orin-model-sizes.md`.
   - `serve.sh TAG [flags]` — restart the port-8080 server (its launch line is saved into each run's manifest). `flag_sweep.sh`, `batching.py`, `text_mapping_probe.py`, `vit_split.py` — server-flag A/B, N-actions-per-call cost, text-only percept→plan control, vision-encoder split from a `-lv 4` log.
 - `run.py`, `tools.py`, `prompts/`, `evaluate_*.py`, `check.py` — codex's original one-response harness (3 images, `plan` tool). `python3 -B check.py` = offline checks.
 - `*_RESULTS.md` (other than latency), `DEPLOY.md`, `TASK_CHUNK_PROPOSAL.md`, `AGENTS.md`, `README.md` — codex's notes: suggestions, verify before relying on them.

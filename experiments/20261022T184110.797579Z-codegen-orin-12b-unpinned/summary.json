@@ -1,0 +1,11 @@
+{
+  "tag": "orin-12b-unpinned",
+  "thinking": false,
+  "passed": 8,
+  "lenient_passed": 8,
+  "n": 9,
+  "total_s_p50": 12.2,
+  "total_s_max": 17.01,
+  "output_tokens_p50": 106,
+  "ms_per_output_token_p50": 112.9
+}

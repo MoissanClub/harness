@@ -1,0 +1,11 @@
+{
+  "tag": "orin-e2b-unpinned",
+  "thinking": false,
+  "passed": 2,
+  "lenient_passed": 5,
+  "n": 9,
+  "total_s_p50": 4.96,
+  "total_s_max": 7.67,
+  "output_tokens_p50": 158,
+  "ms_per_output_token_p50": 29.1
+}

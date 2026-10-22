@@ -1,0 +1,20 @@
+{
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "tag": "mac-e2b",
+  "thinking": false,
+  "max_tokens": 600,
+  "tasks": [
+    "not-red",
+    "count",
+    "leftmost",
+    "greens-tray-wave",
+    "ask-colour",
+    "right-to-left",
+    "majority",
+    "two-colours",
+    "closest-label"
+  ],
+  "build": "b10909-a2878d30d",
+  "model_path": "/Users/junda/.cache/huggingface/hub/models--unsloth--gemma-4-E2B-it-qat-GGUF/snapshots/66a399f68ddd113b06dff02fca9523e55465d11d/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"
+}
