@@ -174,13 +174,13 @@
   },
   "offer_delta_m": {
    "value": [
-    -0.12,
-    0.03,
-    0.18
+    0.08,
+    0.0,
+    0.22
    ],
    "unit": "m",
    "frame": "pelvis, from the lifted hand",
-   "method": "owner 2026-10-23: after the grasp the arm lifts the can up for the guest to take (was +0.06 z, the v1 offer). About 1.2 m above the floor, above the head camera's view (its top edge is near z 0.27-0.32 at x 0.30-0.45), so offer_pose falls back to this base pose and the release comes from the tug, the let-go words or the r key, not the depth cluster",
+   "method": "owner 2026-10-23: after the grasp the arm raises the can higher and extends it forward, more obvious and easier for a person to take (was [-0.12, 0.03, 0.06], the v1 offer; then +0.18 z). From grasp 4's lift (0.392, 0.209, 0.175): palm about (0.47, 0.21, 0.395), 47 cm ahead of the hips, about 1.23 m above the floor; IK at +0.20 z solves at psi 5, pitch -26, clearances 8.7 / 14.4 cm. Above the head camera's view: offer_pose falls back to this base pose; the release comes from the tug, the let-go words or the r key",
    "date": "2026-10-23",
    "n": 0,
    "valid_days": 90,

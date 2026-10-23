@@ -957,16 +957,25 @@ class Brain:
             before = self.can_point(f0, b0) if b0 is not None else None
         except Exception as e: print("  lift pre-check failed:", e)
         self.m_lift = self.arm.goto(self.m_slide + Z * P.lift, 0.04, "lift", correct=2); self.sleep(0.8)
-        self.o["closure_after_lift"] = round(float(self.hand.closed_fraction()), 3); rise = None
+        self.o["closure_after_lift"] = round(float(self.hand.closed_fraction()), 3); rise = None; edge_px = None
         try:
             f1 = self.head_frame(1); d1 = self.detect(f1); ref = tg["box"] if before is None else before["box"]
             near = [d for d in d1 if iou(d.box, [ref[0] - 50, ref[1] - 90, ref[2] + 50, ref[3] + 20]) > 0.05]
-            after = self.can_point(f1, max(near, key=lambda d: iou(d.box, ref))) if near else None
+            pick = max(near, key=lambda d: iou(d.box, ref)) if near else None
+            after = self.can_point(f1, pick) if pick is not None else None
+            if pick is not None: H, W = f1.color.shape[:2]; b = [int(v) for v in pick.box]; edge_px = min(b[0], b[1], W - 1 - b[2], H - 1 - b[3])
             if before is not None and after is not None: rise = float(after["p"][2] - before["p"][2])
-            self.bundle("lift", f1, {"rise": rise})
+            self.bundle("lift", f1, {"rise": rise, "edge_px": edge_px})
             self.view.frame(f1.color, "after the lift: can rose %s" % (None if rise is None else "%.3f m" % rise))
         except Exception as e: print("  lift check failed:", e)
         seen = None if rise is None else bool(abs(rise - P.lift) <= cv("lift_rise_tol_m"))
+        if seen is False and edge_px is not None and edge_px < 8:          # 2026-10-23 grasp 4: the held can, tilted and cut by the image border, read a
+            hs = self.hand.state(); fingers = list(hs[2:]) if hs is not None else []   # 2 mm rise while the hand held it firmly (owner): the hand decides
+            holds = bool(fingers) and float(hs[0]) < SIG[0] and sum(SIG[1] < f < SIG[2] for f in fingers) >= 3
+            print("  lift check: the held can's box is %d px from the image border (its point is not the can's); the hand %s" % (
+                edge_px, ("still holds it %s: not a miss" % np.round(hs, 2).tolist()) if holds else "does not hold it: a miss"), flush=True)
+            self.log.event(ev="lift_edge", stage=self.state, edge_px=edge_px, rise=round(rise, 3), hand=None if hs is None else np.round(hs, 2).tolist(), holds=holds, tag="sensor gate")
+            if holds: seen = None
         self.o["lift_rise"] = None if rise is None else round(rise, 3); self.o["lift_seen"] = seen
         self.log.event(ev="lift_check", stage=self.state, rise=self.o["lift_rise"], seen=seen, tag="sensor gate")
         print("  lift check: can rose %s -> %s" % (self.o["lift_rise"], {True: "seen", False: "NOT with the hand: a miss", None: "not measured"}[seen]), flush=True)
