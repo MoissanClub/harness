@@ -24,10 +24,12 @@ class SkillFailed(RuntimeError): pass
 
 class Arm:
     def __init__(self, rb, cfg, log=None, tol=None, step_s=0.02, max_step=0.02, sub_step=0.01, corr_tol=0.006, corr_speed=0.04,
-                 speed_scale=1.0, roll_inward=0.0, check_abort=None, kin_check=True, joint_step=0.02, step_speed=0.05, contact_lag=0.006):
+                 speed_scale=1.0, roll_inward=0.0, check_abort=None, kin_check=True, joint_step=0.02, step_speed=0.05, contact_lag=0.006,
+                 rest_tol=0.015):
         self.rb, self.cfg, self.log, self.step_s, self.max_step, self.roll_inward = rb, cfg, log, step_s, max_step, roll_inward
         self.tol = geom.IK_TOL if tol is None else tol
         self.sub_step, self.corr_tol, self.corr_speed, self.speed_scale = sub_step, corr_tol, corr_speed, speed_scale
+        self.rest_tol = rest_tol                                           # the hand this far above the stop 2 cm over a goal near the table = resting on something
         self.joint_step, self.step_speed = joint_step, step_speed       # rad per target at speed 1; approach-step speed (m/s at speed 1)
         self.contact_lag = contact_lag                                     # near the table floor: the hand this far behind the commanded advance = contact
         self.check_abort = check_abort or (lambda: None); self.kin_check = kin_check; self.psi = 0.0; self.n = np.array([0.0, -1.0, 0.0]); self.last = {}
@@ -192,7 +194,8 @@ class Arm:
             try: self.rb.arms.wait_settled("left", tol=0.08, timeout=2.0)
             except Exception: pass
             time.sleep(settle); held = float(self.palm_meas()[2] - stop[2])
-            if held > self.corr_tol: blocked = "the hand rests %.3f above its stop 2 cm over the goal (contact?)" % held   # something under it: no lowering onto it
+            if held > self.rest_tol: blocked = "the hand rests %.3f above its stop 2 cm over the goal (contact?)" % held   # something under it: no lowering onto it
+            elif held > self.corr_tol: print("  %s: the hand settled %.3f above its stop (the sag fed forward from high is larger than here; the final line carries the sag measured here)" % (label, held), flush=True)
         if not blocked:
             sag_cap = sag_hi if sag_max is None else sag_max                  # a "sag" grown by more than 1 cm since high is the hand resting on something
             sag0, pitch, why = self.line(p_goal, speed, label, psi, n, ff, validate, sag_cap=sag_cap if ff else None, watch=self.follow_watch(label) if goal_near else None)

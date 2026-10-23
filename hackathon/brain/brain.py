@@ -263,7 +263,7 @@ class Brain:
         t0 = time.time()
         self.rb = build_robot(cfg)                      # DDS, loco (read-only), arm streamer, hands, D435i, YOLOE; arm service off
         self.hand = self.rb.hands["left"]
-        self.arm = motion.Arm(self.rb, cfg, log=self.log_move, tol=P.ik_tol, speed_scale=P.speed, roll_inward=float(getattr(cfg.robot.palm_inward_wrist_roll, "left", 0.0)), check_abort=self.check_abort, joint_step=JOINT_STEP)
+        self.arm = motion.Arm(self.rb, cfg, log=self.log_move, tol=P.ik_tol, speed_scale=P.speed, roll_inward=float(getattr(cfg.robot.palm_inward_wrist_roll, "left", 0.0)), check_abort=self.check_abort, joint_step=JOINT_STEP, rest_tol=cv("pre_rest_tol_m"))
         self.home_q = np.array(cfg.arm.home_q.left, float); self.home_palm = self.arm.palm(self.home_q)
         self.held = None; self.waiting = None; self.wait_enter = False; self.reminder_t = 0.0    # written by the main loop only
         self.raise_trail = []; self.retreat_ref = None; self.table_z = None; self.high_z = None; self.up_yaw = None

@@ -379,6 +379,17 @@
    "n": 0,
    "valid_days": 60
   },
+  "pre_rest_tol_m": {
+   "value": 0.015,
+   "unit": "m",
+   "frame": "measured palm z above the commanded stop 2 cm over a goal near the table floor (motion.Arm.goto); more is a hand resting on something",
+   "method": "2026-10-23 grasp 1 (spikes/2026-10-23-v2-grasp, runs 20261024T033336): the hand settled 7 mm above the stop with nothing under it (C922 cam3_pregrasp.jpg); the stop line fed forward the 3.3 cm sag measured at high and the arm sagged less lower down; corr_tol 6 mm refused it as contact. 15 mm sits above that sag error; an object under the hand between the stop and 15 mm above it is stopped by the final line's follow watch (contact_lag 6 mm): test_motion test_stop_rest_tolerates_the_sag_error_not_an_object",
+   "date": "2026-10-23",
+   "pose": "pre-grasp beside a 66 mm can at (0.40, 0.19), psi -10, half speed",
+   "n": 1,
+   "log": "spikes/2026-10-23-v2-grasp/README.md",
+   "valid_days": 60
+  },
   "visual_gap_agree_m": {
    "value": 0.01,
    "unit": "m",
