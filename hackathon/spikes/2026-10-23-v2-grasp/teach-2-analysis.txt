@@ -1,0 +1,32 @@
+table z -0.013 (depth, at start); thresholds {'upper': 0.03, 'forearm': 0.04, 'hand': 0.06, 'right': 0.05, 'pitch': 15.0, 'table': -0.01}; soft samples used 1981 (every 5th at 50 Hz)
+
+1. Reach envelope: the largest palm x (ahead of the hips) by sideways position y and palm height above the table
+   y band      +0.00..+0.03 +0.03..+0.07 +0.07..+0.12 +0.12..+0.20 +0.20..+0.35   (palm above table, m; cell = max x / forearm pitch there)
+   -0.15..-0.10        -           -           -           -           -    
+   -0.10..-0.05        -           -           -           -           -    
+   -0.05..+0.00        -           -       0.436/+10   0.447/ +5   0.455/-12
+   +0.00..+0.05        -       0.343/ +7   0.458/ +7   0.475/ +2   0.466/-15
+   +0.05..+0.10        -           -       0.471/ +9   0.490/ +1   0.487/ -4
+   +0.10..+0.15        -           -       0.434/ +3   0.455/ -5   0.472/-14
+   +0.15..+0.20        -       0.346/ +7   0.438/ +4   0.383/ -1   0.463/-14
+   +0.20..+0.25    0.288/+20   0.295/+12   0.401/ +3   0.371/ -2   0.452/-12
+   +0.25..+0.30    0.204/+30   0.239/+20   0.371/ +0   0.405/ -8   0.428/-11
+
+2. The planner at the spots the hand reached at grasp height (palm 3-7 cm above the table: a 12-13.5 cm can), one per 3 cm cell,
+   the can axis inferred beside the palm along the grasp normal; the taught pose's own pitch and clearances next to the verdict
+   palm (0.282, +0.410, 0.054) can (0.303, +0.372) | taught: psi  -29 pitch  +12 clear u 0.091 f 0.144 h 0.196 within limits | planner: no (pre: pitch)
+   palm (0.313, +0.386, 0.055) can (0.335, +0.350) | taught: psi  -32 pitch   +9 clear u 0.073 f 0.107 h 0.166 within limits | planner: OK psi -30 pitch +9
+   palm (0.323, +0.360, 0.055) can (0.345, +0.323) | taught: psi  -30 pitch   +8 clear u 0.064 f 0.087 h 0.146 within limits | planner: OK psi -30 pitch +8
+   palm (0.321, +0.331, 0.056) can (0.341, +0.292) | taught: psi  -27 pitch   +7 clear u 0.058 f 0.075 h 0.128 within limits | planner: OK psi -30 pitch +7
+   palm (0.295, +0.227, 0.042) can (0.296, +0.184) | taught: psi   -2 pitch  +12 clear u 0.075 f 0.110 h 0.119 within limits | planner: OK psi -10 pitch +10
+   palm (0.289, +0.217, 0.021) can (0.290, +0.174) | taught: psi   -1 pitch  +16 clear u 0.075 f 0.109 h 0.117 beyond pitch | planner: no (grasp: upper, forearm, hand, pitch, tabl)
+   palm (0.340, +0.196, 0.055) can (0.342, +0.153) | taught: psi   -3 pitch   +7 clear u 0.061 f 0.075 h 0.090 within limits | planner: OK psi -5 pitch +7
+   palm (0.346, +0.177, 0.055) can (0.350, +0.134) | taught: psi   -5 pitch   +7 clear u 0.044 f 0.046 h 0.069 within limits | planner: OK psi -5 pitch +7
+   palm (0.343, +0.042, 0.056) can (0.329, +0.002) | taught: psi  +19 pitch   +7 clear u 0.053 f 0.038 h 0.053 beyond forearm,hand | planner: OK psi 25 pitch +8
+   planner accepts 7 of 9 taught grasp-height spots
+
+3. Camera vs model: the hand found in depth near the FK palm (poses with a blob clear of the window edge)
+   n 4 of 211 soft poses with a blob
+   fingertip front ahead of the FK palm along the forearm: median +0.066 (IQR +0.060..+0.089)  (the BrainCo hand from its URDF extents: about 0.114)
+   visible-hand median minus FK palm: along forearm median +0.033 (IQR +0.021..+0.066), along palm normal median +0.037 (IQR +0.027..+0.069), z median +0.021 (IQR -0.002..+0.035)
+     palm x 0.25-0.35 (n 4): front-palm median +0.066 (IQR +0.060..+0.089)

@@ -1,0 +1,47 @@
+defaults: {'upper': 0.03, 'forearm': 0.04, 'hand': 0.06, 'right': 0.05, 'pitch': 15.0, 'table': -0.01}
+this desk (77 cm)              pitch<=15:   0 of 165 cells none first refusal: {'grasp': 165}
+this desk (77 cm)              pitch<=25:  34 of 165 cells x 0.28-0.38 
+this desk (77 cm)              pitch<=35:  61 of 165 cells x 0.28-0.42 
++5 cm box                      pitch<=15:  21 of 165 cells x 0.30-0.38 
+     y +0.06: x 0.34-0.34
+     y +0.10: x 0.34-0.38
+     y +0.14: x 0.30-0.38
+     y +0.18: x 0.32-0.36
+     y +0.22: x 0.30-0.38
+     y +0.26: x 0.30-0.36
++5 cm box                      pitch<=25:  79 of 165 cells x 0.28-0.44 
++5 cm box                      pitch<=35:  85 of 165 cells x 0.28-0.46 
++10 cm box                     pitch<=15:  90 of 165 cells x 0.28-0.46 
+     y -0.14: x 0.28-0.32
+     y -0.10: x 0.28-0.36
+     y -0.06: x 0.28-0.38
+     y -0.02: x 0.28-0.42
+     y +0.02: x 0.28-0.42
+     y +0.06: x 0.28-0.46
+     y +0.10: x 0.28-0.46
+     y +0.14: x 0.28-0.46
+     y +0.18: x 0.28-0.46
+     y +0.22: x 0.28-0.46
+     y +0.26: x 0.28-0.46
++10 cm box                     pitch<=25: 101 of 165 cells x 0.28-0.48 
++10 cm box                     pitch<=35: 101 of 165 cells x 0.28-0.48 
++15 cm box (Tuesday's height)  pitch<=15: 111 of 165 cells x 0.28-0.50 
+     y -0.14: x 0.28-0.36
+     y -0.10: x 0.28-0.40
+     y -0.06: x 0.28-0.42
+     y -0.02: x 0.28-0.46
+     y +0.02: x 0.28-0.46
+     y +0.06: x 0.28-0.50
+     y +0.10: x 0.28-0.50
+     y +0.14: x 0.28-0.50
+     y +0.18: x 0.28-0.50
+     y +0.22: x 0.28-0.50
+     y +0.26: x 0.28-0.48
++15 cm box (Tuesday's height)  pitch<=25: 113 of 165 cells x 0.28-0.50 
++15 cm box (Tuesday's height)  pitch<=35: 113 of 165 cells x 0.28-0.50 
+
+real	31m28.473s
+user	29m57.591s
+sys	0m37.130s
+
+[exited with code 0]

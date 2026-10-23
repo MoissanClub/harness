@@ -1,0 +1,113 @@
+source ~/miniconda3/etc/profile.d/conda.sh && conda activate g1fetch && cd ~/harness/hackathon/brain && echo READY-$CONDA_DEFAULT_ENV
+[?2004hunitree@unitree-g1-nx:~/harness/hackathon/brain$ source ~/miniconda3/etc/profile.d/conda.sh && conda activate g1fetch && cd ~/harness/hackathon/brain && echo READY-$CONDA_DEFAULT_ENV
+[?2004lREADY-g1fetch
+[?2004h(g1fetch) unitree@unitree-g1-nx:~/harness/hackathon/brain$ clear; python brain.py --dry --orders 1 --park home --model-grasp --expect-calib ae553548d47b677a --fingertip 0.125 --palm-half-height 0.045 2>&1 | tee ~/v2-session/dry-3cans-1.log
+[?2004l[H[Jcalib calib.json sha ae553548d47b677a git da3215a
+palm_real_m                 0.246 m      forearm        2026-10-21 n=2   g1-fetch ee_offset_x 0.15 (URDF wrist-roll origin to the model palm) +
+palm_half_height_m          0.045 m      hand           2026-10-20 n=0   assumed from the BrainCo hand's palm width; the pinky edge sat at the 
+grasp_below_mid_m           0.015 m      pelvis z       2026-10-19 n=4   palm centre below the can mid-height: trial 8 at -0.02 was the deepest
+palm_to_axis_m               0.01 m      palm normal    2026-10-19 n=12  palm face r + 1 cm from the can axis (g1-fetch grab_can, kept through 
+pregrasp_standoff_m          0.03 m      palm normal    2026-10-21 n=0   V2_STRATEGY.md section 5 (v1 used 0.05 with a blind slide; the servo f
+can_diameters_m        [0.055, 0.066] m      -              2026-10-19 n=9   slim / standard, classified from the box width at the box depth with a
+torso_bands            [[-0.15, 0.0, -0.049, 0.049, 0.064], [0.0, 0.05, -0.058, 0.059, 0.066], [0.05, 0.1, -0.061, 0.063, 0.088], [0.1, 0.16, -0.063, 0.068, 0.098], [0.16, 0.22, -0.069, 0.079, 0.1], [0.22, 0.3, -0.071, 0.08, 0.108], [0.3, 0.38, -0.066, 0.063, 0.101], [0.38, 0.5, -0.06, 0.06, 0.09]] m      pelvis (z0, z1, x_min, x_max, y_half) 2026-10-20 n=1   torso_link.STL, waist_support_link.STL, pelvis.STL vertex extents per 
+clearance_m            [0.03, 0.04, 0.06, 0.05] m      segment centre lines to the torso bands: lower upper arm, forearm, hand (wrist to fingertips), hand to the right arm 2026-10-21 n=14  V2_STRATEGY.md section 3 (lower upper arm 3, forearm 4, hand 6, right 
+pitch_max_deg                15.0 deg    forearm        2026-10-21 n=0   V2_STRATEGY.md section 3: beyond 15 deg of droop the real palm drops 1
+ik_tol_m                    0.005 m      real palm      2026-10-21 n=0   V2_STRATEGY.md: the hard-yaw IK either solves or not; v1's 0.035 accep
+lift_m                       0.06 m      pelvis z       2026-10-21 n=6   6 cm lift with correction reached within 3-7 mm on every grasp
+offer_delta_m          [-0.12, 0.03, 0.06] m      pelvis, from the lifted hand 2026-10-21 n=6   the offer pose used on every v1 handover (grab_loop back-up, 2026-10-1
+camera_pose            [0.054, 0.018, 0.474, 47.6] m, deg pelvis: x, y, z of the D435 link and its pitch down 2026-10-20 n=1   g1_body23.urdf d435_joint (0.0576, 0.0175, 0.41987 from torso_link, rp
+pelvis_height_m              0.84 m      floor to the pelvis origin 2026-10-21 n=3   g1-fetch floor_height 0.98 m for a can point at z 0.14 (2026-10-21 log
+contact_rise_rad            0.015 rad    joint tracking error above the per-pose baseline 2026-10-21 n=14  v1 contact stop; in v2 a safety abort only (fired once wrongly 6.6 cm 
+hold_signature         [0.3, 0.25, 0.7] -      BrainCo finger q: thumb below, fingers between 2026-10-21 n=12  12 holds: thumb 0.07-0.22, at least three fingers 0.41-0.61 (V2_STRATE
+hand_feature_K               None m      hand feature offsets from the can axis along (forearm d, palm normal n, z): fingertip front, nearest face, median height 2026-10-21 n=0   NOT MEASURED: step 1 of the v2 plan (the kill test). Measure at the AL
+table_clear_m               -0.01 m      palm lowest point (palm z - palm_half_height_m) above the table plane 2026-10-20 n=1   the memo asks for +0.01, but with grasp z = table + h/2 - 0.015 and a 
+high_rise_m                  0.12 m      pelvis z above the pre-grasp 2026-10-21 n=14  the high waypoint of every v1 pick (raise, reach high, lower), 2026-10
+raise_ahead_m                0.05 m      pelvis x ahead of the home palm 2026-10-21 n=14  v1 'up' waypoint (home x + 5 cm), every pick 2026-10-19/21
+raise_side_y_m               0.18 m      pelvis y, the least leftward y of the raise 2026-10-20 n=0   the raise goes up beside the body; v1 raised at the pre-grasp y (0.16-
+retreat_out_m                0.05 m      along -n (away from the can) before the retreat up 2026-10-21 n=14  v1 retreat-up (y + 5 cm), every pick 2026-10-19/21
+approach_step_m              0.01 m      along +n per corrected step 2026-10-21 n=14  v1 slide step, 2026-10-19/21
+lift_rise_tol_m              0.02 m      the can's rise in the head frame vs lift_m 2026-10-21 n=0   V2_STRATEGY.md section 5 (YOLOE points repeat within 7 mm, live4.log)
+offer_search_m         [0.2, -0.1, 0.08] m      largest shift of the offer pose ahead, toward the midline, up, searched in 5 / 5 / 4 cm steps until the palm is in the head camera's view 2026-10-20 n=0   V2_STRATEGY.md section 5 (offer inside the view); mock: in view at (+0
+fingertip_m                  0.08 m      open fingertips ahead of the palm centre 2026-10-16 n=0   g1-fetch hand.finger_reach_m 0.08
+cluster_radius_m             0.06 m      around the held can: new depth points within it count as the guest's hand 2026-10-21 n=0   V2_STRATEGY.md section 5
+near_ahead_m                  0.3 m      pelvis x: nothing within it at chest height (z 0.15-0.50, |y| < 0.12) moves the arm 2026-10-19 n=0   the hard safety kept from v1 (ROBOT_RULES.md, Oct 19)
+speed_scale                   1.0 -      multiplies every Cartesian speed (raise 0.10, high 0.08, lower 0.05, corrections 0.04, approach steps 0.05 m/s) and the joint step per streamed target (joint_step_rad); in (0, 1] 2026-10-21 n=14  the speeds of every v1 pick (2026-10-19/21, n 14) at 1.0; a run with a
+table_edge_m                 None m      pelvis x of the table's near edge (the chest front is at x 0.08: tape the chest-to-edge distance and add 0.08) 2026-10-20 n=0   NOT MEASURED: the owner's tape, passed as --table-edge (a logged devia
+joint_step_rad               0.02 rad    largest change of any left-arm joint in one streamed 20 ms target, at speed_scale 1 (scaled by it) 2026-10-21 n=0   V2_REVIEW round 2 blocker 1 (a 0.59 rad wrist-roll snap in one target)
+table_floor_margin_m        0.005 m      palm lowest point above the fitted table plane: no goal or command puts the palm centre below plane + palm_half_height_m + this 2026-10-21 n=0   V2_REVIEW round 2 blocker 4 (correction rounds drove the command 1.7-7
+visual_gap_agree_m           0.01 m      visual near-face gap vs the model gap along the palm normal 2026-10-21 n=0   V2_REVIEW round 2 must-fix: the hand closes only on a visual gap that 
+raise_back_m                 0.02 m      pelvis x behind the home palm: the raise first goes up there to the table top + 3 cm, then to the raise waypoint 2026-10-21 n=0   V2_REVIEW round 3: the straight raise swept a 12.5 cm hand's fingertip
+hand_back_m                 0.045 m      the open hand behind the palm centre along the wrist-roll axis (the table floor's hand box) 2026-10-21 n=0   assumed: the mock's hand box; BrainCo left hand 15.9 cm long with the 
+hand_half_thickness_m        0.02 m      half the open hand's thickness, palm face to back (the table floor's hand box) 2026-10-21 n=0   assumed: BrainCo palm 7.6 x 4.1 cm (URDF extents); the owner tapes the
+calib identity: sha ae553548d47b677a as expected, tree clean
+CLI overrides of calib.json (logged as deviations): [('fingertip_m', 0.08, 0.125)]
+server            PASS  health ok, models ['gemma4-e2b']
+warmup            PASS  C922 frame + yes/no: 'yes' in 308 ms (prompt 92 tok)
+geom              PASS  FK error 0.6 mm vs the logged pose; torso box y +-0.12, margin 0.04
+cam_services      PASS  realsense-webrtc=inactive, compat=inactive
+d435i             PASS  8 v4l nodes, lsusb: Bus 002 Device 003: ID 8086:0b3a Intel Corp. Intel(R) RealSe
+c922_video        PASS  /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0
+c922_mic          PASS  plughw:0,0
+power             PASS  cpus online 0-7 (MAXN)
+clocks            PASS  GPU 918 MHz now, min 918, max 918 (pinned by jetson_clocks)
+fsm               PASS  fsm_id 500
+hands             PASS  left publishing, right publishing
+arm_service       PASS  g1_arm_example on (brain switches it off at start, on at exit)
+assistant         PASS  rt/audio_msg: 0 messages in 3 s
+no_default_route  WARN  default via 192.168.1.254 dev wlx94ba06f8160d proto dhcp metric 50   -> unplug the uplink / nmcli con down <uplink>
+wifi_radio        WARN  onboard Wi-Fi radio enabled  -> nmcli radio wifi off (the MT7612U AP is hostapd, unaffected)
+tailscaled        WARN  tailscaled active  -> sudo systemctl stop tailscaled
+PREFLIGHT: PASS (3 warnings)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/24/2026-02:25:23] [TRT] [I] Loaded engine size: 23 MiB
+[10/24/2026-02:25:23] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-02:25:23] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/24/2026-02:25:23] [TRT] [I] Loaded engine size: 23 MiB
+[10/24/2026-02:25:23] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-02:25:23] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/24/2026-02:25:23] [TRT] [I] Loaded engine size: 23 MiB
+[10/24/2026-02:25:23] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-02:25:23] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yolo26n.engine for TensorRT inference...
+[10/24/2026-02:25:30] [TRT] [I] Loaded engine size: 7 MiB
+[10/24/2026-02:25:30] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-02:25:30] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 1, GPU 54 (MiB)
+speeds (x1.00): raise 0.100, high 0.080, lower 0.050, corrections 0.040, approach steps 0.050 m/s; joint step 0.020 rad per 20 ms target
+home_q [0.0, 0.25, 0.0, 1.0, 0.0] (g1-fetch config): real palm [0.194, 0.267, -0.174], fingertips [0.262, 0.293, -0.276]; check against the run plan's expected line before any motion
+robot ready in 20.4 s; mic plughw:0,0; cam3 /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0; runs /home/unitree/harness/hackathon/brain/runs/20261024T022515
+--dry: the arm is not enabled and does not move (no park)
+SAY: Ready.
+== IDLE 
+== LOOK 
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver, Song Forest, apple' (539 ms)
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver Chi Peach' (407 ms)
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver Chii Sparkling' (428 ms)
+  scene: 3 can(s): 1 silver song forest apple, standard, on the left; 2 silver chi peach, slim, in the middle; 3 silver chii sparkling, standard, on the right
+== LISTEN attempt 1
+SAY: Tell me which one you'd like.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_choice: 'Which can does the guest want?' -> 'none' (449 ms)
+== LISTEN attempt 2
+SAY: I do not see that. I see silver song forest apple and silver chi peach and silver chii sparkling.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_choice: 'Which can does the guest want?' -> 'none' (266 ms)
+== LISTEN attempt 3
+SAY: The silver song forest apple one, or the silver chi peach one?
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_choice: 'Which can does the guest want?' -> '1' (264 ms)
+== CONFIRM silver song forest apple
+SAY: The silver song forest apple one. Coming up.
+== LOCATE silver song forest apple
+  safety (locate): clear; valid depth 98%, largest blind region 0%, 0 points in the zone (0 on my own arm, not counted)
+  target silver song forest apple at pelvis [0.52, 0.157, 0.035], box [151, 143, 224, 271], 0.62 m, width 0.074 m -> diameter 0.066; plane -0.077
+  no feasible reach (unreachable): [{'psi': -30, 'ok': False, 'why': 'grasp: IK 81.9 mm', 'pitch': 34.7}, {'psi': -25, 'ok': False, 'why': 'grasp: IK 110.5 mm', 'pitch': 37.3}, {'psi': -20, 'ok': False, 'why': 'grasp: IK 190.8 mm', 'pitch': 46.5}, {'psi': -15, 'ok': False, 'why': 'grasp: IK 741.4 mm', 'pitch': -25.2}, {'psi': -10, 'ok': False, 'why': 'grasp: IK 156.6 mm', 'pitch': 19.2}, {'psi': -5, 'ok': False, 'why': 'grasp: IK 127.1 mm', 'pitch': 34.2}]
+SAY: The silver song forest apple one is out of my reach. Please move it a little closer to me.
+== RESULT order 1: no_plan_unreachable (autonomous False) in 40.2 s; counters {'orders': 1, 'autonomous': 0, 'honest_negatives': 0, 'assisted': 0, 'manual_release': 0, 'failed': 1, 'grasps': 0, 'misses': 0, 'corrections': 0}
+== shutting down
+arm service on -> 0
+[?2004h(g1fetch) unitree@unitree-g1-nx:~/harness/hackathon/brain$ 

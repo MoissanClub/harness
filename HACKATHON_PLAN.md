@@ -1,6 +1,6 @@
 # Gemma Hardware Hackathon: "Any Language, One Can"
 
-Google Gemma Hardware Hackathon, AGI House (Hillsborough), Saturday 2026-10-24, 10:00-17:00, teams of 3-4. One rule: a Gemma-based model, entirely on-device. Judges rotate past workbenches, top six demo on stage. Cash pools: Track 2 Physical AI $7.5k/5k/2.5k (our target), Best Use of LiteRT $7.5k pool (not claimed: LiteRT-LM measured 4-15x slower on the Orin, see `hackathon/spikes/2026-10-18-orin-sunday.md`), Best in Show Android $15k (dropped: no Pixel). Research corpus: `hackathon/research/`. History of this plan: `hackathon/archive/`.
+Google Gemma Hardware Hackathon, AGI House (Hillsborough), Saturday 2026-10-24 (event page re-read 2026-10-21: doors 10:00, building from 12:15, project draft saved by 19:00 for finalist selection, demos, judging and awards 20:00), teams of 3-4. No code freeze (owner, 2026-10-23): work continues through Saturday's build time. One rule: a Gemma-based model, entirely on-device. Judges rotate past workbenches, top six demo on stage. Cash pools: Track 2 Physical AI $7.5k/5k/2.5k (our target), Best Use of LiteRT $7.5k/5k/2.5k, its own track (LiteRT-LM was 4-15x slower on the Orin's CPU, `hackathon/spikes/2026-10-18-orin-sunday.md`; on the GPU on 2026-10-22 it heard the order with llama.cpp's accuracy at 0.56-0.63 s p50, `hackathon/spikes/2026-10-22-litert-gpu/README.md`; entering is the owner's call), Best in Show Android $15k (dropped: no Pixel). Research corpus: `hackathon/research/`. History of this plan: `hackathon/archive/`.
 
 ## 1. The demo
 

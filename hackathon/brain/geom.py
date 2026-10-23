@@ -116,19 +116,27 @@ def fit_plane_ransac(points, thresh=0.012, iters=80, rng=None, min_nz=0.0):
     return n, float(n @ c), np.abs(P @ n - float(n @ c)) < thresh
 
 
-def table_plane(cloud, z_hint=None):
-    """Table plane from a pelvis-frame cloud of the region around the can's base. With z_hint (the can base from the box) only the
-    points within 6 cm of it are fitted: with the cans near the table's edge the band under them also sees the floor, which would win
-    the RANSAC. Rejects a plane that is not horizontal (|n_z| < 0.9) or further than 6 cm from z_hint. Returns dict(n, d, z, n_in) or None."""
+def table_plane(cloud, z_hint=None, band=0.012):
+    """Table plane from a pelvis-frame cloud of the region around the can's base. Tables are level (owner, 2026-10-23): the table is
+    the most common height of the cloud, returned as a LEVEL plane (n = +z, d = z). The free RANSAC fit this replaces leaned 3-16 deg
+    through can sides and a narrow table strip on Oct 23, while the IMU read 1 deg and the depth showed the desk level within 1 cm over
+    x 0.30-0.90. With z_hint (the can base from the box) only the points within 6 cm of it count: with the cans near the table's edge
+    the band under them also sees the floor. A table is a sharp peak in the 5 mm height histogram; vertical surfaces (can sides) spread
+    evenly over heights, so a peak under twice the median of the bins away from it (2 bins either side) is not a table (the old fit
+    refused can sides as not level). Returns dict(n, d, z, n_in, tilt_deg 0) or None (under 30 points within `band` of the mode, a flat
+    histogram, or the mode further than 6 cm from z_hint)."""
     cloud = np.asarray(cloud, float)
     if z_hint is not None and cloud.size: cloud = cloud[np.abs(cloud[:, 2] - z_hint) < 0.06]
-    fit = fit_plane_ransac(cloud, iters=200, min_nz=0.9)
-    if fit is None: return None
-    n, d, inl = fit
-    if abs(n[2]) < 0.9: return None
-    z0 = float(np.median(cloud[inl][:, 2]))               # the table height where it was seen (near the can): the plane's value at the pelvis
-    if z_hint is not None and abs(z0 - z_hint) > 0.06: return None      # origin extrapolated a 1.4 deg tilt of a 3.5 cm strip to +1 cm (mock)
-    return {"n": n, "d": d, "z": z0, "n_in": int(inl.sum()), "tilt_deg": float(math.degrees(math.acos(min(1.0, abs(n[2]))))) }
+    if cloud.ndim != 2 or cloud.shape[0] < 30: return None
+    z = cloud[:, 2]; edges = np.arange(z.min(), z.max() + 0.01, 0.005)
+    hist, edges = np.histogram(z, bins=edges if edges.size > 1 else 1); i = int(hist.argmax())
+    away = np.r_[hist[:max(0, i - 2)], hist[i + 3:]]
+    if away.size and hist[i] < 2.0 * float(np.median(away)): return None   # flat: can sides, no table
+    inl = np.abs(z - 0.5 * (edges[i] + edges[i + 1])) < band
+    if inl.sum() < 30: return None
+    z0 = float(np.median(z[inl])); inl = np.abs(z - z0) < band         # the table height where it was seen (near the can)
+    if z_hint is not None and abs(z0 - z_hint) > 0.06: return None
+    return {"n": np.array([0.0, 0.0, 1.0]), "d": z0, "z": z0, "n_in": int(inl.sum()), "tilt_deg": 0.0}
 
 
 def height_above(points, plane):

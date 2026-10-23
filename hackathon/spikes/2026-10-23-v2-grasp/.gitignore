@@ -1,0 +1,4 @@
+# The teach frames (about 34 MB) stay on disk, not in git; the logs, the analysis and two reference frames are committed.
+teach-*/pose_*
+!teach-2/pose_0049.jpg
+!teach-3/pose_0018.jpg
