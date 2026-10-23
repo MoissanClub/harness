@@ -34,13 +34,14 @@
    "valid_days": 60
   },
   "palm_to_axis_m": {
-   "value": 0.01,
+   "value": 0.035,
    "unit": "m",
    "frame": "palm normal",
-   "method": "palm face r + 1 cm from the can axis (g1-fetch grab_can, kept through 12 holds)",
-   "date": "2026-10-19",
-   "n": 12,
-   "valid_days": 90
+   "method": "the palm point r + this from the can axis at the closure pose. 2026-10-23 grasps 1-2 (runs 20261024T034032, --model-grasp, 66 mm can at (0.40, 0.19)): both approaches pushed the can (1.8 and 1.5 cm) from a model gap of 2.3-2.5 cm on, the thumb placed first (C922 cam3_slide.jpg); the palm point (calib palm_real_m) sits about 4 cm ahead of the palm centre (teach-3), so the hand meets the can about 2.5 cm sooner than r + 1 cm. Was 0.01 (g1-fetch grab_can, the Oct 19 holds with a contact-stop slide). geom.plan_reach now takes it as axis_off (was a literal 0.01)",
+   "date": "2026-10-23",
+   "n": 2,
+   "valid_days": 90,
+   "log": "spikes/2026-10-23-v2-grasp/README.md"
   },
   "pregrasp_standoff_m": {
    "value": 0.03,
@@ -175,14 +176,15 @@
    "value": [
     -0.12,
     0.03,
-    0.06
+    0.18
    ],
    "unit": "m",
    "frame": "pelvis, from the lifted hand",
-   "method": "the offer pose used on every v1 handover (grab_loop back-up, 2026-10-19/21); moved forward/inward/up until the hand is inside the head camera's view",
-   "date": "2026-10-21",
-   "n": 6,
-   "valid_days": 90
+   "method": "owner 2026-10-23: after the grasp the arm lifts the can up for the guest to take (was +0.06 z, the v1 offer). About 1.2 m above the floor, above the head camera's view (its top edge is near z 0.27-0.32 at x 0.30-0.45), so offer_pose falls back to this base pose and the release comes from the tug, the let-go words or the r key, not the depth cluster",
+   "date": "2026-10-23",
+   "n": 0,
+   "valid_days": 90,
+   "log": "spikes/2026-10-23-v2-grasp/README.md"
   },
   "camera_pose": {
    "value": [

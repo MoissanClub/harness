@@ -405,13 +405,14 @@ def psi_order(y_can, lo=-30, hi=60, step=5):
     cands = list(range(lo, hi + 1, step)); return sorted(cands, key=lambda p: (abs(p - pref), p))
 
 
-def plan_reach(can, r, table_z=None, q_seed=None, right_q=None, pre=0.03, thresholds=None, psis=None, ee=PALM_REAL, extra_points=()):
-    """V2_STRATEGY.md section 3: for each psi (outward from the preferred one) solve the real-palm IK at the grasp P = C - (r + 0.01) n,
-    the pre-grasp P - pre n, every 1 cm approach pose and the high waypoints (+0.12 z); accept when every pose passes pose_checks with
-    IK error <= IK_TOL; choose the smallest |pitch|, ties to the smaller |psi|. Returns (plan or None, tried list)."""
+def plan_reach(can, r, table_z=None, q_seed=None, right_q=None, pre=0.03, thresholds=None, psis=None, ee=PALM_REAL, extra_points=(), axis_off=0.01):
+    """V2_STRATEGY.md section 3: for each psi (outward from the preferred one) solve the real-palm IK at the grasp P = C - (r + axis_off) n
+    (axis_off: calib palm_to_axis_m, passed by the brain), the pre-grasp P - pre n, every 1 cm approach pose and the high waypoints
+    (+0.12 z); accept when every pose passes pose_checks with IK error <= IK_TOL; choose the smallest |pitch|, ties to the smaller |psi|.
+    Returns (plan or None, tried list)."""
     can = np.asarray(can, float); q_seed = np.array([0.0, 0.25, 0.0, 1.0, 0.0] if q_seed is None else q_seed, float); tried = []; best = None
     for psi in (psis if psis is not None else psi_order(can[1])):
-        d, n = grasp_frame(psi); P = can - n * (r + 0.01); poses = [("grasp", P), ("pre", P - n * pre)]
+        d, n = grasp_frame(psi); P = can - n * (r + axis_off); poses = [("grasp", P), ("pre", P - n * pre)]
         k = int(math.ceil(pre / 0.01))
         poses += [("slide%d" % i, P - n * (pre - i * pre / k)) for i in range(1, k)] + [("high", P - n * pre + np.array([0, 0, HIGH_RISE]))] + list(extra_points)
         seed = q_seed.copy(); rec = {"psi": psi, "ok": True, "why": "", "poses": {}}

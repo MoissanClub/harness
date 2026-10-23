@@ -655,7 +655,7 @@ class Brain:
         try: right_q = np.asarray(self.rb.arms.measured("right"), float)
         except Exception: pass
         others = [np.asarray(o["p"], float) for o in tg.get("others", [])]
-        plan, tried = geom.plan_reach(target, tg["diam"] / 2, table_z=table_z, q_seed=self.arm.q_cmd(), right_q=right_q, pre=pre, thresholds=THRESH, psis=PSIS)
+        plan, tried = geom.plan_reach(target, tg["diam"] / 2, table_z=table_z, q_seed=self.arm.q_cmd(), right_q=right_q, pre=pre, thresholds=THRESH, psis=PSIS, axis_off=cv("palm_to_axis_m"))
         if plan is not None and others:                                    # the hand must stay 2 cm off the other cans along pre -> grasp
             for o in others:
                 box = np.array([[o[0] - tg["diam"] / 2 - 0.06, o[0] + tg["diam"] / 2 + 0.10], [o[1] - tg["diam"] / 2 - 0.03, o[1] + tg["diam"] / 2 + 0.03], [o[2] - 0.10, o[2] + 0.10]])
