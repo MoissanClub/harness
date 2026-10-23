@@ -5,9 +5,15 @@ with the reason and the no-motion check or observation that covers it.
 
 ## Commit
 
-- Code: `7869c62` on `hackathon` (round 4), NOT pushed (the coordinator's rule for this session); push before the session so PC2 can
-  `git pull`. Later commits change documents only. In `hackathon/brain`:
+- Code: `7869c62` on `hackathon` (round 4), NOT pushed to GitHub (the coordinator's rule for this session). Later commits change
+  documents only. In `hackathon/brain`:
   `git diff --quiet 7869c62 HEAD -- '*.py' calib.json ../../bench/client.py && echo CODE 7869c62` must print `CODE 7869c62`.
+- On PC2 (2026-10-22, no motion): `~/harness` fast-forwarded from 83d7c0e to `da3215a` from a git bundle (`~/deploy/`); the 29
+  untracked files the fast-forward replaced were byte-identical to the committed ones (copies in
+  `~/deploy/untracked-before-ff-20261023T025637`). There: `CODE 7869c62`, the brain folder clean, `calib calib.json sha
+  ae553548d47b677a git da3215a` with no `(dirty)`, `test_geom` 4/4 and `test_motion` 5/5 (54 s), `preflight.py` 11 pass with
+  `cam_services` and `fsm` failing until the owner's boot steps (stop the teleimager services, R1+X), and the three no-cloud items as
+  warnings.
 - `calib.json` sha16: `ae553548d47b677a` (`python calib.py | head -1`), unchanged in round 4: 36 entries, none stale. Every run-plan
   command carries `--expect-calib ae553548d47b677a`; without it the brain refuses on the robot, and it refuses another sha, a dirty tree (the
   brain folder and `bench/client.py`) or a tree that is not a git clone. On the Mac the line shows `(dirty)` only because the
@@ -97,7 +103,7 @@ The stop cases of rounds 2 and 3 (`abort`, `walk`, `quit2`, `sigint2`, `secondq`
 | The real sag and tracking baseline per pose, the hand's orientation on arrival and the real lag on the final line | the mock's sag is fitted | the air test's `sag baseline`, `tracking baseline` and the fourth run's `final line near the table floor: largest lag` |
 | The table's height and near edge, the hand's length, half-height and thickness | only the tape knows them | `--table-z T`, `--table-edge E`, `--fingertip F`, `--palm-half-height H`; the dry run's plane and raise lines |
 | What the D435i sees near the chest, and its blind regions with nothing in front | the mock only blanks a minimum range and reads 0% blind otherwise | the no-motion block: the largest blind region with nothing in front sets `--blind-max`; a hand at 10, 15 and 30 cm |
-| What g1-fetch does at enable, at disable and when the brain exits with the arm out | `g1_fetch/control/arm.py` is not in this repo (the excerpts read: enable holds the measured pose, disable ramps the weight to 0 over 2 s, `max_joint_vel` 1.2 rad/s in `default.yaml`) | the boot block reads arm.py and pc2.yaml; the brain holds on an enable that holds another pose; `quit!` only after L2+B |
+| What the arm does when the brain exits with the arm out | read on PC2 (g1-fetch `d3043d3`): enable sets the target and the command to the measured pose and ramps the arm_sdk weight to 1 over 2 s, disable ramps it to 0 over 2 s, `close` only stops the 50 Hz thread, effective `max_joint_vel` 1.2 rad/s; what the controller does when the messages stop with the weight at 1 is not in that code | the brain releases only at home and holds on an enable that holds another pose; `quit!` only after L2+B |
 | The palm face offset (`palm_to_axis_m` 0.01) | assumed, n 0 | the owner's tape; grasps only |
 | The 30 s hold reminder and the tty Enter gating | the mock types the keys | the first motion process on the robot |
 
