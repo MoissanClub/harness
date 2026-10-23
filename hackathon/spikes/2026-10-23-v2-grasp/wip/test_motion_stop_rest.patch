@@ -1,0 +1,38 @@
+diff --git a/hackathon/brain/test_motion.py b/hackathon/brain/test_motion.py
+index 971c7bc..d0df2d9 100644
+--- a/hackathon/brain/test_motion.py
++++ b/hackathon/brain/test_motion.py
+@@ -114,6 +114,33 @@ def test_corrections_stop_on_the_table():
+     M.ERRZ = 0.0
+ 
+ 
++def test_stop_rest_tolerates_the_sag_error_not_an_object():
++    # 2026-10-23 grasp 1 (spikes/2026-10-23-v2-grasp): the stop 2 cm over the pre-grasp fed forward the 3.3 cm sag measured at high,
++    # the arm sagged less lower down and settled 7 mm above the stop with nothing under it; corr_tol (6 mm) refused it as contact.
++    # Here the arm sags 25% less after high: the pre-grasp must arrive. With the real table 3 or 4.5 cm above the believed one (an
++    # object under the hand) the move must still stop, by the final line's follow watch or the stop's rest check, pushing under 1 cm.
++    s0 = M.SAG_SCALE
++    try:
++        rb, arm, plan = setup(0.122); raise_arm(arm, plan); arm.goto(plan["high"], 0.08, "high", correct=0); set_floor(arm)
++        M.SAG_SCALE = s0 * 0.75; M._SAG_CACHE.clear(); M.STATS["table_contacts"] = 0
++        m = arm.goto(plan["pre"], 0.05, "pre", correct=4, ff=True)
++        assert not arm.last.get("blocked"), arm.last.get("blocked")
++        assert float(np.linalg.norm(arm.last["goal"] - m)) < 0.006, (m, arm.last["goal"])
++        assert M.STATS["table_contacts"] == 0, M.STATS["table_contacts"]
++    finally:
++        M.SAG_SCALE = s0; M._SAG_CACHE.clear()
++    z0 = M.TABLE_Z
++    for lift in (0.03, 0.045):
++        try:
++            rb, arm, plan = setup(0.122); raise_arm(arm, plan); arm.goto(plan["high"], 0.08, "high", correct=0); set_floor(arm)
++            M.TABLE_Z = z0 + lift; M.STATS["push"] = 0.0
++            arm.goto(plan["pre"], 0.05, "pre", correct=4, ff=True)
++            assert arm.last.get("blocked"), "an object %.0f mm above the believed table was lowered onto" % (lift * 1000)
++            assert M.STATS["push"] < 0.010, (lift, M.STATS["push"])
++        finally:
++            M.TABLE_Z = z0
++
++
+ if __name__ == "__main__":
+     want = sys.argv[1:]
+     for name, fn in list(globals().items()):

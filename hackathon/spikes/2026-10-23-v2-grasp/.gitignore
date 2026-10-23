@@ -2,3 +2,10 @@
 teach-*/pose_*
 !teach-2/pose_0049.jpg
 !teach-3/pose_0018.jpg
+# Copies of PC2's runs folder: Tuesday's runs and logs are already under spikes/office-tue-brain; the two dry runs sit at the top level;
+# the hold-loop frames repeat one view.
+runs-pc2/20261021T*
+runs-pc2/*.log
+runs-pc2/20261024T022515/
+runs-pc2/20261024T032922/
+**/hold_*.jpg

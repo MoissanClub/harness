@@ -42,9 +42,49 @@ plus two slow returns home (2.1 s and 1.5 s). L2+B (damping) is not usable for h
 - `teach_reach.py`: the floor was fitted as the table (fixed); the first D435i frames after opening read the desk at 0.187 m (2 s
   warm-up, the table re-measured per pose); a label typed while soft now holds the arm, says "Hands away" and records after 3 s.
 
-## Open
+## Grasps (afternoon, `runs-pc2/`, `console/grasp-N.log`)
 
-- The order step picked a can on "Hm."; LOOK named a lychee "apple" and missed a fruit (crops are about 70 x 130 px).
+Desk raised to about 88 cm (table z +0.045-0.054 from depth), near edge x 0.365 from depth; the Chi Sparkling Pomelo Zest can
+(66 mm) about (0.40, 0.14-0.20). Every run: `--orders 1 --park home --model-grasp --speed 0.5 --table-z 0.048 --table-edge 0.365
+--fingertip 0.125 --palm-half-height 0.045` (table and edge from depth, not tape; no K: the kill test was not run). The owner on the
+robot and the stop keys; the agent drove from the Mac. Second try within an order = the brain's own retry.
+
+| Run (code) | Order heard | Pre-grasp error | Approach | Close / hold signature | After | Result |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 `033336` (`10c1b8d`) | lemon | - | - | - | stopped at the stop 2 cm over the pre-grasp: the hand settled 7 mm above it (corr_tol 6 mm), nothing under it (C922) | false contact, hold, home on `y` |
+| 2 `034032` (`2d04e98`) | "apple" (left can) | 3 / 4 mm | pushed the can 1.8 / 1.5 cm from a model gap of 2.3-2.5 cm | owner placed the can: 0.51, GRASPED | Gemma "in hand" said no; released on the owner | assisted |
+| 3 `034634` | water | - | - | - | can at the image edge | refused, no motion |
+| 4 `034752` (`2fa1446`) | number one | - | 4 steps, closing at gap -0.006 | **0.47, GRASPED on its own** (thumb 0.19, fingers 0.38-0.54) | lift 6 cm; camera rise 0.002 (tilted can cut by the left image border) = "miss": the hand opened, the can fell | dropped |
+| 5 `035520` (`d62542d`) | the left one | 2 mm | 5 steps, gap 0.004 | **0.47, GRASPED on its own** | lift 6 cm; camera rise -0.002 (box 10 px from the border) = "miss": the hand opened, the can fell | dropped |
+| 6 `035958` (`109c1ca`) | the left one | 3 mm | 3 steps, gap 0.004 | **0.47, GRASPED on its own** | lift 12 cm (camera rise 0.109, logged only); offer goal (0.442, 0.219, 0.474) reached (0.468, 0.221, 0.398): 7.6 cm sag, about 1.24 m above the floor; "take it" heard as "A cake." / "Packet"; released on `r` ("Enjoy.") | held: no way home |
+
+Changes made on the robot day, each committed before its run: `2d04e98` the stop's rest check gets its own tolerance (calib
+`pre_rest_tol_m` 0.015); `2fa1446` calib `palm_to_axis_m` 0.01 -> 0.035 (the push onsets) and `geom.plan_reach` reads it (was a
+literal), offer +0.18 z; `d62542d` image-border rule for the lift check (superseded); `109c1ca` no camera veto after the grasp
+(owner), calib `lift_m` 0.06 -> 0.12, `offer_delta_m` [0.06, 0.0, 0.24].
+
+Learned:
+- The v2 motion layer places the hand beside the can within 2-4 mm on every run (sag fed forward 2.2-2.5 cm, 0 correction rounds).
+- With the closure 2.5 cm farther out the hand closed with the hold signature 3 of 3 (runs 4-6): v2 grasps on the model alone at a
+  can about 40 cm ahead and 14-15 cm left.
+- The box-centre point of a held, tilted can is not its height (the median depth of its box falls on the table behind it): 0.2 and
+  -0.2 cm rises for 6 cm lifts. At a 12 cm lift it read 10.9 cm.
+- When the brain exits (`quit!`) with the arm away from home, the controller keeps the last arm_sdk target: the arm stayed at the
+  offer pose (palm (0.461, 0.217, 0.428)), stiff, FSM 500. The arm service was left off.
+- The head camera's 56 deg view puts cans more than about 15-18 cm left at the image edge (refusals in runs 3 and 5's retry).
+
+## Open (for the next session)
+
+- **The way home from the new offer pose.** `plan_retreat` has no path from above and ahead of the raise end: up first, back at that
+  height, then the joint-space bridge, which must start within 5 cm of the raise end (run 6: 0.254 m), so every handover at the new
+  offer ends in a hold. Needs a checked descent (back over the edge, then down to the raise end behind it) before the next run.
+- The release: the let-go words were misheard ("A cake.", "Packet"); the tug did not fire (unknown whether the owner pulled); the
+  head-camera cluster cannot see the raised offer. Run 6 was released with `r`.
+- `check.py` on the Mac: 82 of 86 pass; servo, contact, fwd39, fwd54 fail since `palm_to_axis_m` 0.035 because the mock hand is the
+  model hand (it now closes 2.5 cm short). Give the mock the real hand's near face. The unfinished stop-rest motion test is
+  `wip/test_motion_stop_rest.patch` (its object case pushes 16.5 mm on the old and the new code alike).
+- Identification (next session, other lighting): names change between looks (Sprite, iced tea, water, apple for lychee, peach,
+  pomelo), a pick on "Hm." and "They aren't", back-of-desk cans counted.
 - The hand's depth: white tape or a tag on the back of the hand, or the fingertip from the colour silhouette; RGB 1280x720 would widen
   the view to about 69 deg (now 56 x 43 deg) but not fix the depth and changes every pixel window in the brain.
-- The hand box around the palm point (above); the kill test measures it with a can. The run plan's `CODE 7869c62` lines name the old commit.
+- The kill test (K) was never run; the run plan's `CODE 7869c62` lines name the old commit.

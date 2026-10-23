@@ -1,0 +1,17 @@
+{
+  "variants": [
+    "where-free-off-480x336"
+  ],
+  "base_url": "http://127.0.0.1:8080/v1",
+  "model": "gemma4-e2b",
+  "sampling": "greedy",
+  "cache": "on",
+  "passes": 1,
+  "limit": null,
+  "dataset": "present",
+  "tag": "orin-unpinned-resident",
+  "list": false,
+  "images": 78,
+  "build": "b10909-a2878d30d",
+  "server_launch": "/home/unitree/llama.cpp/build/bin/llama-server -m /home/unitree/models/gemma4/gemma-4-12b-it-qat-q4_0.gguf --mmproj /home/unitree/models/gemma4/mmproj-gemma-4-12b-it-qat-q4_0.gguf --alias gemma4-12b --host 127.0.0.1 --port 8080 -ngl 99 --jinja -np 1 -c 4096 --swa-full --cache-ram 0 --spec-type draft-mtp -md /home/unitree/models/gemma4/mtp-gemma-4-12B-it.gguf --spec-draft-n-max 3"
+}

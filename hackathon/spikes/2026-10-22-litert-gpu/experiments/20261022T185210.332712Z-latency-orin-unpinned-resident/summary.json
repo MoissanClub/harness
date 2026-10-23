@@ -1,0 +1,35 @@
+[
+  {
+    "variant": "where-free-off-480x336",
+    "n": 78,
+    "strict": 77,
+    "strict_rate": 0.987,
+    "strict_ci95": [
+      0.931,
+      0.998
+    ],
+    "permissive": 77,
+    "by_class": {
+      "left": "29/30",
+      "center": "18/18",
+      "right": "30/30",
+      "none": "0/0"
+    },
+    "position_ok": "77/78",
+    "x_mae": null,
+    "errors": 0,
+    "image_cache_hits_excluded_from_latency": 0,
+    "total_ms": {
+      "p50": 319.8,
+      "p90": 321.3,
+      "max": 333.6
+    },
+    "first_call_ms_p50": 287.7,
+    "prompt_n": 106.0,
+    "cache_n": 29.0,
+    "prompt_ms": 265.4,
+    "predicted_n": 2.0,
+    "predicted_ms": 31.9,
+    "under_1s": 1.0
+  }
+]

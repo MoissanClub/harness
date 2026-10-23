@@ -1,0 +1,274 @@
+calib calib.json sha adcc483798084563 git 2d04e98
+palm_real_m                 0.246 m      forearm        2026-10-21 n=2   g1-fetch ee_offset_x 0.15 (URDF wrist-roll origin to the model palm) +
+palm_half_height_m          0.045 m      hand           2026-10-20 n=0   assumed from the BrainCo hand's palm width; the pinky edge sat at the 
+grasp_below_mid_m           0.015 m      pelvis z       2026-10-19 n=4   palm centre below the can mid-height: trial 8 at -0.02 was the deepest
+palm_to_axis_m               0.01 m      palm normal    2026-10-19 n=12  palm face r + 1 cm from the can axis (g1-fetch grab_can, kept through 
+pregrasp_standoff_m          0.03 m      palm normal    2026-10-21 n=0   V2_STRATEGY.md section 5 (v1 used 0.05 with a blind slide; the servo f
+can_diameters_m        [0.055, 0.066] m      -              2026-10-19 n=9   slim / standard, classified from the box width at the box depth with a
+torso_bands            [[-0.15, 0.0, -0.049, 0.049, 0.064], [0.0, 0.05, -0.058, 0.059, 0.066], [0.05, 0.1, -0.061, 0.063, 0.088], [0.1, 0.16, -0.063, 0.068, 0.098], [0.16, 0.22, -0.069, 0.079, 0.1], [0.22, 0.3, -0.071, 0.08, 0.108], [0.3, 0.38, -0.066, 0.063, 0.101], [0.38, 0.5, -0.06, 0.06, 0.09]] m      pelvis (z0, z1, x_min, x_max, y_half) 2026-10-20 n=1   torso_link.STL, waist_support_link.STL, pelvis.STL vertex extents per 
+clearance_m            [0.03, 0.04, 0.06, 0.05] m      segment centre lines to the torso bands: lower upper arm, forearm, hand (wrist to fingertips), hand to the right arm 2026-10-21 n=14  V2_STRATEGY.md section 3 (lower upper arm 3, forearm 4, hand 6, right 
+pitch_max_deg                15.0 deg    forearm        2026-10-21 n=0   V2_STRATEGY.md section 3: beyond 15 deg of droop the real palm drops 1
+ik_tol_m                    0.005 m      real palm      2026-10-21 n=0   V2_STRATEGY.md: the hard-yaw IK either solves or not; v1's 0.035 accep
+lift_m                       0.06 m      pelvis z       2026-10-21 n=6   6 cm lift with correction reached within 3-7 mm on every grasp
+offer_delta_m          [-0.12, 0.03, 0.06] m      pelvis, from the lifted hand 2026-10-21 n=6   the offer pose used on every v1 handover (grab_loop back-up, 2026-10-1
+camera_pose            [0.054, 0.018, 0.474, 47.6] m, deg pelvis: x, y, z of the D435 link and its pitch down 2026-10-20 n=1   g1_body23.urdf d435_joint (0.0576, 0.0175, 0.41987 from torso_link, rp
+pelvis_height_m              0.84 m      floor to the pelvis origin 2026-10-21 n=3   g1-fetch floor_height 0.98 m for a can point at z 0.14 (2026-10-21 log
+contact_rise_rad            0.015 rad    joint tracking error above the per-pose baseline 2026-10-21 n=14  v1 contact stop; in v2 a safety abort only (fired once wrongly 6.6 cm 
+hold_signature         [0.3, 0.25, 0.7] -      BrainCo finger q: thumb below, fingers between 2026-10-21 n=12  12 holds: thumb 0.07-0.22, at least three fingers 0.41-0.61 (V2_STRATE
+hand_feature_K               None m      hand feature offsets from the can axis along (forearm d, palm normal n, z): fingertip front, nearest face, median height 2026-10-21 n=0   NOT MEASURED: step 1 of the v2 plan (the kill test). Measure at the AL
+table_clear_m               -0.01 m      palm lowest point (palm z - palm_half_height_m) above the table plane 2026-10-20 n=1   the memo asks for +0.01, but with grasp z = table + h/2 - 0.015 and a 
+high_rise_m                  0.12 m      pelvis z above the pre-grasp 2026-10-21 n=14  the high waypoint of every v1 pick (raise, reach high, lower), 2026-10
+raise_ahead_m                0.05 m      pelvis x ahead of the home palm 2026-10-21 n=14  v1 'up' waypoint (home x + 5 cm), every pick 2026-10-19/21
+raise_side_y_m               0.18 m      pelvis y, the least leftward y of the raise 2026-10-20 n=0   the raise goes up beside the body; v1 raised at the pre-grasp y (0.16-
+retreat_out_m                0.05 m      along -n (away from the can) before the retreat up 2026-10-21 n=14  v1 retreat-up (y + 5 cm), every pick 2026-10-19/21
+approach_step_m              0.01 m      along +n per corrected step 2026-10-21 n=14  v1 slide step, 2026-10-19/21
+lift_rise_tol_m              0.02 m      the can's rise in the head frame vs lift_m 2026-10-21 n=0   V2_STRATEGY.md section 5 (YOLOE points repeat within 7 mm, live4.log)
+offer_search_m         [0.2, -0.1, 0.08] m      largest shift of the offer pose ahead, toward the midline, up, searched in 5 / 5 / 4 cm steps until the palm is in the head camera's view 2026-10-20 n=0   V2_STRATEGY.md section 5 (offer inside the view); mock: in view at (+0
+fingertip_m                  0.08 m      open fingertips ahead of the palm centre 2026-10-16 n=0   g1-fetch hand.finger_reach_m 0.08
+cluster_radius_m             0.06 m      around the held can: new depth points within it count as the guest's hand 2026-10-21 n=0   V2_STRATEGY.md section 5
+near_ahead_m                  0.3 m      pelvis x: nothing within it at chest height (z 0.15-0.50, |y| < 0.12) moves the arm 2026-10-19 n=0   the hard safety kept from v1 (ROBOT_RULES.md, Oct 19)
+speed_scale                   1.0 -      multiplies every Cartesian speed (raise 0.10, high 0.08, lower 0.05, corrections 0.04, approach steps 0.05 m/s) and the joint step per streamed target (joint_step_rad); in (0, 1] 2026-10-21 n=14  the speeds of every v1 pick (2026-10-19/21, n 14) at 1.0; a run with a
+table_edge_m                 None m      pelvis x of the table's near edge (the chest front is at x 0.08: tape the chest-to-edge distance and add 0.08) 2026-10-20 n=0   NOT MEASURED: the owner's tape, passed as --table-edge (a logged devia
+joint_step_rad               0.02 rad    largest change of any left-arm joint in one streamed 20 ms target, at speed_scale 1 (scaled by it) 2026-10-21 n=0   V2_REVIEW round 2 blocker 1 (a 0.59 rad wrist-roll snap in one target)
+table_floor_margin_m        0.005 m      palm lowest point above the fitted table plane: no goal or command puts the palm centre below plane + palm_half_height_m + this 2026-10-21 n=0   V2_REVIEW round 2 blocker 4 (correction rounds drove the command 1.7-7
+pre_rest_tol_m              0.015 m      measured palm z above the commanded stop 2 cm over a goal near the table floor (motion.Arm.goto); more is a hand resting on something 2026-10-23 n=1   2026-10-23 grasp 1 (spikes/2026-10-23-v2-grasp, runs 20261024T033336):
+visual_gap_agree_m           0.01 m      visual near-face gap vs the model gap along the palm normal 2026-10-21 n=0   V2_REVIEW round 2 must-fix: the hand closes only on a visual gap that 
+raise_back_m                 0.02 m      pelvis x behind the home palm: the raise first goes up there to the table top + 3 cm, then to the raise waypoint 2026-10-21 n=0   V2_REVIEW round 3: the straight raise swept a 12.5 cm hand's fingertip
+hand_back_m                 0.045 m      the open hand behind the palm centre along the wrist-roll axis (the table floor's hand box) 2026-10-21 n=0   assumed: the mock's hand box; BrainCo left hand 15.9 cm long with the 
+hand_half_thickness_m        0.02 m      half the open hand's thickness, palm face to back (the table floor's hand box) 2026-10-21 n=0   assumed: BrainCo palm 7.6 x 4.1 cm (URDF extents); the owner tapes the
+calib identity: sha adcc483798084563 as expected, tree clean
+CLI overrides of calib.json (logged as deviations): [('speed_scale', 1.0, 0.5), ('table_edge_m', None, 0.365), ('fingertip_m', 0.08, 0.125)]
+server            PASS  health ok, models ['gemma4-e2b']
+warmup            PASS  C922 frame + yes/no: 'yes' in 336 ms (prompt 95 tok)
+geom              PASS  FK error 0.6 mm vs the logged pose; torso box y +-0.12, margin 0.04
+cam_services      PASS  realsense-webrtc=inactive, compat=inactive
+d435i             PASS  8 v4l nodes, lsusb: Bus 002 Device 003: ID 8086:0b3a Intel Corp. Intel(R) RealSe
+c922_video        PASS  /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0
+c922_mic          PASS  plughw:0,0
+power             PASS  cpus online 0-7 (MAXN)
+clocks            PASS  GPU 918 MHz now, min 918, max 918 (pinned by jetson_clocks)
+fsm               PASS  fsm_id 500
+hands             PASS  left publishing, right publishing
+arm_service       PASS  g1_arm_example on (brain switches it off at start, on at exit)
+assistant         PASS  rt/audio_msg: 0 messages in 3 s
+no_default_route  WARN  default via 192.168.1.254 dev wlx94ba06f8160d proto dhcp metric 50   -> unplug the uplink / nmcli con down <uplink>
+wifi_radio        WARN  onboard Wi-Fi radio enabled  -> nmcli radio wifi off (the MT7612U AP is hostapd, unaffected)
+tailscaled        WARN  tailscaled active  -> sudo systemctl stop tailscaled
+PREFLIGHT: PASS (3 warnings)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/24/2026-03:40:36] [TRT] [I] Loaded engine size: 23 MiB
+[10/24/2026-03:40:36] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-03:40:36] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/24/2026-03:40:36] [TRT] [I] Loaded engine size: 23 MiB
+[10/24/2026-03:40:36] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-03:40:36] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yoloe-26s-seg-fridge.engine for TensorRT inference...
+[10/24/2026-03:40:36] [TRT] [I] Loaded engine size: 23 MiB
+[10/24/2026-03:40:36] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-03:40:36] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +1, GPU +20, now: CPU 1, GPU 40 (MiB)
+Loading /home/unitree/g1-fetch/models/yolo26n.engine for TensorRT inference...
+[10/24/2026-03:40:38] [TRT] [I] Loaded engine size: 7 MiB
+[10/24/2026-03:40:38] [TRT] [W] Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+[10/24/2026-03:40:38] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +9, now: CPU 1, GPU 54 (MiB)
+speeds (x0.50): raise 0.050, high 0.040, lower 0.025, corrections 0.020, approach steps 0.025 m/s; joint step 0.010 rad per 20 ms target
+home_q [0.0, 0.25, 0.0, 1.0, 0.0] (g1-fetch config): real palm [0.194, 0.267, -0.174], fingertips [0.262, 0.293, -0.276]; check against the run plan's expected line before any motion
+robot ready in 11.3 s; mic plughw:0,0; cam3 /dev/v4l/by-id/usb-046d_C922_Pro_Stream_Webcam_9518517F-video-index0; runs /home/unitree/harness/hackathon/brain/runs/20261024T034032
+start pose: measured q [0.293, 0.236, -0.005, 0.979, 0.073], 0.293 rad from home_q (largest joint), palm [0.05, 0.269, -0.208], fingertips [0.087, 0.297, -0.324]: in the home region (table top 0.048)
+SAY: Parking.
+  home (joint space) path: below z inf the hand stays behind x 0.262 (taped table edge 0.365)
+SAY: Home.
+  home (joint space): measured palm [0.175, 0.254, -0.185]
+left arm at home: real palm at [0.194, 0.267, -0.174]
+SAY: Ready.
+== IDLE 
+== LOOK 
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver sparkling apple' (455 ms)
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver sparkling water' (403 ms)
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver Chi Sparkling Lychee' (433 ms)
+  Gemma LOOK/describe: 'Describe this drink can in at most four words: colour, brand' -> 'Silver, Sparkling, Apple' (459 ms)
+  scene: 4 can(s): 1 silver sparkling apple, standard, number 1; 2 silver sparkling water, standard, number 2; 3 silver chi sparkling lychee, slim, number 3; 4 silver sparkling apple, slim, number 4
+== LISTEN attempt 1
+SAY: Tell me which one you'd like.
+SAY: Listening.
+== UNDERSTAND 
+  Gemma UNDERSTAND/hear_choice: 'Which can does the guest want?' -> '1' (388 ms)
+== CONFIRM silver sparkling apple
+SAY: The silver sparkling apple one. Coming up.
+== LOCATE silver sparkling apple
+  safety (locate): clear; valid depth 97%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  target silver sparkling apple at pelvis [0.402, 0.199, 0.165], box [12, 109, 137, 284], 0.44 m, width 0.091 m -> diameter 0.066; plane 0.054
+  plan: psi -15 pitch 0.0; grasp [0.391, 0.241, 0.103] pre [0.383, 0.27, 0.103]; clearances upper 0.046 forearm 0.052 hand 0.117 right 0.346 table 0.004; 19 psis tried, accepted [-15, -10, -5, 0]
+== PICK 
+  up-low path: below z 0.084 the hand stays behind x 0.292 (taped table edge 0.365)
+  up path: below z 0.084 the hand stays behind x 0.306 (taped table edge 0.365)
+  raise: up-low [0.174, 0.27, 0.084] then up [0.244, 0.27, 0.223] (candidate y 0.270)
+SAY: Raising.
+  up-low: goal [0.174, 0.27, 0.084] measured [0.178, 0.268, 0.077] err 0.008 (arrival 0.008, 0 correction rounds; psi free, pitch 15.1)
+  up: goal [0.244, 0.27, 0.223] measured [0.244, 0.272, 0.211] err 0.012 (arrival 0.012, 0 correction rounds; psi free, pitch -13.6)
+  sag baseline at up: 0.012 m (recorded; over 0.07 stops), tracking 0.039 rad
+  safety (high): clear; valid depth 97%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+SAY: Reaching.
+  high: goal [0.383, 0.27, 0.223] measured [0.378, 0.275, 0.19] err 0.034 (arrival 0.034, 0 correction rounds; psi -15, pitch -18.9)
+  sag baseline at high: 0.034 m (recorded; over 0.07 stops), tracking 0.059 rad
+  table floor: the open hand's lowest point stays above z 0.059 (the higher of the fitted plane 0.054 and the tape 0.048, + 0.005)
+  safety (pre): clear; valid depth 97%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+SAY: Lowering beside the can.
+  pre goal: z 0.103 raised to the table floor 0.105 (hand 0.045 below the palm)
+  pre: the hand settled 0.009 above its stop (the sag fed forward from high is larger than here; the final line carries the sag measured here)
+  pre command: z 0.128 raised to the table floor 0.128 (hand 0.069 below the palm)
+  pre: final line near the table floor: largest lag behind the command 0.002 m (contact at 0.006)
+  pre: goal [0.383, 0.27, 0.105] measured [0.382, 0.267, 0.105] err 0.003 (arrival 0.003, 0 correction rounds, sag fed forward 0.024; psi -15, pitch -3.6)
+== SERVO 
+  Gemma SERVO/box: "Detect the robot's hand" -> '```json\n[\n  {"box_2d": [19, 335, 219, 442' (845 ms)
+  servo0: can [0.4, 0.199, 0.167] hand feat [0.406, -0.127, 0.126] (2477 pts, margins image 0 px window 0 px, AT THE IMAGE EDGE: not used) model palm [0.382, 0.267, 0.105] | off(feat-axis) [-0.032, -0.039, -0.041] | model_off [-0.0005, -0.0707, -0.0616] | scatter [0.0, 0.0, 0.0] | gemma hand box on the blob 0% (points 0.377 apart)
+== APPROACH 
+SAY: Thumb first.
+SAY: Approaching.
+  approach: start gap 0.028 (model 0.028, visual -), tracking base 0.034
+  safety (approach step 1): clear; valid depth 96%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  ap0 target: z 0.105 raised to the table floor 0.105 (hand 0.046 below the palm)
+  ap0 command: z 0.128 raised to the table floor 0.128 (hand 0.069 below the palm)
+  ap1: moved 0.005, gap 0.023 (model 0.023, visual -), lag 0.005, tracking 0.043 (base 0.034)
+  safety (approach step 2): clear; valid depth 96%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  ap2: moved 0.019, gap 0.005 (model 0.005, visual -), lag -0.003, tracking 0.049 (base 0.034)
+  half: can [0.402, 0.181, 0.186] hand feat [0.395, -0.079, 0.129] (3569 pts, margins image 0 px window 0 px, front at the radius, NEAR FACE INSIDE THE CAN: not used) model palm [0.388, 0.245, 0.104] | off(feat-axis) [-0.04, -0.008, -0.058] | model_off [0.0026, -0.0649, -0.082] | scatter [0.0, 0.0, 0.0]
+  approach: can moved 0.018 m: pushed
+SAY: Missed. Let me try once more.
+== RECOVER retreat
+  retreat-up (up first) path: below z 0.084 the hand stays behind x -1.000 (taped table edge 0.365)
+  retreat-back (back over the edge) path: below z 0.084 the hand stays behind x -1.000 (taped table edge 0.365)
+  bridge (onto the raise end) path: below z 0.084 the hand stays behind x -1.000 (taped table edge 0.365)
+  home (the raise retraced) path: below z 0.084 the hand stays behind x 0.306 (taped table edge 0.365)
+SAY: Up and back.
+  retreat-up (up first): measured palm [0.383, 0.289, 0.184]
+  retreat-back (back over the edge): measured palm [0.248, 0.274, 0.206]
+  bridge (onto the raise end): measured palm [0.245, 0.273, 0.209]
+SAY: Home.
+  home (the raise retraced): measured palm [0.181, 0.261, -0.181]
+== LOCATE silver sparkling apple
+  safety (locate): clear; valid depth 97%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  target silver sparkling apple at pelvis [0.407, 0.193, 0.164], box [25, 106, 147, 280], 0.44 m, width 0.089 m -> diameter 0.066; plane 0.054
+  plan: psi -15 pitch 0.2; grasp [0.396, 0.234, 0.103] pre [0.388, 0.263, 0.103]; clearances upper 0.043 forearm 0.046 hand 0.116 right 0.342 table 0.004; 19 psis tried, accepted [-15, -10, -5, 0]
+== PICK 
+  up-low path: below z 0.084 the hand stays behind x 0.293 (taped table edge 0.365)
+  up path: below z 0.084 the hand stays behind x 0.307 (taped table edge 0.365)
+  raise: up-low [0.174, 0.263, 0.084] then up [0.244, 0.263, 0.223] (candidate y 0.263)
+SAY: Raising.
+  up-low: goal [0.174, 0.263, 0.084] measured [0.177, 0.261, 0.075] err 0.009 (arrival 0.009, 0 correction rounds; psi free, pitch 15.3)
+  up: goal [0.244, 0.263, 0.223] measured [0.244, 0.266, 0.21] err 0.014 (arrival 0.014, 0 correction rounds; psi free, pitch -13.8)
+  sag baseline at up: 0.014 m (recorded; over 0.07 stops), tracking 0.042 rad
+  safety (high): clear; valid depth 97%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+SAY: Reaching.
+  high: goal [0.388, 0.263, 0.223] measured [0.384, 0.267, 0.193] err 0.031 (arrival 0.031, 0 correction rounds; psi -15, pitch -18.9)
+  sag baseline at high: 0.031 m (recorded; over 0.07 stops), tracking 0.053 rad
+  table floor: the open hand's lowest point stays above z 0.059 (the higher of the fitted plane 0.054 and the tape 0.048, + 0.005)
+  safety (pre): clear; valid depth 97%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+SAY: Lowering beside the can.
+  pre goal: z 0.103 raised to the table floor 0.104 (hand 0.045 below the palm)
+  pre: the hand settled 0.009 above its stop (the sag fed forward from high is larger than here; the final line carries the sag measured here)
+  pre: final line near the table floor: largest lag behind the command 0.003 m (contact at 0.006)
+  pre: goal [0.388, 0.263, 0.104] measured [0.385, 0.261, 0.103] err 0.004 (arrival 0.004, 0 correction rounds, sag fed forward 0.022; psi -15, pitch -3.2)
+== SERVO 
+  Gemma SERVO/box: "Detect the robot's hand" -> '```json\n[\n  {"box_2d": [198, 11, 584, 252' (817 ms)
+  servo0: can [0.404, 0.192, 0.166] hand feat [0.408, -0.122, 0.129] (3074 pts, margins image 0 px window 0 px, front at the radius, AT THE IMAGE EDGE: not used) model palm [0.385, 0.261, 0.103] | off(feat-axis) [-0.031, -0.041, -0.037] | model_off [-0.0004, -0.0723, -0.0626] | scatter [0.0, 0.0, 0.0] | gemma hand box on the blob 39% (points 0.080 apart)
+== APPROACH 
+SAY: Thumb first.
+SAY: Approaching.
+  approach: start gap 0.029 (model 0.029, visual -), tracking base 0.038
+  safety (approach step 1): clear; valid depth 96%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  ap0 target: z 0.103 raised to the table floor 0.104 (hand 0.045 below the palm)
+  ap0 command: z 0.126 raised to the table floor 0.126 (hand 0.067 below the palm)
+  ap1: moved 0.004, gap 0.025 (model 0.025, visual -), lag 0.006, tracking 0.044 (base 0.038)
+  safety (approach step 2): clear; valid depth 96%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  ap1 target: z 0.103 raised to the table floor 0.104 (hand 0.045 below the palm)
+  ap1 command: z 0.128 raised to the table floor 0.128 (hand 0.069 below the palm)
+  ap1-corr command: z 0.131 raised to the table floor 0.131 (hand 0.072 below the palm)
+  ap2: moved 0.015, gap 0.010 (model 0.010, visual -), lag 0.000, tracking 0.054 (base 0.038)
+  half: can [0.405, 0.177, 0.185] hand feat [0.409, -0.08, 0.128] (3530 pts, margins image 0 px window 0 px, NEAR FACE INSIDE THE CAN: not used) model palm [0.389, 0.242, 0.102] | off(feat-axis) [-0.028, -0.014, -0.057] | model_off [0.0017, -0.0671, -0.083] | scatter [0.0, 0.0, 0.0]
+  safety (approach step 3): clear; valid depth 94%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  ap2 target: z 0.103 raised to the table floor 0.104 (hand 0.045 below the palm)
+  ap2 command: z 0.126 raised to the table floor 0.134 (hand 0.076 below the palm)
+  ap3: moved 0.008, gap 0.016 (model 0.016, visual -), lag 0.002, tracking 0.061 (base 0.038)
+  safety (approach step 4): clear; valid depth 94%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  ap3 target: z 0.103 raised to the table floor 0.105 (hand 0.046 below the palm)
+  ap3 command: z 0.126 raised to the table floor 0.138 (hand 0.079 below the palm)
+  ap4: moved 0.005, gap 0.011 (model 0.011, visual -), lag 0.007, tracking 0.060 (base 0.038)
+  safety (approach step 5): clear; valid depth 93%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  end: can [0.404, 0.177, 0.185] hand feat [0.4, -0.07, 0.129] (3666 pts, margins image 0 px window 0 px, front at the radius, NEAR FACE INSIDE THE CAN: not used) model palm [0.391, 0.229, 0.103] | off(feat-axis) [-0.036, -0.004, -0.056] | model_off [0.0012, -0.0541, -0.0819] | scatter [0.0, 0.0, 0.0]
+  approach: 4 steps, aborted (the approach would advance 0.050 m, beyond the standoff + 1.5 cm), measured gap 0.011 (model 0.011, visual -)
+== RECOVER assist
+  safety (assist): clear; valid depth 93%, largest blind region 1%, 0 points in the zone (0 on my own arm, not counted)
+  assist-up: goal [0.378, 0.278, 0.223] measured [0.375, 0.279, 0.184] err 0.039 (arrival 0.039, 0 correction rounds; psi free, pitch -19.2)
+  offer pose [0.455, 0.209, 0.184] in view (delta [0.2, -0.1, 0.0])
+  assist-offer: goal [0.455, 0.209, 0.184] measured [0.443, 0.214, 0.138] err 0.047 (arrival 0.047, 0 correction rounds; psi free, pitch -8.5)
+SAY: I missed. Please place the silver sparkling apple one in my hand.
+== VERIFY 
+  closure 0.51 state [0.12, 0.8, 0.51, 0.59, 0.55, 0.4] -> GRASPED
+== CHECK 
+  Gemma CHECK/yesno: 'Is the robot holding the soda can in its hand, off the table' -> 'no' (317 ms)
+== HANDOVER 
+SAY: I have the can. Please take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (324 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (313 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (233 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (223 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (221 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (339 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (224 ms)
+SAY: I am holding the can. Take it, or say take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (339 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (319 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (222 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (175 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (163 ms)
+SAY: I am holding the can. Take it, or say take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (343 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (327 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (313 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (225 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (342 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (224 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (339 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (223 ms)
+SAY: I am holding the can. Take it, or say take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (341 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (320 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (222 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (341 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (224 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> '' (225 ms)
+SAY: I am holding the can. Take it, or say take it.
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (340 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (317 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (314 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (313 ms)
+  Gemma HANDOVER/yesno: 'Is a human hand touching the soda can that the robot is hold' -> 'no' (315 ms)
+  Gemma HANDOVER/take_it: 'Transcribe this audio in English.' -> 'Take it.' (319 ms)
+  release: voice after 70.8 s
+SAY: Enjoy.
+== RECOVER retreat
+  retreat-up (up first) path: below z 0.084 the hand stays behind x -1.000 (taped table edge 0.365)
+  retreat-back (back over the edge) path: below z 0.084 the hand stays behind x -1.000 (taped table edge 0.365)
+  bridge (onto the raise end) path: below z 0.084 the hand stays behind x -1.000 (taped table edge 0.365)
+  home (the raise retraced) path: below z 0.084 the hand stays behind x 0.307 (taped table edge 0.365)
+SAY: Up and back.
+  retreat-up (up first): measured palm [0.429, 0.291, 0.18]
+  retreat-back (back over the edge): measured palm [0.247, 0.267, 0.21]
+SAY: Turning my wrist.
+  bridge (onto the raise end): measured palm [0.245, 0.266, 0.21]
+SAY: Home.
+  home (the raise retraced): measured palm [0.181, 0.26, -0.182]
+== RESULT order 1: assisted (autonomous False) in 209.9 s; counters {'orders': 1, 'autonomous': 0, 'honest_negatives': 0, 'assisted': 1, 'manual_release': 0, 'failed': 0, 'grasps': 1, 'misses': 2, 'corrections': 0}
+== shutting down
+SAY: Releasing my arm.
+arm service on -> 0

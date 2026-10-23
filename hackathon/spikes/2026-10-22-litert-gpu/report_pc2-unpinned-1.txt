@@ -1,0 +1,9 @@
+pc2-unpinned-1   gpu    sunday  errors 0 {"n": 12, "correct": 10, "format_ok": 12, "p50": 0.562, "p90": 0.678, "max": 0.683, "gr3d_median_of_max": 99.0}
+pc2-unpinned-1   gpu    v2      errors 0 {"n": 28, "correct": 26, "format_ok": 28, "p50": 0.628, "p90": 0.663, "max": 0.677, "gr3d_median_of_max": 99.0}
+pc2-unpinned-1   llama  sunday  errors 0 {"n": 12, "correct": 10, "format_ok": 12, "p50": 0.217, "p90": 0.263, "max": 0.265, "gr3d_median_of_max": 98.0}
+pc2-unpinned-1   llama  v2      errors 0 {"n": 28, "correct": 26, "format_ok": 28, "p50": 0.168, "p90": 0.191, "max": 0.258, "gr3d_median_of_max": 98.0}
+GATE pc2-unpinned-1 gpu sunday: PASS | correct 10/12 vs llama 10/12 (slack 2 = 1 clip x 2 rounds), format 12/12 | p50 0.562<=1.0 max 0.683<=1.5 | GR3D 99.0
+  per-clip differences: none
+GATE pc2-unpinned-1 gpu v2: PASS | correct 26/28 vs llama 26/28 (slack 2 = 1 clip x 2 rounds), format 28/28 | p50 0.628<=1.0 max 0.677<=1.5 | GR3D 99.0
+  per-clip differences: a_coke_please.wav gpu 2/2 vs llama 0/2; give_me_the_chi.wav gpu 0/2 vs llama 2/2
+GATE pc2-unpinned-1 GPU: PASS

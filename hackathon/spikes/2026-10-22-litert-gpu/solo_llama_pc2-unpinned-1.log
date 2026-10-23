@@ -1,0 +1,44 @@
+engine llama ready in 0.00s {"server": "http://127.0.0.1:8080/v1"}
+smoke: {"status":"ok"}
+  en_green.wav                                 ok=True  'green en'     total=0.226s gr3d=98 
+  en_red.wav                                   ok=True  'red en'       total=0.206s gr3d=98 
+  en_blue.wav                                  ok=True  'blue en'      total=0.205s gr3d=98 
+  zh_green.wav                                 ok=True  'green zh'     total=0.237s gr3d=98 
+  es_red.wav                                   ok=False 'none en'      total=0.265s gr3d=99 
+  en_other.wav                                 ok=True  'none en'      total=0.212s gr3d=98 
+  en_green.wav                                 ok=True  'green en'     total=0.223s gr3d=98 
+  en_red.wav                                   ok=True  'red en'       total=0.202s gr3d=98 
+  en_blue.wav                                  ok=True  'blue en'      total=0.203s gr3d=98 
+  zh_green.wav                                 ok=True  'green zh'     total=0.236s gr3d=98 
+  es_red.wav                                   ok=False 'none en'      total=0.263s gr3d=99 
+  en_other.wav                                 ok=True  'none en'      total=0.211s gr3d=99 
+SUMMARY llama sunday {"n": 12, "correct": 10, "format_ok": 12, "p50": 0.217, "p90": 0.263, "max": 0.265, "gr3d_median_of_max": 98.0, "errors": 0, "mem_avail_end_mb": 9903, "self_hwm_mb": 18, "tegra_ram_max_mb": 5611}
+  I_d_like_the_silver_one.wav                  ok=True  '2'            total=0.171s gr3d=98 
+  a_coke_please.wav                            ok=False '3'            total=0.159s gr3d=98 
+  black.wav                                    ok=True  '3'            total=0.160s gr3d=98 
+  blue.wav                                     ok=True  'none'         total=0.168s gr3d=98 
+  coffee.wav                                   ok=True  '3'            total=0.169s gr3d=98 
+  give_me_the_chi.wav                          ok=True  '2'            total=0.160s gr3d=88 
+  je_voudrais_la_canette_argentee_Thomas.wav   ok=True  '2'            total=0.191s gr3d=99 
+  quiero_la_lata_morada_Monica.wav             ok=True  '1'            total=0.178s gr3d=99 
+  red.wav                                      ok=True  'none'         total=0.168s gr3d=89 
+  silver.wav                                   ok=True  '2'            total=0.169s gr3d=97 
+  the_La_Croix_please.wav                      ok=True  '1'            total=0.161s gr3d=98 
+  the_purple_can.wav                           ok=True  '1'            total=0.161s gr3d=98 
+  我要紫色的_Tingting.wav                           ok=True  '1'            total=0.178s gr3d=98 
+  c922_owner_purple.wav                        ok=True  '1'            total=0.258s gr3d=99 
+  I_d_like_the_silver_one.wav                  ok=True  '2'            total=0.171s gr3d=99 
+  a_coke_please.wav                            ok=False '3'            total=0.159s gr3d=88 
+  black.wav                                    ok=True  '3'            total=0.160s gr3d=89 
+  blue.wav                                     ok=True  'none'         total=0.168s gr3d=98 
+  coffee.wav                                   ok=True  '3'            total=0.168s gr3d=98 
+  give_me_the_chi.wav                          ok=True  '2'            total=0.160s gr3d=98 
+  je_voudrais_la_canette_argentee_Thomas.wav   ok=True  '2'            total=0.191s gr3d=98 
+  quiero_la_lata_morada_Monica.wav             ok=True  '1'            total=0.178s gr3d=98 
+  red.wav                                      ok=True  'none'         total=0.168s gr3d=98 
+  silver.wav                                   ok=True  '2'            total=0.169s gr3d=98 
+  the_La_Croix_please.wav                      ok=True  '1'            total=0.161s gr3d=98 
+  the_purple_can.wav                           ok=True  '1'            total=0.161s gr3d=88 
+  我要紫色的_Tingting.wav                           ok=True  '1'            total=0.164s gr3d=90 
+  c922_owner_purple.wav                        ok=True  '1'            total=0.258s gr3d=99 
+SUMMARY llama v2 {"n": 28, "correct": 26, "format_ok": 28, "p50": 0.168, "p90": 0.191, "max": 0.258, "gr3d_median_of_max": 98.0, "errors": 0, "mem_avail_end_mb": 9859, "self_hwm_mb": 19, "tegra_ram_max_mb": 5654}

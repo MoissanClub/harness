@@ -1,0 +1,115 @@
+INFO: [environment.cc:36] Creating LiteRT environment with options
+WARNING: [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorNotFound.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaad5b6a340, name=GPU WebGPU
+INFO: [gpu_registry.cc:113] Statically linked GPU accelerator registered.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaad5b95e60, name=YNNPackAccelerator
+INFO: [cpu_registry.cc:56] YNNPACK CPU accelerator registered.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaad5b95ec0, name=CpuAccelerator
+INFO: [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+WARNING: Logging before InitGoogle() is written to STDERR
+W0000 00:00:1792694910.531382    4254 litert_lm_loader.cc:391] Section not found: SP_Tokenizer
+INFO: [environment.cc:36] Creating LiteRT environment with options
+WARNING: [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorNotFound.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaad6357080, name=GPU WebGPU
+INFO: [gpu_registry.cc:113] Statically linked GPU accelerator registered.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaad733cf70, name=YNNPackAccelerator
+INFO: [cpu_registry.cc:56] YNNPACK CPU accelerator registered.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaad733cfd0, name=CpuAccelerator
+INFO: [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+W0000 00:00:1792694910.631874    4251 litert_lm_loader.cc:391] Section not found: ExecutorMetadataProto
+W0000 00:00:1792694910.632247    4251 litert_lm_loader.cc:391] Section not found: ExecutorMetadataProto
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=976, num_signatures=4
+INFO: [magic_number_utils.cc:109]   signature=decode, subgraph_index=0, num_tensors=2703, num_inputs=35, num_outputs=32, num_ops=2068
+INFO: [magic_number_utils.cc:109]   signature=prefill_1024, subgraph_index=1, num_tensors=1454, num_inputs=35, num_outputs=30, num_ops=1107
+INFO: [magic_number_utils.cc:109]   signature=prefill_128, subgraph_index=2, num_tensors=1454, num_inputs=35, num_outputs=30, num_ops=1107
+INFO: [magic_number_utils.cc:109]   signature=verify, subgraph_index=3, num_tensors=2887, num_inputs=35, num_outputs=32, num_ops=2243
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [magic_number_utils.cc:536] 439 tensors of signature decode have been updated for magic number  32003 to target number 2048
+INFO: [magic_number_utils.cc:536] 271 tensors of signature prefill_1024 have been updated for magic number  32003 to target number 2048
+INFO: [magic_number_utils.cc:536] 270 tensors of signature prefill_128 have been updated for magic number  32003 to target number 2048
+INFO: [magic_number_utils.cc:536] 444 tensors of signature verify have been updated for magic number  32003 to target number 2048
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: [delegate_webgpu.cc:342] Create WebGPU environment (use_low_power=0, enable_host_mapped_pointer=1)
+I0000 00:00:1792694910.732049    4251 environment.cc:532] Selected adapter: NVIDIA Tegra Orin (nvgpu), arch=ampere, vendor=nvidia, backend=Vulkan, adapterType=Integrated GPU
+INFO: [delegate_webgpu.cc:363] Created a WebGPU environment.
+INFO: [environment.cc:47] Adding options to the existing LiteRT environment
+INFO: Failed to load OpenCL library with dlopen: libOpenCL.so: cannot open shared object file: No such file or directory. Trying ICD loader.
+INFO: [gpu_environment.h:155] Created LiteRT GpuEnvironment.
+INFO: [environment.cc:47] Adding options to the existing LiteRT environment
+I0000 00:00:1792694910.840413    4251 delegate_webgpu.cc:751] # of threads to upload weights = 2
+I0000 00:00:1792694910.840622    4251 delegate_webgpu.cc:759] # of threads to compile kernels = 1
+I0000 00:00:1792694915.113063    4251 delegate_kernel.cc:329] Total 32 external tensors are used for delegate inputs and outputs
+I0000 00:00:1792694915.113156    4251 delegate_kernel.cc:979] Initializing WebGPU-based API from serialized data.
+I0000 00:00:1792694915.442746    4251 delegate_kernel.cc:329] Total 31 external tensors are used for delegate inputs and outputs
+I0000 00:00:1792694915.442787    4251 delegate_kernel.cc:979] Initializing WebGPU-based API from serialized data.
+I0000 00:00:1792694915.866447    4251 delegate_kernel.cc:329] Total 31 external tensors are used for delegate inputs and outputs
+I0000 00:00:1792694915.866489    4251 delegate_kernel.cc:979] Initializing WebGPU-based API from serialized data.
+I0000 00:00:1792694916.285863    4251 delegate_kernel.cc:329] Total 32 external tensors are used for delegate inputs and outputs
+I0000 00:00:1792694916.285904    4251 delegate_kernel.cc:979] Initializing WebGPU-based API from serialized data.
+INFO: [environment.cc:36] Creating LiteRT environment with options
+WARNING: [npu_registry.cc:34] NPU accelerator could not be loaded and registered: kLiteRtStatusErrorNotFound.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaadcdbf590, name=GPU WebGPU
+INFO: [gpu_registry.cc:113] Statically linked GPU accelerator registered.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaae3330f10, name=YNNPackAccelerator
+INFO: [cpu_registry.cc:56] YNNPACK CPU accelerator registered.
+INFO: [accelerator_registry.cc:54] RegisterAccelerator: ptr=0xaaaae22577c0, name=CpuAccelerator
+INFO: [cpu_registry.cc:75] XNNPACK CPU accelerator registered.
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=1, num_signatures=1
+INFO: [magic_number_utils.cc:109]   signature=embedder, subgraph_index=0, num_tensors=16, num_inputs=1, num_outputs=1, num_ops=8
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=1, num_signatures=1
+INFO: [magic_number_utils.cc:109]   signature=eoa, subgraph_index=0, num_tensors=1, num_inputs=0, num_outputs=1, num_ops=0
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: [compiled_model.cc:1856] Tracked constant output tensor eoa_embedding with locked address
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=1, num_signatures=1
+INFO: [magic_number_utils.cc:109]   signature=eoi, subgraph_index=0, num_tensors=1, num_inputs=0, num_outputs=1, num_ops=0
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: [compiled_model.cc:1856] Tracked constant output tensor eoi_embedding with locked address
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=1, num_signatures=1
+INFO: [magic_number_utils.cc:109]   signature=per_layer_embedder, subgraph_index=0, num_tensors=83, num_inputs=1, num_outputs=1, num_ops=42
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+engine gpu ready in 6.35s {"litert_lm_api": "0.18.0", "liblitert_lm_bytes": 133496240, "LD_LIBRARY_PATH": "", "model": "/home/unitree/litert/gemma-4-E2B-it.litertlm", "threads": 8, "mem_avail_before_mb": 12623, "cache_entries_before": 0, "load_s": 6.35, "mem_avail_after_load_mb": 12651, "mapped": ["/home/unitree/litert/gemma-4-E2B-it.litertlm", "/home/unitree/miniconda3/envs/litert/lib/python3.10/site-packages/litert_lm/liblitert-lm.so", "/usr/lib/aarch64-linux-gnu/libvulkan.so.1.3.204", "/usr/lib/aarch64-linux-gnu/nvidia/libGLX_nvidia.so.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-egl-gbm.so.1.1.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-egl-wayland.so.1.1.11", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-eglcore.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-glcore.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-glsi.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-glvkspirv.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-rmapi-tegra.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-tls.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvtegrahv.so", "/usr/lib/aarch64-linux-gnu/tegra-egl/libEGL_nvidia.so.0"]}
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=1, num_signatures=1
+INFO: [magic_number_utils.cc:109]   signature=serving_default, subgraph_index=0, num_tensors=2530, num_inputs=2, num_outputs=2, num_ops=2182
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=1, num_signatures=1
+INFO: [magic_number_utils.cc:109]   signature=audio_adapter, subgraph_index=0, num_tensors=18, num_inputs=2, num_outputs=1, num_ops=11
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=339, num_signatures=3
+INFO: [magic_number_utils.cc:109]   signature=vision_140, subgraph_index=0, num_tensors=1729, num_inputs=2, num_outputs=2, num_ops=1477
+INFO: [magic_number_utils.cc:109]   signature=vision_280, subgraph_index=1, num_tensors=1729, num_inputs=2, num_outputs=2, num_ops=1477
+INFO: [magic_number_utils.cc:109]   signature=vision_70, subgraph_index=2, num_tensors=1729, num_inputs=2, num_outputs=2, num_ops=1477
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+INFO: [magic_number_utils.cc:101] Loaded: num_subgraphs=3, num_signatures=3
+INFO: [magic_number_utils.cc:109]   signature=vision_adapter_140, subgraph_index=0, num_tensors=21, num_inputs=1, num_outputs=1, num_ops=15
+INFO: [magic_number_utils.cc:109]   signature=vision_adapter_280, subgraph_index=1, num_tensors=21, num_inputs=1, num_outputs=1, num_ops=15
+INFO: [magic_number_utils.cc:109]   signature=vision_adapter_70, subgraph_index=2, num_tensors=21, num_inputs=1, num_outputs=1, num_ops=15
+INFO: [magic_number_utils.cc:113] Magic number configs: num_configs=1
+INFO: [magic_number_utils.cc:120]   config[0]: magic_number=32003, target_number=2048, signature_prefix=null
+INFO: [compiled_model.cc:829] Flatbuffer model initialized directly from incoming litert model.
+W0000 00:00:1792694918.034716    4251 mel_filterbank.cc:137] Missing 10 bands  starting at 0 in mel-frequency design. Perhaps too many channels or not enough frequency resolution in spectrum. (fft_length: 257 sample_rate: 16000 mel_channel_count: 128 lower_frequency_limit: 0 upper_frequency_limit: 8000
+W0000 00:00:1792694919.617728    4286 sampler_factory.cc:492] WebGPU sampler not available, falling back to statically linked C API.
+smoke: 'Meow' in 3.24s {'ttft_s': 1.717, 'prefill_n': 23, 'prefill_tps': 14.7, 'decode_n': 3, 'decode_tps': 6.4}
+mapped after smoke: ["/home/unitree/litert/cache-gpu-a/gemma-4-E2B-it.litertlm_1792364749_2588147712.audio_adapter.xnnpack_cache", "/home/unitree/litert/cache-gpu-a/gemma-4-E2B-it.litertlm_1792364749_2588147712.static_audio_encoder.xnnpack_cache", "/home/unitree/litert/cache-gpu-a/gemma-4-E2B-it.litertlm_1792364749_2588147712.vision_adapter.xnnpack_cache", "/home/unitree/litert/cache-gpu-a/gemma-4-E2B-it.litertlm_1792364749_2588147712.vision_encoder.xnnpack_cache", "/home/unitree/litert/gemma-4-E2B-it.litertlm", "/home/unitree/miniconda3/envs/litert/lib/python3.10/site-packages/litert_lm/liblitert-lm.so", "/usr/lib/aarch64-linux-gnu/libvulkan.so.1.3.204", "/usr/lib/aarch64-linux-gnu/nvidia/libGLX_nvidia.so.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-egl-gbm.so.1.1.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-egl-wayland.so.1.1.11", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-eglcore.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-glcore.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-glsi.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-glvkspirv.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-rmapi-tegra.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvidia-tls.so.540.4.0", "/usr/lib/aarch64-linux-gnu/nvidia/libnvtegrahv.so", "/usr/lib/aarch64-linux-gnu/tegra-egl/libEGL_nvidia.so.0"]
+INFO: [accelerator_registry.cc:43] DestroyAccelerator: ptr=0xaaaad733cfd0, name=CpuAccelerator
+INFO: [accelerator_registry.cc:43] DestroyAccelerator: ptr=0xaaaad733cf70, name=YNNPackAccelerator
+INFO: [accelerator_registry.cc:43] DestroyAccelerator: ptr=0xaaaad6357080, name=GPU WebGPU
+INFO: [accelerator_registry.cc:43] DestroyAccelerator: ptr=0xaaaae22577c0, name=CpuAccelerator
+INFO: [accelerator_registry.cc:43] DestroyAccelerator: ptr=0xaaaae3330f10, name=YNNPackAccelerator
+INFO: [accelerator_registry.cc:43] DestroyAccelerator: ptr=0xaaaadcdbf590, name=GPU WebGPU

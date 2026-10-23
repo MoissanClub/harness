@@ -1,0 +1,613 @@
+{
+ "about": "Round 4: adversarial verification of 13bff01/abe447a (eight agents plus a critic), 2026-10-21.",
+ "results": [
+  {
+   "key": "q1-startpark",
+   "fixed": false,
+   "confidence": "medium",
+   "evidence": "The round-3 plan blocker is fixed: the kill test now starts from a released arm when --table-z is right or missing. The claim's wider part does not hold: \"p's retake goes through the same checks\" fails after a failed retake, and a mistyped --table-z quietly widens the home region. No new blocker.\n\nHolds (scratch trees q1-new-13bff01 and q1-old-8e226e9; mock flags --probe --orders 1 --table-edge 0.34 --fingertip 0.125, START_Q 0.06,0.18,0.06,1.12,0.10):\n- table_top() (brain.py:1064-1067) uses --table-z in every mode, and home_region (brain.py:1074) checks the palm and the fingertips.\n- Gate case `released`: on 8e226e9 it gives \"result None; no start pose line\"; on 13bff01 it gives \"result probe; start pose: ... 0.139 rad from home_q ... in the home region\".\n- Gate case `pause`: fails on old (\"order started True, ARM OFF False\"), passes on new.\n- --table-z 0.075, missing (table top 0.000) and -0.075 all accept the released pose and finish with result probe. -7.5 gives \"park refused\" and nothing is enabled.\n- Start-up order at brain.py:1199-1220 is: read the measured joints, run the region check, enable, check for a mismatch, then plan, keep-out check and move.\n- I patched the scratch mock so that a release moves the arm 0.139 rad off home. The p retake then passed: \"in the home region (table top 0.075)\", Parking., \"== ARM ON\", result probe.\n- FK sweeps of the joint line home (true T 0.075, E 0.33, F 0.125): no torso-band penetration in any configuration. Near home (\u03c3 0.15 rad), 0 of 1887 poses put any corner of the hand box past the edge. With the correct T, no corner of the hand box reaches past the edge within 4 cm below the table top.\n\nRefuted:\n(a) A failed retake turns off the checks for the next p. brain.py:589 clears pause_released before park(), so after a failure the next p prints the false line \"[p] resumed: the arm is taken back at home\". Enter then starts an order whose to_pregrasp calls arms_enable (brain.py:722) with no region check before the enable and no mismatch check.\n  - Arm released out of the region: \"[p] the arm was not taken back: still paused (ARM OFF)\" \u2192 \"[p] resumed...\" \u2192 \"STUCK: no way home: the arm is away from home with no recorded raise\", with 2 enables.\n  - Mock enable made to hold a stale pose: \"ENABLE MISMATCH ... (0.539 rad apart): released at once\", then enable #3 holds the stale pose with no check \u2192 \"STUCK ... holds at [0.407, 0.199, 0.012]\".\n(b) --table-z has no range check and is not required (brain.py:92); --table-edge gets edge_arg (brain.py:31).\n  - A 1.64 rad overhead pose (palm z 0.624): with --table-z 7.5 or 0.915 it is \"in the home region (table top 7.500)\" and parked home in joint space. With 0.075 it gives \"park refused\".\n  - The keep-out printed \"behind x 0.308\". FK of that same line puts a hand-box corner at x 0.341, within 4 cm below the table top, with the edge at 0.33. The mock recorded 0 table contacts, so the overlap is in the FK only.\n(c) low_reach (brain.py:1163-1170) uses the wrist, palm and tip points only. From unusual start poses, hand-box corners pass the edge by 0.6-1.6 cm, 15-26 cm below the top: 8 of 1514 at \u03c3 0.3, 17 of 1148 at \u03c3 0.5.\n(d) On a mismatch the arm is released with the streamer holding a pose away from home: mock disable_away [[0.429, 0.204, 0.057]]. No gate case exercises this.",
+   "gate_catches_old_bug": "Yes, for the blocker itself. CHECK_TREE=8e226e9 `released` fails with \"result None; no start pose line\"; on 13bff01 it gives \"result probe\". `pause` fails on old and passes on new. The gate cannot see the residuals:\n- BASE always passes --table-z 0.075 (check.py:46), so a missing or mistyped T is never tried.\n- The mock's disable never moves the arm, so `pause` always retakes from home.\n- The mock's enable always takes the measured pose, so ENABLE MISMATCH can never fire.\n- No case has a retake that fails and then another p.",
+   "residual": [
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 589,
+     "issue": "Pause/retake: pause_released is cleared before park() runs. After a failed retake (\"park refused\" or ENABLE MISMATCH), the next p prints \"[p] resumed: the arm is taken back at home\" while the arm is still OFF. Enter then starts an order whose to_pregrasp (line 722) enables the arm with no region check before the enable and no mismatch check. Reproduced on the instrumented mock: the out-of-region case ended STUCK with the arm enabled away from home; the stale-enable case enabled again with no check. Reachable at every can reset in the kill test and the servo block.",
+     "fix": "Clear pause_released only after park() succeeds. Alternatively, make every enable with arms_on False (to_pregrasp, assist) go through park()'s pre-enable checks and refuse otherwise. On a failed retake, print 'restart the command' instead of 'p takes it back'. Add a gate case: a failed retake, then p, then Enter \u2192 no enable."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 92,
+     "issue": "--table-z is a bare float with no range check and is not required. A missing value silently becomes 0.0. Centimetres (7.5) or forgetting the 0.84 m subtraction (0.915) makes home_region accept any height. An overhead arm 1.64 rad from home was parked home in joint space; FK puts a hand-box corner at x 0.341 at table-top height (edge 0.33) while the keep-out printed 0.308. In probe mode nothing compares T with the fitted plane.",
+     "fix": "Add a table_z_arg range check (about -0.25 to 0.20 m), required with motion unless --mock or --dry, like --table-edge. Cap home_region at a joint distance from home_q (about 0.3 rad; releases leave 0.06-0.14). In --probe, compare the fitted plane with T (2 cm), as the air test does."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1168,
+     "issue": "The keep-out on the joint-space home line (start-up park and p retake) measures only the wrist, palm and tip centre points. The hand box reaches up to about 3.5 cm further forward. From accepted start poses well off home, corners pass the table edge by 0.6-1.6 cm, 15-26 cm below the top: harmless under an open table, a touch on an apron, cabinet or drawer front. Near-home releases are unaffected (0 of 1887).",
+     "fix": "Use the hand-box corners (the corner set in geom.hand_lowest, with the taped F, H and thickness) in low_reach, as the table floor already does."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1215,
+     "issue": "ENABLE MISMATCH releases the arm while the streamer holds a pose away from home (mock disable_away), which breaks the 'never released away from home' rule. The check runs after g1-fetch's 2 s enable ramp, so it detects a jump rather than preventing it. The gate never fires it. spikes/scripts/arm_test.py:28 says enable 'holds measured', so the risk is low; behaviour on a re-enable after a release is unverified.",
+     "fix": "Keep the boot-block reading of ArmStreamer.enable, including re-enable on an existing streamer. On a mismatch, hold (stuck) rather than release. Add an instrumented mock case."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1175,
+     "issue": "The --table-z help says the tape drives 'the keep-out before a plane is fitted, in every mode'. Outside --air the code uses below=inf (every point counts, x only), which is more conservative than the help says. Documentation mismatch only.",
+     "fix": "Correct the help text and README."
+    }
+   ]
+  },
+  {
+   "key": "q2-zone",
+   "fixed": false,
+   "confidence": "medium",
+   "evidence": "Trees extracted to $SCR/q2-{old-8e226e9,new-13bff01,docs-abe447a}. I only instrumented the copy $SCR/q2-inst, where the mock hand's position, size, forearm and appearance time can be set (Q2_* env) and the arm's optical z is printed at each check. Logs are in $SCR/q2-runs/.\n\nWhat holds:\n- The round-3 plan blocker is fixed. Plan :87 and :106-109 now expect a refusal at 10 and 20 cm and \"clear\" at 30 cm, and state the zone.\n- With the 6x8x8 cm mock hand, 0.28 m minimum range, --dry, the code gives what the plan expects:\n  - 10 cm: \"one region of 17% of the frame has no depth ... valid depth 83%, largest blind region 17%\" (blocked).\n  - 20 cm: \"429 points within 0.30 m\".\n  - 30 cm: \"clear; valid depth 100%, largest blind region 0%\".\n  - The same holds at slots 12, 09 and 06, and with the arm enabled at home or parked after a release (blocked 17%).\n- With a 0.15 or 0.19 m minimum range (D435i at 640x480 / 848x480), 10 and 20 cm are refused by the points rule (1488 and 736 points), 30 cm clear. Flat-hand, stop-gesture and guest-forearm shapes are all refused at 10 and 20 cm.\n- Gate: new tree \"nearhand ok ... result blocked; ... one region of 17%\". 8e226e9: \"nearhand FAIL ... result dry; safety (locate): clear; valid depth 83%\".\n\nWhat does not hold on every path:\n1. The blind rule is skipped whenever the arm is out: brain.py:460 has `(not self.arms_on or self.at_home_safe())`. So none of the per-segment re-checks run it: high (:739), pre (:744), air steps (:1361), back steps (:1370), approach (:836).\n   - Repro: air test (0.38, 0.15) at half speed, with the 10 cm hand appearing after \"Reaching.\". The log reads \"safety (pre): clear; valid depth 83%, largest blind region 17%\", the same clear line at all 5 air steps and 5 back steps, then \"RESULT order 1: air\".\n   - The no-motion check runs with the arm disabled, where the rule is on. A \"has no depth\" pass there therefore says nothing about the arm-out checks, contrary to plan :190-191 (\"the no-motion check ... decides what it sees\").\n   - In the mock, the arm's own centre line in view stays at optical z 0.28-0.43 at every arm-out check (3 air targets, kill, servo). It is not inside a 640x480 minimum range, so the skip is not needed there.\n2. The blind region is computed over the whole frame (brain.py:458 `frame.depth[::4, ::4] <= 0`), not over the zone.\n   - The camera sits inside the zone volume, so every ray starts in it (100% of pixels). But an invalid pixel has no range, so glare, can lids or black objects at 0.5-1.5 m count the same as a hand at 0.2 m.\n   - No depth frames exist under hackathon/spikes (111 JPGs, jsonl, no depth). The only number is \"depth 82-97% valid\" (spikes/2026-10-19-office-grab.md:6), which does not bound the largest region. The mock models no real invalid depth, so every gate frame reads 0%.\n   - From the RGB frames (can lids, a remote, a laptop) I would guess 1-3%, but that is unmeasured. If it is 8% or more, plan :87/:108 stops the session at the no-motion block (fail-safe, no motion).\n3. 20 cm sits on the zone boundary. A hand whose near edge is at x 0.30 still gives 269 points; at x 0.31 it reads \"clear\". The plan itself gives the zone as 17-22 cm from the chest (geom.py:22 says the chest is at 0.13, the STL bands at belly height say 0.063-0.080, geom.py:273-275).\n4. The no-motion command uses --orders 4. Blocked orders count (brain.py:1234, :1466), so the hand test uses 2-3 of the 4 orders.\n\nNothing found can cause unsafe motion. Items 2 and 3 can end the session early, before any motion.",
+   "gate_catches_old_bug": "Yes for the narrow case. Running `CHECK_TREE=<8e226e9 tree> check.py --cases nearhand` gives \"nearhand FAIL 12.4s result dry; safety (locate): clear; valid depth 83%, 0 points in the zone\". On 13bff01 it gives \"nearhand ok 11.8s result blocked; safety (locate): one region of 17% of the frame has no depth\".\n\nThe gate only covers part of the claim:\n- It runs only --dry (arm off), so it never reaches the arm-out re-checks, where the rule is switched off.\n- It runs only on mock frames with a 0% baseline blind region, so it cannot catch a false refusal on real D435i frames.\n- It places a single hand at 10 cm, so the 20/30 cm boundary is untested.",
+   "residual": [
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 108,
+     "issue": "The blind-region check (brain.py:458-461) counts invalid depth anywhere in the frame: glare, can lids, black objects, the floor. Its real baseline is unmeasured: no depth frames exist under hackathon/spikes, and the only figure is '82-97% valid' (office-grab.md:6), which does not bound the largest region. The mock always reads 0%. If the real largest region is 8% or more, every locate refuses (dry run, air, kill, servo), and the plan's stop rule ends the session at the no-motion block with no data. This is fail-safe (no motion), but the plan can then answer nothing.",
+     "fix": "Record MM in the boot or dry run with nothing in front and save the depth frame. If MM is 8 or more, read bundle_locate_depth.png. If the region is a far surface, remove or cover the object, or run with --blind-max set to MM + 0.05 as a logged deviation, instead of stopping. Add blind_max to CALIB_ARGS and the order params: today an override is not logged (brain.py:1237, CALIB_ARGS). Better still, refuse on growth over a start-up baseline mask."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 460,
+     "issue": "With the arm out, the blind rule is skipped, so none of the per-segment re-checks run it (high :739, pre :744, air :1361, back :1370, approach :836). Mock air test with a 10 cm hand inside a 0.28 m minimum range appearing after 'Reaching.': 'safety (pre): clear; valid depth 83%, largest blind region 17%', the same at all 5 air and 5 back steps, and the order completes. The plan (:190-191) says the no-motion check 'decides what it sees', but that check runs with the arm off, where the rule is on, and the plan accepts 'has no depth' as a pass. In the mock, the arm's centre line in view stays at optical z 0.28 or more at every arm-out check, so the skip is not needed at 640x480. Not a blocker: at 640x480 the 10 cm hand has valid depth and the points rule refuses it (1488 points), and a guest forearm adds points (112 even at a 0.28 m minimum range).",
+     "fix": "Keep the blind rule on with the arm out, after masking the arm's projected silhouette (the arm_segments already used for `own`, projected with radius plus margin) out of `inval`. Or require the 10 cm no-motion refusal to read 'within 0.30 m'; if it reads 'has no depth', write in the plan that the arm-out checks cannot see a hand there."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 87,
+     "issue": "The 20 cm expectation sits on the zone boundary. Mock: a hand near edge at x 0.30 gives 269 points (refused); at x 0.31 it reads 'clear'. The plan gives the zone as 17-22 cm from the chest (geom.py:22 'chest front ~0.13'; STL bands at belly height 0.063-0.080, geom.py:273-275). If the tape starts at a strap or the stand, or the fingertips end up past 22 cm, 20 cm reads clear and the stop rule at :107 ends the session before any motion.",
+     "fix": "Test at 10 and 15 cm (pelvis x 0.18 and 0.23) and expect a refusal; keep 30 cm as clear. Or measure the 20 cm hand from the torso shell at belly height and accept either result at 20 cm."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 87,
+     "issue": "The no-motion command runs --orders 4 with 'Enter per slot' for 4 slots, plus a hand test of 10, 20 and 30 cm 'at one slot'. Each hand position is a separate order, and blocked orders count (brain.py:1234 counts every order, :1466 stops at --orders), so only about 2 of the 4 slots, possibly not including the edge-probe slot, are located before the run ends.",
+     "fix": "Use --orders 6, or run the hand test as its own --dry command."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/HANDOFF.md",
+     "line": 81,
+     "issue": "A stale line under 'Round 2 plan changes' still reads 'a hand held at 20 and 30 cm (must be refused)'. This contradicts the plan, which now expects clear at 30 cm, and HANDOFF :24.",
+     "fix": "Mark the line as superseded by round 3, or update it."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 452,
+     "issue": "At the cross-body air target (0.40, -0.08), the robot's forearm is inside the zone: 365-445 zone points are excluded as own-arm at pre, air and back. A guest's hand within 7-8 cm of the forearm there is not counted. Also, if g1-fetch ever returns NaN for invalid depth, `<= 0` counts NaN as valid for the blind rule while geom.py:220 (`> 0`) counts it as invalid.",
+     "fix": "Keep people out of the zone during motion, as the plan already says. Use `~(depth > 0)` for the blind mask."
+    }
+   ]
+  },
+  {
+   "key": "q3-stuck",
+   "fixed": false,
+   "confidence": "high",
+   "evidence": "All work was in scratch copies: qs-old-8e226e9, qs-new-13bff01, qs-docs-abe447a, plus qs-inst-13bff01, where two lines in stuck_loop were changed so a pty can type the keys. The repo is unchanged: git status shows the same 3 untracked files. Logs are in $SCR/qs-logs/*.log.\n\nWHAT HOLDS (13bff01)\n- q, Ctrl-C or SIGTERM while stuck only set quit_after_home (brain.py:323-326). on_signal does not raise while stuck, retreating, quitting or shutting down (1458). check_abort never raises Abort while retreating (312). stuck_loop clears freeze_req before y (444).\n- run_retreat turns every Exception into stuck (1157). Shutdown re-enters stuck_loop after any failure and catches BaseException (1405-1415).\n- The four gate cases pass on 13bff01 and fail on 8e226e9 with this mock.\n- The pty runs used the real stdin key thread: SIGTERM x2 while stuck prints \"[ctrl-c] the arm is stuck and holding ...\" and nothing moves.\n- Plan step 4 on the idle loop (run H): \"[q] stop: the arm holds where it is\", the next h+y gets home, then \"the arm is home: quitting as asked\".\n- Unknown lines get \"not a key ...\".\n\nWHAT BREAKS\n1. quit! does not always mean no motion.\n   - Run D, the plan's air-test contact case: --air --speed 0.5 --orders 1, a failure injected at the 5th target after \"Sliding.\", and quit! typed right after \"I could not complete that reach.\". Output: \"[quit!] exiting WITHOUT moving or releasing the arm ...\" / \"== RECOVER retreat\" / \"SAY: Up and back.\" ... \"SAY: Home.\" / \"== quit!: the arm is at home\". 901 targets were streamed after the failure.\n   - Cause: quit! sets freeze_req only while retreating (337-340), and recover_fast opens the hand (0.8 s plus the open wait, 1225) before the retreat starts.\n   - Run F2, real key thread: \"y\\nquit!\\n\" typed together while stuck. quit! was acknowledged, then the whole way out ran: back, bridge, home. stuck_loop never re-checks force_quit after the y wait (440-444).\n2. A second stop is not always honoured (plan 146-148, README:42, the console line at 330).\n   - Run B, q then a typed at once: \"[a] aborting this order\", then 394 targets home and \"Releasing my arm.\". The a sets abort (327) and shutdown clears it (1402).\n   - Run A2, real key thread: a second q 20 ms after \"Moving my arm back before I stop.\" printed \"[q] second stop: the arm holds where it is instead of coming home\", then home and released. hold_on_quit is read only once (1407), before the say and plan_retreat. Run A is the same through SAYKEYS: 394 targets.\n   - Run C: a, then q,q before the recovery retreat starts. \"second stop\" was printed, the arm went home and was released.\n3. The key reader can die, leaving no h, y or quit!.\n   - Run G: Ctrl-D while stuck. h and quit! got no answer; Ctrl-C and SIGTERM only re-printed the stuck text; the reminder kept going until my driver used SIGKILL (rc -9).\n   - Run F1: \"o stage=pre note=x\" typed during the probe gave \"Exception in thread Thread-1 (keys) ... TypeError: OrderLog.event() got multiple values for keyword argument 'stage'\" (358). After that, q and h were ignored.\n4. Run E, pause: a stop during the p-resume park printed \"STUCK: stopped during the retreat (Frozen)\", then \"[p] the arm was not taken back: still paused (ARM OFF)\" (590) while the arm was enabled.\n5. Run F6, startup: SIGINT during the enable left disables at 0: no release, and \"arm service on -> 0\" ran with the streamer still on. g1-fetch's enable is a 2 s ramp per spikes/scripts/arm_test.py.\n6. Run F4: SIGHUP has no handler. rc -1, no shutdown, no stats.\n\n'HOLDS' AND PROCESS EXIT\n- \"Holds\" means g1-fetch's streamer thread keeps re-publishing the last target; the brain sends nothing while stuck. The main thread cannot finish without shutdown, which loops while the arm is away from home.\n- The process ends without shutdown only on SIGHUP, SIGKILL, SIGQUIT, OOM or a native crash.\n- What the G1 does when arm_sdk stops (kill -9) is unknown. g1-docs 05_01 documents only the explicit weight ramp (lines 178-193). g1-fetch arm.py is not in the repo (HANDOFF:118). Also unknown: whether the streamer thread is a daemon (if not, quit! may hang at exit) and whether g1-fetch has an atexit or close hook that ramps the weight to 0 (that would release the arm away from home).",
+   "gate_catches_old_bug": "Yes for what the four cases test. On 13bff01 all pass:\n- qstuck: \"ended 0.0 from home ... quit after home: True\"\n- wayfail and wayfail1: \"0 targets before the next way out\"\n- secondq: \"1 targets\"\n\nWith CHECK_TREE=8e226e9 all fail:\n- qstuck: \"ended 0.4427 from home ... quit after home: False\"\n- wayfail: \"316 targets before the next way out\"\n- wayfail1: \"ended 0.439 from home\"\n- secondq: \"405 targets\"\n\nThe mock types every key synchronously at a target or a sentence, so the gate never sees:\n- a second q, a or Ctrl-C after shutdown's hold check, or before an in-order recovery retreat\n- q and a typed together\n- quit! before an automatic retreat, or right after y\n- the stdin thread itself (EOF, exceptions)\n- signals during enable, and SIGHUP",
+   "residual": [
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 337,
+     "issue": "quit! is honoured for motion only while stuck or already retreating. Typed in the 1-2 s between a SKILL FAILED and the start of the recovery retreat, it prints 'exiting WITHOUT moving or releasing the arm' and the whole retreat still streams. Run D, the plan's air-test contact rule (L2+B, then quit!): 901 targets after the failure, then '== quit!: the arm is at home'. The same happens after 'Order cancelled.'. y and quit! typed together (run F2, real key thread) also run the whole way out, because stuck_loop does not re-check force_quit after the y wait (443-444). There is still no damping check (HANDOFF:149 defers it, but quit! is this plan's exit).",
+     "fix": "Make check_abort raise Frozen whenever force_quit is set, in every state including retreating. Check force_quit before recover_fast starts a retreat and after the y wait. Read loco.fsm_id() and refuse quit! unless the robot is in damping. Gate: an air run with 'Sliding.;fail;5' and SAYKEYS 'I could not complete that reach.:quit!' must stream 0 targets after the quit!."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1407,
+     "issue": "The second stop is not always honoured, although plan 146-148, README:42 and the console ('a second q or a stops it there') promise it. Three cases:\n- q then a typed at once: the a only sets abort (327), shutdown clears it (1402), and the arm went home (run B, 394 targets).\n- A second q or Ctrl-C after the single hold_on_quit check at 1407 but before run_retreat sets retreating (the say plus plan_retreat): it prints 'second stop: the arm holds' and the arm goes home and is released (run A2, real key thread, q 20 ms after 'Moving my arm back').\n- q,q before an in-order recovery retreat (after 'Order cancelled.' or a SKILL FAILED): the same message, then home (run C).\nThe motion is the planned, keep-out-checked retreat, and the plan names L2+B as the only stop, so this is not a blocker.",
+     "fix": "While an automatic way home runs without a y, have check_abort raise Frozen once hold_on_quit is set, and treat an a after a q as a second stop. Gate cases: SAYKEYS 'Moving my arm back before I stop.:q', keys:q+a, and 'Order cancelled.:q+q'."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 333,
+     "issue": "The stdin reader thread has no guard. Ctrl-D (EOF) ends it silently (run G). An o line with stage=, ev= or tag= during an order raises a TypeError at 358 and kills it (run F1). After that, h, y, q and quit! get no answer. While stuck, Ctrl-C and SIGTERM only set quit_after_home, so the only exit is kill -9, whose effect on the robot is unknown. The plan has no procedure for a live brain whose keys are dead.",
+     "fix": "Wrap key() in try/except inside keys(). On EOF, reopen /dev/tty or print a loud warning and give another way to quit! (for example a second SIGTERM while stuck). Namespace the obs keys. Add 'keys not answered' to the plan's stuck procedure: L2+B, then kill the PID."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 590,
+     "issue": "A stop or refusal during the p-resume park (Taking my arm. / Parking.) leaves the arm enabled and stuck, yet the console prints '[p] the arm was not taken back: still paused (ARM OFF)' (run E: the STUCK line, then this line). The plan's can-reset rule keys on ARM OFF.",
+     "fix": "Print ARM OFF only when arms_on is False. When stuck, print and say the stuck guidance instead."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 398,
+     "issue": "Ctrl-C or SIGTERM during g1-fetch's 2 s enable ramp (startup park or p-resume) raises Abort inside rb.arms.enable() before arms_on is set. Shutdown then skips arms_disable and switches the arm service on while the streamer may still be enabled and the weight half ramped (run F6: disables 0, 'arm service on -> 0'). The plan's own start-pose check (stop if more than 1 cm off) invites a Ctrl-C at exactly this moment. The arm is at the side, so the motion risk is small.",
+     "fix": "Set arms_on (or an 'enabling' flag) before calling enable, and in shutdown always disable a streamer that may be on. Alternatively, have on_signal only set quit, never raise, while arms_on or enabling."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1460,
+     "issue": "Process death skips shutdown. SIGHUP has no handler: tmux kill-pane or kill-session ends the brain at once with the arm out (run F4: rc -1, no '== shutting down'), the same as kill -9 or the OOM killer. What the G1 does when arm_sdk stops is unknown: g1-docs 05_01 documents only the explicit weight ramp, and g1-fetch arm.py is not in the repo. Also unknown: whether the streamer thread is a daemon (if not, quit! hangs at exit with the streamer still publishing) and whether g1-fetch registers an atexit or close hook that ramps the weight to 0 (that would release the arm away from home after quit!). The race from round 3 is unchanged: a Ctrl-C between run_retreat's retreating=False and set_stuck's stuck assignment (410-411, under a millisecond) raises Abort, and shutdown then homes the arm with no y.",
+     "fix": "Add SIGHUP to the handled signals. In the boot block, also read whether the streamer thread is a daemon and look for atexit/close hooks in arm.py, and write down what the controller does when arm_sdk stops. Assign stuck before clearing retreating."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 139,
+     "issue": "The plan's stuck procedure differs from the code in these places:\n- A q or Ctrl-C during the way out also quits after the next way out reaches home (322; run H). Step 4 says this only for q while stuck, and the console at that moment says only 'h, then y, brings it home later'.\n- A plain quit during a running way out or the shutdown retreat only prints help, and the motion continues (341; run I: the way out completed and 3 more orders ran). The spoken line 'then type quit' invites exactly this.\n- After a SKILL FAILED the brain opens the hand and retreats home by itself (recover_fast); the air-test and kill-test stop rules (115-120) do not say the arm will move.\n- y is never acknowledged, and a y typed before 'Press y' is discarded.\n- 'Turning my wrist.' is said for any bridge over 5 degrees, while describe_retreat may name the shoulder or the elbow.\n- A q that lands after a retreat's last target sets quit_after_home and freeze_req but not quit, so the session continues.",
+     "fix": "After the code fixes, rewrite steps 4-6 and the SKILL FAILED rules key by key: what moves by itself and what stops it. Accept quit like quit! whenever the arm is out, print '[y] running the way out', and say 'Turning my <joint>'."
+    }
+   ]
+  },
+  {
+   "key": "q4-floor",
+   "fixed": false,
+   "confidence": "medium",
+   "evidence": "Scratch only. Trees: $SCR/q4-{old-8e226e9,new-13bff01,docs-abe447a}. Instrumented copy: $SCR/q4-inst (mock only). It adds a configurable true hand box (BRAIN_MOCK_HANDBOX), an exact box-over-table contact (BRAIN_MOCK_EXACT: the corners over the table plus the box edges cut by x = edge), frictionless sliding contact (BRAIN_MOCK_SLIDE) and per-phase penetration of the true hand. Logs: $SCR/q4-logs/s1..s10 ($SCR = /private/tmp/claude-501/-Users-junda-robot-harness/44b035f1-dc0d-4025-a748-1eab1915cdb8/scratchpad).\n\nWHAT HOLDS\n- The floor follows the hand box through the predicted arrival pose: motion.py:56-79, geom.py:283-288.\n- No correction round is streamed once the hand rests more than 6 mm above a goal near the floor (motion.py:184-190). Every contact case showed \"0 correction rounds\".\n- The kill and servo commands carry --floor-margin 0.02.\n- The prediction is conservative. Kill slots, no errors: true lowest point 2.1-2.6 cm above the table against 2.0 planned (\"pre goal: z 0.119 raised to the table floor 0.144/0.146/0.148\"). Air run 4: 9 mm against 5 mm.\n- K_z includes the raise. Slot 09 off_z is 0.017 at margin 0.02 and 0.001 at 0.005 (pre-grasp 0.145 vs 0.130). K_d and K_n move by 1 mm or less.\n- The hand stays in view at the raised pre-grasp: margins 46-56 px, 2300-3000 points.\n- Servo block with the plan's K [0.095, -0.052, 0.017]:\n  - Slots 09 and 06 at E 0.33 and 0.34: 0 contacts. One correction leaves e_d 3 mm and e_z -2..-4 mm. Clearance during \"Correcting.\" is 1.96-2.15 cm.\n  - Plane 1 cm low and hand 1 cm low: 1-2 contacts, push 0.7 mm.\n- Retreat-up, back steps, park and p retake never go below the clearance at the pre-grasp. The air slide with sliding contact does not run away: the pitch lifts the low corner.\n- F 0.08-0.14 and H 0.035-0.05 work when the tape matches the hand. An untaped HAND_BACK of 0.06 or thickness of 0.025 costs 1 mm.\n\nREFUTED\n1. \"killtable push 3.4 mm\" comes from the mock, not the code.\n   - mock_robot.py:397 tests only the 8 box corners. The hand's back corners sit at x 0.339, just off the mock table edge at 0.34, 9 mm under the top: \"lowcorner [0.3392, 0.2048, 0.0659]\". The bottom-back edge cuts into the table there and goes uncounted.\n   - With the exact box-over-table test, the gate's own case (plane 2 cm low, hand 1 cm low, slots 12/09/06, E 0.34 or 0.33): commanded hand 9.8-10.5 mm under the top, mock push 8.4-8.9 mm, 19-28 contacts. Every slot ends \"SKILL FAILED: pre-grasp: the hand rests 0.012-0.014 above its goal near the table (contact?)\".\n   - Hand 2 cm low: 21.5-24.3 mm, refused.\n   - test_motion corrections_stop with the exact test: push 9.0 mm, corner penetration 10.5 mm.\n   - The final line (motion.py:178) streams the whole residual into the table before the check at :189.\n   - So the plan's risk line \"covers a plane 2 cm low with the hand 1 cm low (mock push 3 mm)\" is false. That case is a contact refusal at every slot, so the block ends with no K. With the corner-only mock the gate run printed nothing and returned \"result probe\".\n2. Air run 4 (--air-margin 0) runs at the calib floor margin 0.005, not 0.02. The plan's command has no --floor-margin; brain.py:741 uses table_floor = T + FLOOR_MARGIN.\n   - Log: \"pre goal: z 0.121 raised to the table floor 0.135 (hand 0.055 below the palm)\".\n   - Hand 1-1.4 cm low: 8-35 silent contacts, up to 4.9 mm commanded penetration, the hand slides 5 cm and back, \"result air\". The run passes and nothing is printed.\n   - Hand 1.6 cm low, or tape 1 cm low with hand 1 cm low: refused, so by the stop rule there is no kill test.\n   - The expected \"pre-above\" line is never printed by the code.\n3. Raise and home retrace against the table's near edge.\n   - low_z comes from the fitted plane (brain.py:728). The keep-out (brain.py:1163-1179) checks the commanded centre line, with no sag and no hand box.\n   - E 0.33 (inside the plan's 0.33-0.347 window), plane 2 cm low, hand 1 or 2 cm low: the true hand cuts into the edge by 3.1 / 5.7 mm (vertical 8.3 / 15.4 mm) during \"Raising.\" and \"Home.\".\n   - Tape short by 1.5 cm on F and H, at E 0.34: 10.7 mm.\n   - No contact check runs on these paths.\n4. A taped H of 0.055 or more refuses every kill slot. Dry-run log: \"no feasible reach (torso) ... 'grasp: upper, forearm, table'\". The cause is geom.py:379, which uses the unfloored grasp height. The plan's first dry run does not pass F or H.\n5. --floor-margin -0.03 --palm-half-height 0 --fingertip 0 are accepted (\"CLI overrides ... ('table_floor_margin_m', 0.005, -0.03)\").\n6. Only air() compares the fitted plane with --table-z (brain.py:1337). The kill test's floor uses the plane alone.\n7. The gate's servoblock takes K from a margin-0.005 probe (check.py:345, K_z 0.0). In that run the servo z never converges (\"correcting by [0.021, -0.006, -0.024]\" \u2192 \"raised to the table floor 0.146\", three times) and the case still passes.",
+   "gate_catches_old_bug": "Yes, though the comparison is confounded. I ran CHECK_TREE=8e226e9 check.py --cases killtable,servoblock,airfloor:\n- killtable fails: \"push into the table 0.0262, 80 contacts\".\n- servoblock fails: \"49 table contacts ... servo 0: the hand followed 0.000\".\n- airfloor passes on the old tree.\n\nThe confound: args_for_tree drops --floor-margin for the old tree, so the old code runs with its own 5 mm palm-centre floor and the new code with 20 mm. Part of the difference is the margin, not the code.\n\nOn 13bff01 killtable passes with push 0.0048 and 14 contacts, result \"probe\", and no contact message, but only because the mock counts box corners only. With the exact box-over-table contact, the same case gives push 8.9 mm (still under the gate's 10 mm bound), a 10.3 mm commanded penetration, and a contact refusal. The bound is met by 1 mm.\n\nservoblock uses a K measured at margin 0.005, so it never tests the plan's servo condition (K from a margin-0.02 probe).",
+   "residual": [
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/mock_robot.py",
+     "line": 397,
+     "issue": "The gate's table contact tests only the 8 corners of the hand box. At the kill slots the hand's back corners (x 0.336-0.339) hang just off the mock table edge at 0.34, 9 mm below the top, so the bottom-back edge cutting the table is not seen. killtable's 'push 3.4 mm' (2.8-4.8 mm in my reruns, result probe, nothing printed) is this artifact. With the exact box-over-table test, the same case pushes 9.8-10.5 mm at slots 12/09/06 and E 0.33-0.34 (mock push 8.4-8.9 mm, 19-28 contacts) and is refused at every slot. With the hand 2 cm low it is 21.5-24.3 mm.",
+     "fix": "Model the contact as the box intersected with the table (corners plus the box edges cut by x = edge), as in $SCR/q4-inst, and re-run killtable, servoblock, airfloor and test_motion under it. Bound the push at the corner level."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/motion.py",
+     "line": 178,
+     "issue": "The final line streams the whole residual error (plane error + hand error - margin) into the table, and the 'rests above its goal' check (:189) runs only afterwards. The plan's claimed coverage of a plane 2 cm low with the hand 1 cm low therefore pushes about 1 cm (about 1.5 N at the mock's 0.15 N/mm) and is refused at every kill slot, so the block ends with no K. With the hand 2 cm low it pushes 2.4 cm. The kill test also never compares the fitted plane with --table-z: only air() does (brain.py:1337).",
+     "fix": "Floor on max(plane, --table-z), or refuse a plane more than 2 cm from T in every mode. On the final line, stop when the measured palm stops descending with the command (a per-target follow check) rather than after the line. Correct the run plan's risk line (2026-10-21-v2-kill-test.md:187-189)."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 88,
+     "issue": "The fourth air run ('--air-margin 0 ... as the kill test lowers') has no --floor-margin, so it runs at the calib 0.005, not 0.02 ('pre goal: z 0.121 raised to the table floor 0.135 (hand 0.055 below the palm)', 9 mm true clearance). With the hand 1-1.4 cm low it makes 8-35 silent contacts (up to 4.9 mm), slides 5 cm along the table and back, and returns 'result air'. With 1.6 cm or more of combined error it is refused, which by the plan's air stop rule means no kill test. It neither rehearses the kill lowering nor reports a touch. The expected 'pre-above' line is never printed.",
+     "fix": "Add --floor-margin 0.02 to the fourth air command (or state the 5 mm margin), drop 'pre-above' from the expected lines, and add a printed contact warning (residual below)."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1172,
+     "issue": "Raise and home retrace against the table's near edge. low_z comes from the fitted plane (brain.py:728), and the keep-out checks the commanded wrist/palm/tip centre line with no sag and no hand box. At E 0.33 (inside the plan's 0.33-0.347 window) the nominal clearance is 2.0 cm. With the plane 2 cm low and the hand 1/2 cm low, the true open hand cuts into the table edge by 3.1/5.7 mm (vertical 8.3/15.4 mm) during 'Raising.' and 'Home.'. With F/H taped 1.5 cm short at E 0.34 it is 10.7 mm. The raise and home paths have no contact check (correct=0, no tracking check).",
+     "fix": "Take the raise's low waypoint and the keep-out's height from max(plane, T), evaluate the keep-out on the sagged hand box, or raise the E lower bound to 0.34."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/geom.py",
+     "line": 379,
+     "issue": "plan_reach's table check uses the unfloored grasp height with palm_half_height. A taped H of 0.055 or more makes every kill slot unplannable ('no feasible reach (torso) ... grasp: upper, forearm, table'; the robot says the can is too close to its body). H 0.05 still plans, at table clearance -0.006. The plan's first dry run passes no --fingertip or --palm-half-height, so it plans with 0.08/0.045 and cannot reveal this. The plan says to run with H over 0.05.",
+     "fix": "Judge the plan on the floored grasp height (the hand box), carry F and H in every dry run, and label the reason 'table'."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 68,
+     "issue": "--fingertip, --palm-half-height and --floor-margin are unbounded. '--floor-margin -0.03 --palm-half-height 0 --fingertip 0' is accepted, only logged ('CLI overrides ... (table_floor_margin_m, 0.005, -0.03)'), and plans. A typo silently lowers the floor.",
+     "fix": "Range-check them as edge_arg does (for example F 0.06-0.16, H 0.03-0.06, margin 0-0.05)."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/motion.py",
+     "line": 189,
+     "issue": "Contact under corr_tol (6 mm) is silent. Gate killtable: 11-14 contacts, result probe, nothing printed. Air run 4: up to 35 contacts, result air. The same test also refuses any arrival more than 6 mm above a goal within 4 cm of the floor (the air runs' goals are 2.1 cm above it) even without contact, for example when the real sag or stiction stops the hand high, which would stop the plan on a false refusal.",
+     "fix": "Print a contact warning when the measured palm sits 2-6 mm above its goal near the floor. Judge contact by the hand not following a descending command, not by the arrival height alone."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/check.py",
+     "line": 345,
+     "issue": "servoblock takes K from a margin-0.005 kill probe (K_z 0.0) and runs at --floor-margin 0.02. Its servo never converges in z ('correcting by [0.021, -0.006, -0.024]' then 'raised to the table floor 0.146', three times) and the case passes on contacts alone. The plan's condition (K from a margin-0.02 probe) is not what the gate tests. On that condition I measured 0 contacts and a 2-4 mm residual.",
+     "fix": "Measure K for servoblock with --floor-margin 0.02 and check the residual."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 125,
+     "issue": "hand_back_m and hand_half_thickness_m have no CLI route (the plan asks the owner to tape the thickness). At the kill pre-grasp the lowest point is the BACK corner (forearm pitch -7 to -9.5 deg, fingertips up), so the floor depends on the untaped HAND_BACK. The effect in the mock is about 1 mm (back 0.06, thickness 0.025). Nothing logs the measured drop on arrival against the predicted one, so the air test cannot measure the prediction error on the robot.",
+     "fix": "Add flags or document that they stay assumed, and print drop_at(q_meas) next to the predicted drop at each pre-grasp."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": false,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 89,
+     "issue": "'K_z includes it, a later grasp at the nominal height subtracts it' is wrong for grasping. The nominal grasp height is itself floored at the grasp margin (slot 09 at margin 0.005: 0.119 raised to 0.131), so subtracting the printed kill raise (0.119 to 0.146, 2.7 cm) over-corrects by about 1.5 cm. The raise also varies by slot (2.5/2.7/2.9 cm). The mock's box hand cannot show how occlusion changes with height.",
+     "fix": "Correct K_z by (kill raise minus grasp raise) at the same slot, or measure K at the grasp margin before grasping."
+    }
+   ]
+  },
+  {
+   "key": "q5-raise",
+   "fixed": false,
+   "confidence": "high",
+   "evidence": "Method: everything ran in scratch copies only. q5-inst is 13bff01 with motion.Arm.set dumping every streamed target, plus a mock TABLE_Z env. q5-oldinst is 8e226e9 with the same dump. I made about 60 mock runs (--orders 1, timeouts) and did FK on each dumped target with the brain's geom chain: PALM_REAL 0.246, fingertip F 0.08/0.10/0.125/0.14, the open-hand box (back 0.045, +-0.02, +-H 0.045). Sag used the mock's sag_dq at x0, x1 and x1.3, both applied statically and in closed-loop runs with BRAIN_MOCK_SAG=1.3. I also measured distances to the URDF meshes (g1_body23: hip pitch/roll/yaw, knee, pelvis, torso).\n\nWHAT HOLDS (motion-time keep-out):\n- The raise is up-low then up (brain.py:728-735). The commanded keep-out reach at F 0.125 is 0.304-0.307 on all 8 plan targets (air 0.38/0.15, 0.35/0.00, 0.40/-0.08, air-margin 0, kill slots y 0.12/0.09/0.06/0.17). At T 0.0-0.035 it is 0.309-0.311. The old straight raise reached 0.351.\n- The retraced home is the same envelope, also after stops mid up-low, at the up-low end and mid up. Example: 'home (the raise retraced) path: ... behind x 0.321' at F 0.14. Retreat-up/back and the bridge never put a hand corner under T, even at sag x1.3 closed loop.\n- E below the reach refuses: E 0.30 gives 'up waypoint ... skipped: up-low: the hand would pass x 0.295 ...', then 'SKILL FAILED: no raise waypoint solves', with 0 targets streamed.\n- Sag barely matters for the raise because it is open loop: x1.3 adds at most 2 mm under T.\n- Plane fits at the air targets and slots work with the mock edge at 0.33 and at 0.347.\n- Gate: check.py --cases reach,dry on 13bff01 gives 'reach ok ... commanded 12.5 cm hand reached x 0.3079 ... (the sagged mock hand 0.2798; edge 0.34)'.\n\nWHAT BREAKS:\n1. The plan's E check reads a line that still plans the OLD raise. The --dry --air line (brain.py:1349-1352, unchanged since 8e226e9) streams a straight path from home_q's palm to the raise waypoint, with no up-low. With the plan's dry command at E 0.34 it printed:\n   - F 0.125: 'dry raise from home: below z 0.105 the hand stays behind x 0.350' (0.351 at the other two targets)\n   - F 0.14: 0.365-0.366; F 0.10: 0.325-0.326; F 0.08: 0.305-0.306\n   The brief (lines 110-111) requires X <= E-0.02 and E <= 0.347, and claims 'X is 0.304-0.307'. So for F >= ~0.105 (the BrainCo estimate is ~0.114, the mock 0.125) no E exists, and the rule says stop. The no-motion block ends the session. No gate case runs --dry --air.\n2. Each raise segment is checked only as it streams (brain.py:730-735; motion.py:155 validates one line). With E 0.32 at F 0.125 the arm moved before refusing:\n   - 'up-low path ... 0.295', then 'up-low: ... measured [0.172, 0.243, 0.089]'\n   - 'up waypoint [0.244, 0.242, 0.271] skipped: up: the hand would pass x 0.304 ...'\n   - a second up-low sideways to y 0.267, skipped again\n   - 'SKILL FAILED: no raise waypoint solves', then the retrace home\n   In all, 692 targets streamed for a raise that could never finish. The bad window is E 0.315-0.324 at F 0.125 and 0.329-0.342 at F 0.14.\n3. The real margin is about 5-6 mm, not 2 cm. The keep-out tests only wrist/palm/tip of the commanded pose (brain.py:1163-1179). The hand box at the sagged pose reaches further under T:\n   - F 0.125: 0.319 (x1) / 0.321 (x1.3), against the minimum accepted E 0.327\n   - F 0.14: 0.334 / 0.338, against E 0.343\n   A 1 cm tape error in F or E puts the lower front corner about 4-5 mm into the edge while it rises.\n4. Body clearance on the up-low:\n   - Hip/thigh: at the end of the up-low the shoulder pitch is +1.03 rad and the elbow -0.80. The hip and thigh are clear: the hand box is 4.9-5.9 cm from the nearest leg mesh vertex (legs at 0 and at hip -0.3/knee 0.6), the forearm 7.0-7.8 cm, about the same as the home start. geom has no leg links; TORSO_BANDS cover the pelvis and waist only.\n   - Elbow: it goes to x -0.156..-0.161 at z 0.11-0.19, y 0.165-0.18. The old raise went to -0.114/-0.116. That is about 9 cm behind the torso's back plane (x_min -0.063..-0.069).\n   - No pose_checks run on a psi-free goto: solve (motion.py:81-92) checks only IK error and joint margin. The commanded upper-arm centre-line clearance is 5.3 cm at the y 0.18 targets (HANDOFF:27 says 5.6 cm or more).\n   - The stand and its straps are unmodelled, and the plan logs elbow gaps only at the pre-grasp and slide (brief:162).\n5. At F 0.14 air run 2 (0.35, 0.00) fails at the pre-grasp:\n   - 'pre-corr command: z 0.196 raised to the table floor 0.200 (hand 0.120 below the palm)'\n   - 'SKILL FAILED: pre-grasp: the hand followed 0.001 of a 0.003 vertical correction near the table (contact?)'\n   It fails safe and the arm goes home. F 0.13-0.135 pass.\n6. The mock's 'true hand' figure (0.274-0.280) is not physical. ERRK extrapolated to elbow -0.8 shortens the palm offset to about 0.19 m.\n7. At T 0.115 the up-low elbow margin is 5.9 degrees and the first up waypoint is skipped for IK after up-low has moved. At T 0.15 the air run returns air_no_plan.",
+   "gate_catches_old_bug": "Partly. Case `reach` (air 0.35/0.00, F 0.125, E 0.34, half speed) checks the commanded mock hand box under the table top during \"Raising.\" against 0.32. The old straight raise gave 0.338, the new one gives 0.3079 (re-run: \"reach ok ... 0.3079\"), so it does catch the original sweep. It does not test: the --dry --air \"dry raise from home\" line the plan's E rule reads, which prints 0.350-0.351 on both 8e226e9 and 13bff01; streaming one segment before the next is checked; F other than 0.125 (at 0.14 the window shrinks to 4 mm and air run 2 fails); the sagged hand box against E; other table heights; or the elbow/stand clearance of the new up-low posture.",
+   "residual": [
+    {
+     "severity": "blocker",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1349,
+     "issue": "The --dry --air 'dry raise from home' line still plans the old straight raise from home_q's palm to the raise waypoint, without the up-low waypoint (raise_back_m), and 13bff01 left it unchanged. Mock results at E 0.34: F 0.125 prints 'below z 0.105 the hand stays behind x 0.350/0.351'; F 0.14 prints 0.365-0.366; F 0.10 prints 0.325-0.326; F 0.08 prints 0.305-0.306. The motion-time keep-out reads 0.304-0.307 at F 0.125. The run plan's no-motion rule (brief:110-111) needs X <= E-0.02 and E <= 0.347, and says X is 0.304-0.307. For any F >= ~0.105 (BrainCo ~0.114, mock 0.125) no E satisfies the rule, and the plan says stop. The session ends before the air test.",
+     "fix": "Factor the raise into one planner (up-low then up, both waypoint candidates) and use it in pick, in --dry --air and in assist. Have the dry line print the up-low and up reach separately. Add a check.py case that runs --dry --air at F 0.125 and F 0.14 and compares the dry X with the motion run's 'up-low path'/'up path' keep-out lines. Re-state the brief's E rule from the fixed line."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 730,
+     "issue": "Each raise segment is keep-out checked only just before it streams, so up-low moves before up is checked. Mock, E 0.32 at F 0.125: 'up-low path ... 0.295', then the arm rises 27 cm, then 'up waypoint [0.244, 0.242, 0.271] skipped: up: the hand would pass x 0.304 ...', then a second up-low sideways to y 0.267, skipped again, then 'SKILL FAILED: no raise waypoint solves', then the retrace home. That is 692 targets for a raise that could never finish. The window is E 0.315-0.324 at F 0.125 and 0.329-0.342 at F 0.14. At T 0.115 the same happens with an IK refusal ('joint 3 within 5 deg of its limit') after up-low moved. The first motion of the session can be an unplanned partial raise.",
+     "fix": "Before any target streams, solve and keep-out check up-low and up for each waypoint candidate (and the joint margins). Pick the first candidate that passes completely; otherwise refuse with the arm still."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1172,
+     "issue": "The keep-out tests only the wrist, palm and fingertip axis points of the commanded pose below T+3 cm. At the model palm the open-hand box (+-H 0.045, +-0.02, back 0.045) at the sagged pose reaches further under the table top. At F 0.125: 0.319 (sag x1) and 0.321 (x1.3), against the smallest E the brain accepts, 0.327 (reach 0.307 + 0.02). At F 0.14: 0.334/0.338, against E 0.343. The 2 cm margin is really 5-6 mm, so a 1 cm error in the taped F or E puts the hand's lower front corner about 4-5 mm into the edge as it rises.",
+     "fix": "Evaluate the keep-out on the hand-box corners (taped F and H) at the commanded pose plus a sag allowance (about 2 cm down), or require E >= printed reach + 0.03 in the plan. Tape F to the tip of the longest open finger."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/motion.py",
+     "line": 81,
+     "issue": "The up-low posture is new and nothing checks it. At its end the shoulder pitch is +1.03 rad and the elbow -0.80 rad. The commanded elbow reaches x -0.156..-0.161 at z 0.11-0.19, y 0.165-0.18. The old raise reached -0.114/-0.116, so the elbow now goes about 9 cm behind the torso's back plane (TORSO_BANDS x_min -0.063..-0.069). The raise (psi 'free') runs no pose_checks; solve checks only IK error and joint margin. The commanded upper-arm centre-line clearance is 5.3 cm at the y 0.18 targets (HANDOFF:27 claims 5.6 cm or more). Hip/thigh: from the URDF leg meshes the hand box comes within 4.9-5.9 cm of a vertex and the forearm 7.0-7.8 cm, about the same as at home, so that part is fine. The stand and its straps are unmodelled, and the plan logs elbow-to-stand gaps only at the pre-grasp and slide (brief:162), not at the up-low end where the elbow is furthest back.",
+     "fix": "In the brief, tell the owner where the elbow goes (about 16 cm behind the pelvis origin, 9 cm behind the back, at belly height). Before the first air run, run the raise with a pause at the up-low end and type o gap_stand=... there. Optionally run pose_checks (torso bands) on the raise targets."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 110,
+     "issue": "The E window depends on F and T, the brief states only the F 0.125 case, and the brain never checks E against the slots. Keep-out reach on the 8 plan targets at T 0.075: F 0.08 gives 0.260 (E >= 0.30, the edge_arg floor); F 0.10 gives 0.281; F 0.125 gives 0.304-0.307 (0.311 at T 0.0, so E >= 0.331); F 0.14 gives 0.319-0.323 (E >= 0.343, a 4 mm window below 0.347); F >= ~0.145 leaves no window. edge_arg (brain.py:31) accepts 0.30-0.55, and only the tape stops an E larger than the real edge. The upper bound 0.347 leaves no margin for the purple can's base at x 0.38. At F 0.14 air run 2 (0.35, 0.00) fails at the pre-grasp: 'pre-corr command: ... (hand 0.120 below the palm)', then 'SKILL FAILED: pre-grasp: the hand followed 0.001 of a 0.003 vertical correction near the table (contact?)'. It fails safe and the arm goes home.",
+     "fix": "Tabulate the window against the taped F (and T) in the brief, and make the plan's chest-to-edge setting come from the fixed dry line. Look into the floor's 0.12 m hand drop at F 0.14."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/mock_robot.py",
+     "line": 387,
+     "issue": "The mock's 'true hand' statistic (raise_tip_under_table_x 0.274-0.280, printed by the reach case as 'the sagged mock hand') is optimistic by about 4 cm. At the up-low end ERRK x (q3-1), extrapolated to elbow -0.8 rad, shortens the true palm offset from 0.246 to about 0.19 m. The real hand is rigid.",
+     "fix": "Do not read that figure as physical. Clamp ERRK's elbow range in the mock, or report the sagged model-palm box instead."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": false,
+     "file": "hackathon/brain/brain.py",
+     "line": 1053,
+     "issue": "The assist raise still streams the old straight raise from palm_cmd(), the sagged home, with no up-low. With F >= 0.10 its keep-out reach is about 0.33-0.35, so it is refused at any E <= 0.347: the assist can never raise. It fails safe and does not bite in this no-grasp plan.",
+     "fix": "Use the same two-segment raise planner from home_q's palm."
+    }
+   ]
+  },
+  {
+   "key": "q6-obstacle",
+   "fixed": false,
+   "confidence": "high",
+   "evidence": "The narrow claim holds. In 13bff01, clear_or_hold runs before high (brain.py:739), pre (:744), each air and back step (:1361, :1370) and each approach step (:836). A refusal calls set_stuck and raises Frozen (:474), so the arm holds and the stuck procedure follows. The --pre-offset move is covered because it is part of the pre goal: \"pre-grasp offset 0.025 m ...\" prints before \"safety (pre)\". The claim does not hold on the other paths the brief asked about. Each finding below is a mock run on an instrumented scratch copy ($SCR/q6-inst) with these knobs added: a configurable obstacle box, the near hand triggered after a phrase, camera failure and camera freeze. Nothing in the repo was touched.\n\n1. No check before the servo nudge (brain.py:783).\n   - Servo-block command (--probe --probe-servo --pre-offset 0.025 --K ...), with a box at x 0.12-0.28, y -0.12 to -0.03, z 0.18-0.36 appearing after \"Measuring.\":\n     - \"[mock] a box appears\", then \"servo 0: correcting by [0.027, -0.007, -0.014]\", \"SAY: Correcting.\", \"servo0: goal [0.401, 0.155, 0.143] measured [0.4, 0.154, 0.138]\".\n     - No safety line appears in between.\n   - Control: the same box appearing after \"Reaching.\" gives \"safety (pre): 2915 points within 0.30 m ...\", then \"STUCK\".\n   - Logs: $SCR/q6-servoobs.log and $SCR/q6-servoobsctl.log.\n\n2. With the arm out, the blind-region rule is switched off (brain.py:460, `not self.arms_on or self.at_home_safe()`).\n   - Air test at (0.40, -0.08), with a hand 10 cm in front of the chest (inside a 0.28 m minimum range) appearing after \"Raising.\":\n     - \"safety (high): clear; valid depth 81%, largest blind region 17%\".\n     - The pre check and all five air steps read clear at 82-83%, and the run ended with result air.\n     - The forearm passed within 9 cm (centre line) of that hand.\n   - Without the hand, the arm-out checks at all three air targets read 0-1% blind (for example \"safety (high): clear; valid depth 99%, largest blind region 1%\"). In the mock the arm does not need the exemption.\n\n3. A frame read failure does not hold the arm.\n   - A RuntimeError raised at clear_or_hold(air step 0) reaches the generic `except Exception` (:1290): \"SAY: Something went wrong. Resetting.\", then \"Up and back.\", \"Turning my wrist.\", \"Home.\"; result error.\n   - The arm retreated home with no h and no y.\n\n4. A stale frame passes.\n   - No frame timestamp or sequence number is used anywhere in brain.py or geom.py.\n   - With the camera frozen and a box appearing after \"Reaching.\": \"safety (pre): clear ... 0 points in the zone (0 on my own arm)\". The five air steps and the back steps were all clear, with the box present.\n   - Whether g1_fetch's camera can return a cached frame is unknown: its source is not on this Mac.\n\n5. The own-arm mask (:456, capsules of radius 0.07 and 0.08) hides things touching the arm. Pose: the (0.40, -0.08) pre-grasp, mask applied.\n   - A flat 9x8x2 cm hand resting on the robot hand: \"masked blocked False (zone 10, own 390) | unmasked +122\".\n   - Two fingers stay hidden up to 6.5 cm from the axis, about 2 cm above the hand.\n   - A 7 cm cube is still seen when adjacent (88-588 points).\n   - Only the part of the arm inside x < 0.30 counts. At this pose that is the wrist to the back of the palm.\n\n6. An `a` typed during the 4 s refusal sentence (:466, wait=4.0) bypasses the hold.\n   - \"7480 points within 0.30 m\", then \"[a] aborting this order\", \"Up and back.\", \"Home.\"; result aborted.\n   - The arm went home with the zone still occupied.\n\n7. Latency per check:\n   - The check itself takes 1.0-4.0 ms. The frame read takes 60-100 ms on the mock, where the frame is rendered; on the robot it is one D435i frame.\n   - The streaming speeds come from per-target step_s, unchanged. The stall checks use the per-step distance moved and the tracking error after settling, also unchanged. This part holds.\n\n8. Plan: the owner measures gap_n with a feeler at the palm during the 4 s pause (brief:165-167) while the streamer is live. ROBOT_RULES.md:13 allows hands in the workspace only with ARM OFF. The brain then moves by itself (\"Up and back.\", or the 2.7 cm \"Correcting.\" nudge), and the hand at x 0.37-0.40 is outside the 0.30 m zone, so no check sees the owner's hand.\n\n9. Plan: the brief contradicts itself on an obstacle hold during the air test.\n   - brief:128-130: the person steps back, then the stuck procedure.\n   - brief:115-117: \"My arm stopped and is holding\" means stop, no kill test.\n   - brief:175: the pass criterion requires no stuck.\n\nGate: on the scratch new tree, check.py --cases lateobst,lateobst2,block,minrange,nearhand,servoblock prints \"CHECK: PASS\".",
+   "gate_catches_old_bug": "Yes, for the narrow claim. On the new tree: \"lateobst ok ... lowered False, slid False, result stuck\" and \"lateobst2 ok ... approach steps 0, result stuck\". With CHECK_TREE=$SCR/q6-old-8e226e9/hackathon/brain: \"lateobst FAIL ... lowered True, slid True, result air\" and \"lateobst2 FAIL ... approach steps 3, result success\". No gate case covers any of these:\n- an obstacle before the servo nudge;\n- a near hand inside the minimum range with the arm out;\n- a camera read failure or a stale frame during the re-check;\n- a person's hand touching the robot's arm under the own-arm mask;\n- `a` typed during the refusal sentence.\nThe gate's lateobst box (x 0.15-0.25, |y| < 0.08) is large and in plain view of the camera.",
+   "residual": [
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 783,
+     "issue": "Servo block: the 2.7 cm forward nudge has no 0.30 m re-check. It runs after --pause 4 s plus two measurements with Gemma calls. Mock run: a box in the zone after 'Measuring.' gives 'servo 0: correcting by [0.027, -0.007, -0.014]' and the hand reaches [0.4, 0.154, 0.138]. The same box at pre gives '2915 points within 0.30 m' and STUCK.",
+     "fix": "Call clear_or_hold('servo %d') before each nudge. Add a gate case: BRAIN_MOCK_OBSTACLE=after:Measuring. with a box that does not hide the hand (a BRAIN_MOCK_OBSBOX knob)."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 460,
+     "issue": "The blind-region rule is skipped whenever the arm is out, so the re-checks before high, pre and the air steps cannot see a hand inside the D435i's minimum range. Mock run, air (0.40, -0.08), MIN_RANGE 0.28, near hand after 'Raising.': 'safety (high): clear; valid depth 81%, largest blind region 17%'; pre and air0-4 clear; result air; the forearm came within 9 cm (centre line) of that hand. Without the hand, the arm-out checks read 0-1% blind at all three air targets, so the exemption is not needed at the plan's poses. The no-motion hand test runs with the arm at home and cannot reveal this.",
+     "fix": "Apply --blind-max with the arm out too, or exclude only the invalid pixels inside the projected own-arm silhouette. Add a gate case: near hand after:Raising. in the air test."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 165,
+     "issue": "At each kill-test pause the owner measures gap_n with a feeler at the palm while the streamer is live (ROBOT_RULES.md:13: hands in the workspace only with ARM OFF). The brain does not wait: after the 4 s pause it measures, then retreats ('Up and back.') or, in the servo block, nudges 2.7 cm ('Correcting.', no wait). The hand sits at x 0.37-0.40, outside the 0.30 m zone, so no check sees the owner's hand.",
+     "fix": "Drop the feeler measurement from this plan, or make the brain wait for an explicit key (hands away) before any motion after the pause. State the rule in the plan."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1290,
+     "issue": "A camera read failure (or any exception) in clear_or_hold is not a hold. It reaches order()'s generic except: 'Something went wrong. Resetting.', then recover_fast retreats home with no h and no y. Mock run: RuntimeError at clear_or_hold(air step 0), then 'Up and back.' ... 'Home.'; result error. There is no forward motion, but the claim says the arm holds.",
+     "fix": "In clear_or_hold, catch exceptions from head_frame and ahead_clear, then set_stuck('cannot read the head camera') and raise Frozen. Add a gate case with a camera failure."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 377,
+     "issue": "No frame age or sequence check: head_frame(1) accepts whatever camera.read returns. Mock run, camera frozen after 'Reaching.' with a box appearing: pre, air0-4 and back0-4 all read 'clear; 0 points in the zone', and the own-arm count was 0 with the arm in view. It is unknown whether g1_fetch can return a cached frame (its source is not on this Mac).",
+     "fix": "Refuse a frame whose timestamp or frame number is not newer than the end of the last move, or one where the arm's expected silhouette has no points while the arm should be in view. Check g1_fetch camera.read on PC2."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 466,
+     "issue": "The refusal sentence waits 4 s through sleep() and check_abort before set_stuck. An `a` typed then raises OrderAborted and the arm retreats automatically with the zone still occupied. Mock run: '7480 points within 0.30 m', then '[a] aborting this order', 'Up and back.', 'Home.'; result aborted. A `q` takes the shutdown path home the same way.",
+     "fix": "Call set_stuck before speaking, or speak the refusal without the abort check, so a refusal always ends in the stuck procedure."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 456,
+     "issue": "The own-arm capsules (0.07 m and 0.08 m around the centre lines) hide a person's hand or fingers touching the arm where it lies inside the zone. Pose: the (0.40, -0.08) pre-grasp. A flat 9x8x2 cm hand resting on the robot hand: 'masked blocked False (zone 10, own 390)'; unmasked it adds 122 points. Two fingers stay hidden up to 6.5 cm from the axis. A 7 cm cube next to the arm is still seen. At (0.38, 0.15) the arm is outside the zone.",
+     "fix": "Say in the plan that contact with the arm is not detected; only the operator on L2+B covers it. Optionally shrink the radii to the link size plus the calibration error (measured on the robot from n_own_arm at the four air poses)."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 115,
+     "issue": "The plan contradicts itself on an obstacle hold during the air test. Lines 128-130: the person steps back, then the stuck procedure. Lines 115-117: 'My arm stopped and is holding' means stop, no kill test. Line 175: the pass criterion requires no stuck. A person walking in, or a false positive from the real arm, would end the plan without an answer. The mock renders only a 25 cm forearm and the hand box, with no upper arm, so arm false positives are untested.",
+     "fix": "State that a 0.30 m hold ('Something is too close') is recorded and the air target re-run after the stuck procedure, not counted as a model failure. Log n_own_arm and n_zone at each air pose on the robot."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 744,
+     "issue": "One check before 'pre' covers the whole lowering and up to 4 forward correction rounds, which take several seconds. In the kill test nothing is checked after pre, but every later move there is a retreat. Each check adds 1-4 ms of compute plus one frame read (60-100 ms on the mock); the streaming speeds and stall checks are unchanged. A refusal adds 4 s of speech.",
+     "fix": "None needed for this plan. Optionally re-check between the correction rounds."
+    }
+   ]
+  },
+  {
+   "key": "q7-gemma-probe",
+   "fixed": false,
+   "confidence": "high",
+   "evidence": "The repo was not touched (git status shows the same four untracked V2_REVIEW files; HEAD is abe447a). Trees are in $SCR/q7-old-8e226e9, $SCR/q7-new-13bff01 (pristine) and $SCR/q7-docs-abe447a. $SCR/q7-inst is a copy of 13bff01 with extra mock knobs: silver-can slots s12/s09/s06/s17, a Gemma box with a chosen back/front extent or placed on the can, a continuous forearm, a box-depth axis bias, an undetected cylinder, and the hand displaced in the next k frames. Tools are in $SCR/q7-tools (run.py, matrix.py, hang.py), and logs are in $SCR/q7-runs. Every run used the plan's kill-test command: --probe --manual --orders 1 --park home --no-grasp --table-z 0.075 --table-edge 0.34 --fingertip 0.125 --palm-half-height 0.045 --floor-margin 0.02. Servo runs added --probe-servo --pre-offset 0.025 --K.\n\nWHAT HOLDS\n- **The ranges fit the mock at every slot for both cans.** off minus model_off (d, n, z) with no hidden error:\n  - Purple can: y 0.12 (0.097, 0.020, 0.045), y 0.09 (0.098, 0.020, 0.044), y 0.06 (0.096, 0.021, 0.043).\n  - Silver can: (0.095, 0.020, 0.045), (0.095, 0.021, 0.044), (0.094, 0.020, 0.043).\n  - With the mock's default error (ERRK 0.03, ERRZ 0.01): d 0.062-0.066, n 0.021, z 0.050-0.052.\n  - With a continuous forearm: d 0.081-0.086, or 0.054-0.057 with the default error.\n  - All of these are inside d 0.03-0.12, n 0-0.04, z 0-0.07. In terms of real palm error that leaves d +2.3 / -6.5 cm, n +/-2 cm, z +2.6 / -4.4 cm.\n- **Readings that leave the ranges:**\n  - ERRK -0.03: d 0.119-0.125, out at purple y 0.12 and 0.09 and at silver y 0.12.\n  - ERR 0.135 (the fwd39 error): d 0.131-0.136, out at every slot.\n  - ERRZ +0.03: z 0.0707 at purple y 0.12.\n  - ERRK 0.06: d 0.027-0.033, and the hand reaches the image edge at y 0.12.\n  - ERRZ -0.05 never reaches the probe: 'SKILL FAILED: pre-grasp: the hand rests 0.013 above its stop 2 cm over the goal (contact?)'.\n- **The near-face flag:**\n  - ERRY -0.02 gives off_n -0.034 (purple) and -0.029 (silver), flagged 'NEAR FACE INSIDE THE CAN: not used'; orders.jsonl holds off_flagged only.\n  - A 1.5 cm box-depth axis bias in x at silver y 0.06 leaks can points into the blob: off_n +0.025, flagged.\n  - The threshold sits 1.4 cm (purple) and 1.25 cm (silver y 0.06) beyond the mock's near face.\n- **In view from every frame.** One displaced probe frame of five: 'AT THE WINDOW EDGE (4 of 5 frames in view): not used', median off unchanged, the robot says 'Not measured'. With the first servo0 frame cut: '(1 of 2 frames in view): not used', no err, no correction (8e226e9 corrected on such a frame).\n- **A missing Gemma box in the servo block (slots 09 and 06):** 'servo: Gemma returned no box of my hand ... no approach', then retreat and home with 0 table contacts.\n- **The gate catches the old bug.** Checked with check.py --cases gemmanone, run from the 13bff01 tree. New: 'skill_failed: Gemma returned no box of my hand, approach False'. With CHECK_TREE=8e226e9: 'result success, approach True', CHECK: FAIL.\n- **Box scaling.** gemma.box with a fixed answer scales y1 by each frame's own height: (128, 48, 256, 144) on 640x480 and (256, 72, 512, 216) on 1280x720. The model is always sent a 480x336 image with max_tokens 24 and stop ']'. MockGemma replaces only chat, so the prompt and the image path are the robot's own.\n- **K's provenance can be rebuilt from the logs.** The console shows K's frame (the plan line's psi), its slot (the target line) and its raise (the 'pre goal' line; also derivable from order_01.jsonl's plan and pre move goal: 0.119 to 0.146). --K is logged as a deviation of three numbers. In the mock the servo block converges: e_d 0.030-0.035, one correction, residual 2-8 mm.\n\nWHERE THE CLAIM BREAKS\n1. **Nothing enforces the ranges.** The brain neither computes off minus model_off nor flags it. At ERRK -0.03, y 0.12 (d 0.125) the robot says 'Measured. Fingertip 123 ...' and orders.jsonl stores an unflagged off. Plan line 124 relies on the agent subtracting two vectors by hand. Its wording ('..., or the Gemma hand box ... under 50% at two slots') does not say whether 'at two slots' also applies to the ranges. The servo block's K rule says 'only from unflagged probe lines', and an out-of-range probe is unflagged as far as the brain is concerned.\n2. **A probe with no Gemma box is treated as measured.** The plan counts 'gemma hand box: none' as not in view (plan:23, :121). The brain still reports in_view True, says 'Measured. Fingertip 63, near face -51 ...' and records off (m3-gnone-probe).\n3. **A hung server does not fail fast.** gemma.ask calls timed_chat with no timeout (gemma.py:61), so the default 600 s applies (bench/client.py:38). Against a socket that accepts and never answers, the call was 'after 20 s: box call still blocked'. Meanwhile the arm holds beside the can and q does nothing until the call returns; Ctrl-C does interrupt it.\n4. **The prompt and the both-ways overlap make a pass hinge on the exact size of Gemma's box.**\n   - The prompt says 'Detect the robot's hand ... \"label\": \"can\"' (gemma.py:100). The only real hand box came from 'the robot's white hand' with label 'hand' (spikes/scripts/grab_lateral.py:83; V2_STRATEGY.md:53).\n   - The blob box covers only the front 12 cm of the hand (geom.py:201), while Gemma boxes the whole hand.\n   - Slot 09 probe: nominal 75-83%. A box that takes in 5.5 cm more wrist reads 48%; one 6 cm back 47%; one on the can 30%. A box 10 cm ahead of the hand passes at 61%, with 0.040 m between the hand points (that distance is not gated).\n   - In the servo block, the wrist-sized box was refused at 41% and 49%.\n   - An undetected cylinder 10-14 cm ahead of the hand shifts off d by +1.5 to +2.6 cm and still passes at 59-67%.",
+   "gate_catches_old_bug": "Partly. Only the gemmanone part has a gate case, and it does fail on the old code.\n\n- **gemmanone on 13bff01:** run from $SCR/q7-new-13bff01/hackathon/brain: 'gemmanone ok ... result skill_failed: Gemma returned no box of my hand: the cross-check cannot, approach False', 'CHECK: PASS'.\n- **gemmanone on 8e226e9:** the same command with CHECK_TREE=$SCR/q7-gate-old/hackathon/brain: 'gemmanone FAIL ... result success, approach True', 'CHECK: FAIL'.\n- **The gate case runs an order (the pick path), not the plan's servo block.** I ran the servo-block path myself (--probe --probe-servo --pre-offset 0.025 --K, BRAIN_MOCK_GEMMA_BOX=none, slots 09 and 06). It held: 'SKILL FAILED: Gemma returned no box of my hand', then a retreat home with 0 table contacts.\n- **No gate case covers:**\n  - the per-axis ranges (plan text; HANDOFF calls them 'plan text; the flag is code');\n  - the near-face flag;\n  - the both-ways overlap: the existing 'gemma' case (box 15 cm off) fails one-way too;\n  - in_view taken from every frame;\n  - a flagged probe being neither spoken nor recorded;\n  - the box scaled to a frame that is not 640x480: the mock is always 640x480;\n  - a hung Gemma server;\n  - a Gemma box larger than the hand.",
+   "residual": [
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 124,
+     "issue": "The range stop rule is manual arithmetic. The brain neither computes off minus model_off nor flags it. An out-of-range reading (mock ERRK -0.03 at y 0.12: d 0.125) is spoken as 'Measured. Fingertip 123 ...' and recorded as an unflagged off in orders.jsonl, which is a K candidate under the servo block's rule 'only from unflagged probe lines' (plan:90). The pass criterion (plan:21-25) does not include the ranges. Line 124 is ambiguous: it does not say whether 'at two slots' covers the ranges or only the Gemma rule.",
+     "fix": "In brain.measure, print 'off-model_off [d, n, z]'. When a component is outside the expected ranges, print 'OUTSIDE THE EXPECTED RANGE: not used', store the value as off_flagged and do not speak it. Or rewrite plan:124 as two rules: a range breach at any slot stops the block and is never a source of K; Gemma under 50% at two slots stops it."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1305,
+     "issue": "A probe whose Gemma box is missing is treated as measured. The plan counts 'gemma hand box: none' as not in view (plan:23, :121), but the brain keeps in_view True, says 'Measured. Fingertip 63, near face -51 ...' and stores off unflagged (m3-gnone-probe). The flag that names the near face inside the can is also spoken with the wrong reason: 'My hand is at the edge of what I can measure' (brain.py:1307).",
+     "fix": "When gemma_box was requested and is None, or gemma_on_blob is under 0.5, store off_flagged and say 'Gemma did not confirm my hand. Not used.' Say 'my hand is too close to the can' for near_inside_can."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/gemma.py",
+     "line": 100,
+     "issue": "The probe's Gemma call does not match a validated payload or the robot's likely box. The prompt asks for 'the robot's hand' but its JSON template says label \"can\" (the can payload from grab_loop). The only real hand box used 'the robot's white hand' with label 'hand' (spikes/scripts/grab_lateral.py:83; V2_STRATEGY.md:53). The both-ways overlap (brain.py:549) compares Gemma's whole-hand box with the blob box, which covers only the front 12 cm (geom.py:201), so the nominal reading is 75-83%. A box that takes in 5.5 cm more wrist reads 48%; one 6 cm back 47%; one on the can 30%. In the servo block the wrist-sized box was refused at 41% and 49% (brain.py:768), while a box 10 cm ahead of the hand passes at 61%. In this plan the overlap is a hard refusal in the servo block and a stop rule in the kill test, so Gemma's untested box size can end the servo half of the session (fail-safe).",
+     "fix": "Use the spike's hand wording and label. Measure the overlap as the fraction of the blob box inside Gemma's box, plus a bound on the distance from Gemma's box front to the blob front. Or, for this plan, record the overlap and judge it from measure_probe.jpg rather than refuse on it; if the servo block must run with --no-gemma-hand, log it."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/gemma.py",
+     "line": 61,
+     "issue": "The fix's premise ('no box (server down, timeout): fails', brain.py:764) holds only when the connection is refused. Gemma.ask passes no timeout, so timed_chat's 600 s default applies to each blocking read (bench/client.py:38). Against a socket that accepts and never answers, the box call was still blocked after 20 s (hang.py). During that time the arm holds at the pre-grasp beside the can and q is ignored until the call returns. Ctrl-C works only if q was not typed first.",
+     "fix": "Pass a short timeout for box and yes/no calls (for example 5 s) through Gemma.ask to timed_chat, and add a mock case with a server that hangs."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 533,
+     "issue": "The near-face flag threshold sits 1.4 cm (purple) and 1.25 cm (silver at y 0.06) beyond the mock's near face (off_n -0.052 / -0.045). Any real hand part that sticks out more than that toward the can past the mock's palm face (the BrainCo thumb at OPEN6, untested) would flag every slot and trip the kill-test stop rule as 'NEAR FACE INSIDE THE CAN'. A palm error of 1.5 cm toward the can does the same.",
+     "fix": "In the plan, read the owner's gap_n against off_n at the first slot to separate a geometry constant from a real gap, before applying the stop rule."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 53,
+     "issue": "The both-ways overlap does not catch an undetected object merged into the blob. With a 7 cm cylinder 10 cm ahead of the hand, off d read 0.110 against 0.095 clean, with 67% overlap, unflagged, spoken as Measured. At 14 cm ahead: d 0.121 at 59%, and only the d range catches it. The plan clears the table only within 0.30 m of the chest.",
+     "fix": "Require the table clear within 30 cm of each slot (the blob radius is 25 cm) and photograph it."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1302,
+     "issue": "In the servo block, servo() runs before o['probe'] is stored, so any SkillFailed from it (no Gemma box, under 50%, contact) loses that order's probe off from orders.jsonl. Only the measure event remains in order_01.jsonl.",
+     "fix": "Store o['probe'] before calling servo()."
+    }
+   ]
+  },
+  {
+   "key": "q8-plan-walk",
+   "fixed": false,
+   "confidence": "high",
+   "evidence": "Checked and holding:\n- Every flag in the plan exists in argparse (brain.py:45-100), including --table-z/--air-table, --fingertip, --palm-half-height, --floor-margin, --no-grasp, --pre-offset, --air-margin, --K, --probe-servo and --expect-calib. Every tape value (T, E, F, H) has a flag.\n- Identity, in a scratch `git clone -b hackathon` at abe447a: `git status --porcelain` is empty; the diff line prints `CODE 13bff01`; `calib.py | head -1` prints exactly `calib calib.json sha ae553548d47b677a git abe447a`. The brain with --expect-calib prints `calib identity: sha ae553548d47b677a as expected, tree clean`. calib.json sha16 is ae553548d47b677a at both 13bff01 and abe447a. No entry goes stale from 10-21 to 10-25, so no command needs --accept-calib. runs/ is git-ignored. --expect-calib is required on the robot (brain.py:1443-1444).\n- Preflight prints `geom PASS FK error 0.6 mm`. The home_q line prints palm [0.194, 0.267, -0.174]. The start pose, `park refused`, `ENABLE MISMATCH`, `--dry: the arm is not enabled` and the air-test lines all exist as worded: CLI overrides, speeds x0.50 with joint step 0.010, up/high sag baselines, safety (high)/(pre), pre err 0.004, tracking baseline, air0-4, slide end 0.002, Back., Up and back., Turning my wrist., `home (the raise retraced) path`, Home., Releasing my arm.\n- Kill-test mock: `pre goal: z 0.119 raised to the table floor 0.146`; the probe line shows margins 56/56 px; off minus model_off = (0.097, 0.020, 0.044).\n- Servo mock: the `pre-grasp offset 0.025 m` line; `servo0 ... err [0.029, ...]`; `servo 0: correcting by`; `SAY: Correcting.`; servo1 err [-0.003, -0.001, 0.004].\n- Stop-rule wordings exist: (contact?), `correction stopped:` (motion.py:199), NEAR FACE INSIDE THE CAN, AT THE IMAGE/WINDOW EDGE, `gemma hand box: none`, \"I have no safe way out\", and `quit` is accepted while stuck.\n- Pause: Enter while paused prints `[enter] ignored: paused`.\n- A hand 10 or 20 cm from the chest at belly height projects into the image at 0.19-0.26 m range, inside the D435i minimum range, so the blind-region refusal can fire.\n- Blocks add up to 12+12+20+28+13+15 = 100 minutes.\n\nRefuted:\n(1) The dry-run reach line the E rule depends on is computed on the old straight raise (brain.py:1349-1352). It is not the two-stage raise the robot actually moves (brain.py:731-735). Mock at the three air targets:\n- F 0.08: `dry raise ... behind x 0.305/0.306`\n- F 0.10: 0.325/0.326\n- F 0.114 (calib's own BrainCo estimate: 15.9 cm hand, palm 4.5 cm from the wrist end): 0.339/0.340, while the real air run's up-low/up/home keep-out lines print 0.284/0.292/0.294\n- F 0.125: `behind x 0.350 (taped table edge 0.340)`\n\nThe plan's rule (line 110: X <= E - 0.02 and E <= 0.347, \"with the mock's 12.5 cm hand X is 0.304-0.307\") has no valid E for F above about 0.103, so the session stops before the first motion.\n\n(2) Pause, a refused take-back: when park() refuses, the arm stays paused with pause_released False. The next p only resumes: it prints \"[p] resumed: the arm is taken back\" and takes nothing back. The next Enter runs the order, and to_pregrasp's arms_enable (brain.py:722) enables the arm without the start-pose gate or the ENABLE MISMATCH check. Mock, with a scratch hook that leaves the arm out of the home region after the release and has the owner lower it 4 s later: `park refused ... still paused (ARM OFF)` \u2192 `p` \u2192 `[p] resumed` \u2192 `enter` \u2192 `== LOOK` \u2192 `[mock] arm streamer enabled` \u2192 `SAY: Home.` \u2192 the probe ran.\n\n(3) A second stop that arrives after \"Moving my arm back before I stop.\" (in practice while the way home is being planned) is acknowledged but not acted on:\n- q prints `[q] second stop: the arm holds where it is instead of coming home`, and then `Up and back.`, `Home.`, `Releasing my arm.` follow.\n- a prints `[a] aborting this order`, and the arm goes home the same way.\n\nhold_on_quit is checked once (brain.py:1407), and a sets abort (brain.py:327), which the shutdown and the retreat ignore. The plan (lines 146-148) promises a hold.\n\n(4) The kill test asks the owner to measure gap_n with a feeler or tape at the hand during the unconfirmed 4 s --pause. The robot says \"Measuring.\" before that pause (brain.py:1300). The 5 blob frames follow, and the owner's hand would be inside the 200x170 px window. After that the retreat starts on its own (brain.py:1309), at full speed, because the kill command carries no --speed 0.5.\n\n(5) The no-motion block runs a single safety check per order, at locate, and only after LOOK has found a can (brain.py:699). The 10/20/30 cm hand test therefore needs three orders on top of the 4 slots, but the command has --orders 4. A flat hand 10 cm from the chest projects onto u 240-490 px, v 253-382 px, which overlaps the y 0.06/0.09 cans (u 216-270, v 162-274). If it hides the can, the brain says \"I do not see any can\" and prints no safety line.",
+   "gate_catches_old_bug": "Partly. The `pause` case fails on 8e226e9: no release, and the latched Enter starts the order. It never runs a refused take-back, where 13bff01 still resumes with the arm released and the next Enter enables the arm inside the order without the start-up checks. `secondq` types q+q at one streamed target, before the shutdown's single hold_on_quit check. It misses a second q, a or Ctrl-C after \"Moving my arm back before I stop.\": on 13bff01 that is acknowledged as a hold and the arm still goes home. No case reads the `dry raise from home` line that the plan's E rule uses (reach/air2/air3/airfloor read only the moving raise), so the wrong 0.350 at F 0.125 passes the 50/50 gate.",
+   "residual": [
+    {
+     "severity": "blocker",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1349,
+     "issue": "Dry run (no-motion block): the `dry raise from home` line plans the pre-round-3 straight raise (home palm straight to the up waypoint), not the two-stage up-low then up raise of to_pregrasp (brain.py:731-735). Mock: 0.350-0.351 at F 0.125 and 0.339-0.340 at F 0.114 (the BrainCo estimate), while the real raise's keep-out reads 0.284-0.304. The plan's stop rule (briefs/2026-10-21-v2-kill-test.md:110-112: X <= E-0.02, E <= 0.347) then has no valid E for F above about 0.103, so the plan stops itself before the air test.",
+     "fix": "Make the dry line plan the same two waypoints: the up-low waypoint (home x - raise_back_m at table_top+0.03), then up, run through the keep-out exactly as to_pregrasp does. Print both reaches, and add a check.py case that compares the dry line with the moving run's `up path` line at F 0.125."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 590,
+     "issue": "Pause: when the take-back is refused (`park refused`, or ENABLE MISMATCH), paused goes back to True with pause_released False. The next p only resumes, and prints '[p] resumed: the arm is taken back at home' although nothing is taken back. The next Enter starts an order with ARM OFF, and to_pregrasp's arms_enable (brain.py:722) enables the arm without the start-pose gate or the ENABLE MISMATCH check, then joint-moves it home. Mock (scratch hook: arm out of the region after release, lowered by the owner 4 s later): park refused \u2192 p \u2192 `[p] resumed` \u2192 enter \u2192 `== LOOK`, `[mock] arm streamer enabled`, `SAY: Home.`, probe ran.",
+     "fix": "Keep pause_released True, or re-set it, when park() refuses, so every resume goes through park(). Refuse an order while arms_on is False outside --dry. Print the real state on resume. Add a gate case with a refused take-back."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 1407,
+     "issue": "Stops and shutdown: a second q or Ctrl-C after 'Moving my arm back before I stop.' and before the first retreat target (in practice while plan_retreat runs) sets hold_on_quit after its only check: it prints '[q] second stop: the arm holds where it is instead of coming home', yet the arm goes home ('Up and back.', 'Home.', 'Releasing my arm.' in the mock). A second `a` sets abort (brain.py:327), which the shutdown clears and run_retreat ignores. The plan (briefs:146-148) promises 'a second q, a or Ctrl-C ... stops the arm there'.",
+     "fix": "In the shutdown and in go_home, turn any stop typed after the first quit (q, a or Ctrl-C, including during plan_retreat) into a freeze that run_retreat checks before every target. Or have run_retreat raise Frozen at its first target when hold_on_quit is set. Route `a` to the same branch once quit or in_shutdown is set."
+    },
+    {
+     "severity": "must_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 166,
+     "issue": "Kill test: the owner is asked for gap_n with a feeler or the tape at the robot's hand during the 4 s --pause. That pause follows 'Measuring.' and gates nothing (brain.py:1300). The 5 blob frames come next, with a person's hand inside the 200x170 px window, which corrupts off and scatter, the very quantities under test. The retreat then starts by itself after the spoken result (brain.py:1309), at full speed (no --speed 0.5 on the kill command), with the owner's hand at the robot hand.",
+     "fix": "Drop gap_n from this plan (it is data for the later grasp session). Or add an operator-gated hold after the frames and before the retreat (Enter to retreat), state 'hands out before Measuring.', and lengthen --pause if the fore/height judgement needs more time."
+    },
+    {
+     "severity": "should_fix",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 87,
+     "issue": "Dry run: the 0.30 m hand test (10, 20, 30 cm) needs one order per distance, because ahead_clear runs once, at locate (brain.py:699), and only after LOOK has detected a can. The command has --orders 4 for the 4 slots. A flat hand 10 cm from the chest projects onto u 240-490 px, v 253-382 px and can hide the y 0.06/0.09 cans (u 216-270, v 162-274), giving 'I do not see any can' with no safety line.",
+     "fix": "Run the hand test with `--dry --air` (ahead_clear on the first frame, no can needed, brain.py:1331), one run per distance, or raise --orders to 7 and test at the edge-probe slot."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/brain.py",
+     "line": 125,
+     "issue": "The owner tapes the hand thickness, but hand_half_thickness_m (0.02) and hand_back_m (0.045) have no CLI route; they feed the table-floor hand box through geom.",
+     "fix": "Add flags logged as deviations, or say in the plan that the thickness is recorded only; the 2 cm --floor-margin covers a few mm."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/brain/HANDOFF.md",
+     "line": 141,
+     "issue": "The 'later' items do reach this plan. The bridge is a joint-space wrist roll with no clearance check, and it runs in every air and kill retreat (mock: 1.085 rad pure wrist roll at the up waypoint; the line-model clearances do not change, hand 12.6 cm from the torso). The 30 s reminder, the y window and the tty Enter gating run for the first time on the robot. The keep-out uses commanded joints: the sagged mock fingertips reached x 0.319 under the table top while the command read 0.3095, so E 0.33 leaves about 1 cm.",
+     "fix": "Keep the owner on L2+B through every retreat and the bridge. Prefer E near 0.34-0.347 in the window."
+    },
+    {
+     "severity": "note",
+     "in_this_plan": true,
+     "file": "hackathon/briefs/2026-10-21-v2-kill-test.md",
+     "line": 88,
+     "issue": "The expected `up-low path: ... behind x 0.3xx` reads 0.284-0.295 in the mock. The take-back after p can also move the arm ('Parking.', 'Home.'), which the pause text does not mention.",
+     "fix": "Reword the expected lines."
+    }
+   ]
+  }
+ ],
+ "critic": {
+  "fixed": false,
+  "confidence": "medium",
+  "evidence": "This is a read-only review: no repo file was changed. Trees are in $SCR/{old-8e226e9,new-13bff01,docs-abe447a}, the instrumented copies in $SCR/c4-inst and $SCR/c4-rel, and the logs in $SCR/c4-*.log ($SCR = /private/tmp/claude-501/-Users-junda-robot-harness/44b035f1-dc0d-4025-a748-1eab1915cdb8/scratchpad).\n\nSomething should still stop approval, because the q5/q8 blocker is real. Mock --dry --air at all three plan targets printed 'dry raise from home: below z 0.105 the hand stays behind x 0.350' (also 0.351, 0.351). The real raise prints 'up-low path: ... x 0.296' and 'up path: ... x 0.305'. Plan :110 requires X <= E-0.02 with E <= 0.347, so the no-motion block stops the session.\n\nNone of the new risks I found is a blocker. What I checked:\n- Four plan air runs with --park home --no-grasp, half speed, on the instrumented tree: all end 'result air'. At the 2 cm stop the hand's measured height minus the stop height ('held') was 0.0008 and 0.0005. At the kill slots (y 0.12/0.09/0.06/0.17, --floor-margin 0.02) it was 0.0002-0.0005, with 0 table contacts.\n- The sag cap only applies when the sag at the stop differs from the one at high by more than 1 cm. Here the differences were 0.003-0.0065, so it never applied. When it does, it is neutralised by the command floor, which uses the current sag (motion.py:72-76).\n- Raw air steps before correction: first step 0.0074/0.0077 m, later steps about 0.010 m.\n- The high and pre joint poses are identical to 8e226e9's (for example pre q_cmd [-1.022, 0.425, -0.881, 0.578, -1.019] at (0.40, -0.08) in both). The up-low only adds shoulder pitch +1.03 rad, elbow -0.80 rad.\n- Pause and retake from a moved release pose (mock disable patched to put the arm at 0.06,0.18,0.06,1.12,0.10): 'start pose: ... 0.139 rad from home_q ... in the home region', 'Parking.', 'home (joint space) ... x 0.262', '== ARM ON', then the second order ran normally.\n- Gemma's box scaling is correct: image_part stretches the frame to 480x336 and the normalised box is mapped back to the frame's own size.\n\nNote on method: my first mock runs failed only because my wrapper did not pass env (default two-can scene). After that fix, check.py air2/air3/airfloor/reach pass and so do my reruns.\n\nComplexity: Brain has 17 flags (quit, abort, go, paused, pause_released, stuck, retreating, in_shutdown, freeze_req, force_quit, quit_after_home, hold_on_quit, home_req, answer, ...). They are written by the stdin thread, the signal handler and the main loop. q has 4 meanings depending on state, a has 4, Ctrl-C has 2, 'quit' has 2, and p releases only when idle at home. The owner can predict the normal path (raise, high, lower, measure, retreat) from the plan, but not the stop and pause paths. The verifiers already list 5 places where the plan and the code disagree, and the HANDOFF claim about a typed between orders is false (residual 2).",
+  "gate_catches_old_bug": "I did not re-run the 14 new cases on 8e226e9. None of the gate cases can show the failure modes that 13bff01's new refusals introduce:\n- The mock's measured joints depend only on the command (mock_robot.py:381-383: cmd + sag_dq(cmd), with no friction or hysteresis). So the 2 cm-stop check (motion.py:175), the sag cap (:177) and the air stall stop (brain.py:1365) cannot fire falsely in any case.\n- The mock's disable() leaves the arm at home, so the 'pause' case never runs the retake's Parking move. I patched it to move the arm and the retake works.\n- No case checks the --dry --air 'dry raise from home' line, which still prints the old straight raise (0.350 against 0.305 for the real raise).\n- No case types a between orders. That path still cancels the next order, although the HANDOFF says it is fixed.\n- check.py's BASE passes --fingertip 0.125, which equals the mock's HAND_BOX. The floor's hand box and the \"true\" hand are therefore identical, so killtable and servoblock test only translation errors (plane bias, ERRZ), not hand shape or orientation.",
+  "residual": [
+   {
+    "severity": "should_fix",
+    "in_this_plan": true,
+    "file": "hackathon/brain/motion.py",
+    "line": 175,
+    "issue": "New in 13bff01: after the lowering stops 2 cm above the goal, a hand resting more than corr_tol (6 mm) above that stop is refused as '(contact?)'. That stop line feeds forward the sag measured at the high waypoint, 12 cm higher and with forearm pitch about -16 deg instead of +5 to -10 deg. So the check really tests whether sag(high) - sag(stop) in z exceeds 6 mm. It runs in air run 1 (0.38, 0.15), air run 4 and at every kill slot. In the mock this 'held' value was only 0.0002-0.0008, because the mock arm has no friction or hysteresis (mock_robot.py:381-383). A real PD arm stopping above its static sag on the way down, or a sag that is 6 mm smaller at the stop, gives 'SKILL FAILED: pre-grasp: the hand rests 0.0xx above its stop 2 cm over the goal (contact?)'. That ends the air test (plan :115, no kill test) or every kill block (plan :118). 'held' is printed only when it refuses, so the air runs cannot show how close it came before the kill test. This is distinct from q4's :189 item, though q4's 'corr_tol' note may overlap.",
+    "fix": "Log and print 'held' on every stop. Gate the kill test on the air runs' held values (stop if any is over 4 mm). Better: test contact with the follow ratio of the final 2 cm, using the sag measured at the stop after settling, as 8e226e9 fed it, instead of a fixed offset against high's sag."
+   },
+   {
+    "severity": "should_fix",
+    "in_this_plan": true,
+    "file": "hackathon/brain/brain.py",
+    "line": 574,
+    "issue": "HANDOFF.md:41 claims 'a typed between orders no longer cancels the next one'. This is false: abort is cleared only on entry to idle() (:575), so an a typed while idle waits for Enter (between kill slots, or during the can-reset pause) stays latched. Mock run (slot09 --probe --manual, a at 3 s, Enter at 6 s): '[a] aborting this order' ... '== PICK probe', 'SAY: Raising.', 'SAY: Order cancelled.', '== RESULT order 1: aborted'. Nothing streams, because check_abort runs before the first set_target. But one of the plan's --orders 4 / --orders 2 slots is lost, and the console told the operator an order was being aborted when none was running.",
+    "fix": "In key(), ignore a when no order runs (self.o is None): print '[a] ignored: no order is running'. Or clear abort when idle() returns True. Correct the HANDOFF line."
+   },
+   {
+    "severity": "note",
+    "in_this_plan": true,
+    "file": "hackathon/brain/brain.py",
+    "line": 353,
+    "issue": "p typed during an order prints '[p] paused: no order starts; at home the arm is released (ARM OFF) for a can reset' while the arm is out and held. Mock: printed right after 'Measuring.' with the hand at the pre-grasp. The release happens only after the order, when the arm is back home. Plan :165-167 asks the owner to put a feeler at the hand during exactly that pause, so this text invites the wrong reading (see q6's must_fix about hands in the workspace while the streamer is live).",
+    "fix": "When an order is running or the arm is not at home, print '[p] noted: the arm is OUT and held; it is released only after this order, at home: wait for == ARM OFF'."
+   },
+   {
+    "severity": "note",
+    "in_this_plan": true,
+    "file": "hackathon/brain/brain.py",
+    "line": 1365,
+    "issue": "New air stall stop: a step under 5 mm ends the air test. The in-step correction runs only when the step moved more than half its length (motion.py:224), so the 5 mm limit is applied to the raw step. The mock's raw first step moves only 0.0074 (target (0.40, -0.08)) and 0.0077 (target (0.38, 0.15)) because the sag changes along the slide; later steps move about 0.010. If the real sag changes about 2.5 mm more per centimetre than in the mock, or the arm has stiction, run 1 or 3 fails with 'stalled (contact?)'. That is a SKILL FAILED, so the plan stops with no kill test.",
+    "fix": "Feed the sag change of step 0 forward (as later steps do), or run the in-step correction whenever the step moved more than 2 mm. Report the first-step margin in the plan's air pass criterion."
+   },
+   {
+    "severity": "note",
+    "in_this_plan": true,
+    "file": "hackathon/brain/brain.py",
+    "line": 733,
+    "issue": "The first raise candidate goes up-low at y = max(pre_y, 0.18), which is 0.18 for the cross-body air targets and kill slots y 0.09 and 0.06. At taped T >= 0.10 it is refused before any motion with 'joint 3 within 5 deg of its limit'. Mock path solve: T 0.075 min margin 14.1 deg; T 0.10/0.12/0.15 REFUSED; the y 0.233 candidate also refused at T 0.15. The raise then falls back to up-low and up at y 0.267 ('up waypoint ... skipped'). Neither the plan's expected lines nor the dry run show that path. Tuesday's table was about T 0.08-0.09.",
+    "fix": "Print which raise candidate was used. Add the 'skipped' case to the plan's expected air lines, or stop if T >= 0.09 until both candidates have been dry-planned at the taped T."
+   },
+   {
+    "severity": "note",
+    "in_this_plan": true,
+    "file": "hackathon/brain/README.md",
+    "line": 53,
+    "issue": "The README added in abe447a contradicts the code and the plan. Its key list still says '`p` no new order starts (the arm stays held at home)' (:53) and 'goals and commands floored at the table plane + palm half-height + 5 mm' (:62). Its example commands lack --table-z, --no-grasp and --fingertip. An owner reading the README gets the old pause meaning, under which a can reset would happen with the arm held.",
+    "fix": "Update the key list and the floor description, and point the examples at the run plan's verbatim commands."
+   },
+   {
+    "severity": "note",
+    "in_this_plan": true,
+    "file": "hackathon/brain/brain.py",
+    "line": 315,
+    "issue": "Complexity: the arm's behaviour on stops and pauses is now a product of about 17 flags written by three contexts (the stdin thread, the signal handler, the main loop). q, a, Ctrl-C, quit, quit!, p and Enter each change meaning with the state (for example, q means quit after home, hold here, quit after the next way out, or hold instead of home). The plan's stuck procedure already differs from the code in several places (q3), and two of the HANDOFF's key claims are wrong (residual 2 here, and q1/q8 on p after a failed retake). The owner can predict the normal path from the plan but not the stop and pause paths.",
+    "fix": "Before the session, print a one-screen key table that shows each key's meaning in each state, generated from the code. Also reduce the flags to one explicit arm state (HOME_HELD, RELEASED, OUT, RETREATING, STUCK, SHUTDOWN) with a transition table that the gate enumerates."
+   }
+  ]
+ }
+}

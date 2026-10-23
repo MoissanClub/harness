@@ -1,0 +1,304 @@
+{"ev": "order", "n": 1, "params": {"pre": 0.03, "grasp_below": 0.015, "palm_real": 0.246, "K": null, "servo_iters": 3, "servo_tol": 0.01, "psi": "-30:60:5", "clear": [0.03, 0.04, 0.06, 0.05], "pitch_max": 15.0, "ik_tol": 0.005, "contact": 0.015, "lag": 0.012, "lift": 0.12, "verify": "signature", "seconds": 4.0, "probe": false, "air": false, "no_gemma_hand": false, "pre_offset": 0.0, "model_grasp": true, "no_fix": false, "probe_servo": false, "no_grasp": false, "speed": 0.5, "table_edge": 0.365, "air_table": 0.048, "air_margin": 0.03, "fingertip": 0.125, "palm_half": 0.045, "floor_margin": 0.005, "blind_max": 0.08}, "session": "20261024T035958", "tag": "scripted skill", "t": 1792785614.3423305}
+{"ev": "calib", "calib_sha": "acbabf3ea8f6919a", "git": "109c1ca", "dirty": false, "tag": "scripted skill", "t": 1792785614.3560038}
+{"ev": "deviation", "key": "speed_scale", "calib": 1.0, "cli": 0.5, "tag": "scripted skill", "t": 1792785614.356276}
+{"ev": "deviation", "key": "table_edge_m", "calib": null, "cli": 0.365, "tag": "scripted skill", "t": 1792785614.356318}
+{"ev": "deviation", "key": "fingertip_m", "calib": 0.08, "cli": 0.125, "tag": "scripted skill", "t": 1792785614.3563457}
+{"ev": "detect", "stage": "LOOK", "n": 3, "ms": 126, "boxes": [[81, 116, 190, 289], [231, 11, 298, 172], [315, 110, 396, 279]], "conf": [0.87, 0.82, 0.91], "tag": "scripted skill", "t": 1792785614.5415795}
+{"ev": "gemma", "t": 1792785615.0685847, "stage": "LOOK", "kind": "describe", "question": "Describe this drink can in at most four words: colour, brand or flavour, and any fruit pictured.", "answer": "Silver, Sparkling East, None", "ms": 526, "tag": "Gemma decision", "media": "can 0", "prompt_n": 143, "prompt_ms": 335.843, "predicted_n": 7, "predicted_ms": 181.48, "cache_n": 2}
+{"ev": "gemma", "t": 1792785615.4906986, "stage": "LOOK", "kind": "describe", "question": "Describe this drink can in at most four words: colour, brand or flavour, and any fruit pictured.", "answer": "Silver sparkling white peach", "ms": 417, "tag": "Gemma decision", "media": "can 1", "prompt_n": 105, "prompt_ms": 286.404, "predicted_n": 5, "predicted_ms": 121.449, "cache_n": 41}
+{"ev": "gemma", "t": 1792785615.9802098, "stage": "LOOK", "kind": "describe", "question": "Describe this drink can in at most four words: colour, brand or flavour, and any fruit pictured.", "answer": "Silver, ERO, peach", "ms": 486, "tag": "Gemma decision", "media": "can 2", "prompt_n": 111, "prompt_ms": 300.097, "predicted_n": 7, "predicted_ms": 177.409, "cache_n": 41}
+{"ev": "scene", "stage": "LOOK", "cans": [{"i": 0, "desc": "silver sparkling east", "box": [81, 116, 190, 289], "conf": 0.87, "size": "standard", "p": [0.396, 0.154, 0.165], "words": "silver sparkling east, standard, on the left"}, {"i": 1, "desc": "silver sparkling white peach", "box": [231, 11, 298, 172], "conf": 0.82, "size": "slim", "p": [0.539, 0.071, 0.157], "words": "silver sparkling white peach, slim, in the middle"}, {"i": 2, "desc": "silver ero peach", "box": [315, 110, 396, 279], "conf": 0.91, "size": "slim", "p": [0.403, -0.005, 0.161], "words": "silver ero peach, slim, on the right"}], "tag": "Gemma decision", "t": 1792785615.998608}
+{"ev": "stage", "stage": "LOOK", "ms": 1642, "tag": "scripted skill", "t": 1792785615.9987524}
+{"ev": "say", "stage": "LISTEN", "text": "Tell me which one you'd like.", "tag": "scripted skill", "t": 1792785615.9993024}
+{"ev": "say", "stage": "LISTEN", "text": "Listening.", "tag": "scripted skill", "t": 1792785618.5295243}
+{"ev": "record", "stage": "LISTEN", "seconds": 4.0, "bytes": 128044, "ms": 4128, "path": "/home/unitree/harness/hackathon/brain/runs/20261024T035958/order_01/order_1.wav", "tag": "scripted skill", "t": 1792785623.858115}
+{"ev": "stage", "stage": "LISTEN", "ms": 7859, "tag": "scripted skill", "t": 1792785623.8582566}
+{"ev": "gemma", "t": 1792785624.2348733, "stage": "UNDERSTAND", "kind": "hear_choice", "question": "Which can does the guest want?", "answer": "1", "ms": 375, "tag": "Gemma decision", "media": "audio", "prompt_n": 218, "prompt_ms": 325.621, "predicted_n": 2, "predicted_ms": 33.088, "cache_n": 5}
+{"ev": "stage", "stage": "UNDERSTAND", "ms": 377, "tag": "scripted skill", "t": 1792785624.2358177}
+{"ev": "say", "stage": "CONFIRM", "text": "The silver sparkling east one. Coming up.", "tag": "scripted skill", "t": 1792785624.238409}
+{"ev": "stage", "stage": "CONFIRM", "ms": 1003, "tag": "scripted skill", "t": 1792785625.238851}
+{"ev": "detect", "stage": "LOCATE", "n": 3, "ms": 32, "boxes": [[81, 115, 190, 289], [232, 10, 298, 172], [315, 110, 396, 278]], "conf": [0.92, 0.81, 0.92], "tag": "scripted skill", "t": 1792785625.3211794}
+{"ev": "safety_check", "stage": "LOCATE", "where": "locate", "blocked": false, "why": "", "tag": "sensor gate", "valid": 0.965, "n_zone": 0, "n_own_arm": 0, "blind": 0.011, "t": 1792785625.3305202}
+{"ev": "plane", "stage": "LOCATE", "plane": {"z": 0.053, "n": [0.0, 0.0, 1.0], "n_in": 1001, "tilt_deg": 0.0}, "z_hint": 0.105, "tag": "scripted skill", "t": 1792785625.3319016}
+{"ev": "target", "stage": "LOCATE", "desc": "silver sparkling east", "p": [0.395, 0.153, 0.167], "diam": 0.066, "box": [81, 115, 190, 289], "z": 0.434, "size_m": [0.078, 0.125], "n_cans": 3, "tag": "scripted skill", "t": 1792785625.3473148}
+{"ev": "plan", "stage": "LOCATE", "ok": true, "psi": -10, "pitch": -0.1, "target": [0.395, 0.153, 0.1], "grasp": [0.383, 0.22, 0.1], "pre": [0.378, 0.25, 0.1], "high": [0.378, 0.25, 0.22], "checks": {"grasp": {"upper": 0.052, "forearm": 0.06, "hand": 0.108, "pitch": -0.073, "psi": -10.0, "margin": 1.19, "table": 0.002, "right": 0.35, "ik": 0.0}, "pre": {"upper": 0.067, "forearm": 0.088, "hand": 0.128, "pitch": 0.666, "psi": -10.001, "margin": 1.207, "table": 0.002, "right": 0.377, "ik": 0.0}, "slide1": {"upper": 0.062, "forearm": 0.079, "hand": 0.121, "pitch": 0.329, "psi": -10.0, "margin": 1.2, "table": 0.002, "right": 0.368, "ik": 0.0}, "slide2": {"upper": 0.057, "forearm": 0.069, "hand": 0.114, "pitch": 0.083, "psi": -10.0, "margin": 1.194, "table": 0.002, "right": 0.359, "ik": 0.0}, "high": {"upper": 0.067, "forearm": 0.091, "hand": 0.131, "pitch": -18.739, "psi": -10.0, "margin": 0.953, "table": null, "right": 0.383, "ik": 0.0}}, "tried": [{"psi": -30, "ok": false, "why": "grasp: upper, forearm", "pitch": 5.4}, {"psi": -25, "ok": false, "why": "grasp: upper, forearm", "pitch": 2.4}, {"psi": -20, "ok": false, "why": "grasp: upper, forearm", "pitch": 0.6}, {"psi": -15, "ok": false, "why": "grasp: forearm", "pitch": -0.2}, {"psi": -10, "ok": true, "why": "", "pitch": -0.1}, {"psi": -5, "ok": true, "why": "", "pitch": 1.0}, {"psi": 0, "ok": true, "why": "", "pitch": 3.1}, {"psi": 5, "ok": true, "why": "", "pitch": 6.6}, {"psi": 10, "ok": false, "why": "pre: IK 6.0 mm", "pitch": 12.2}, {"psi": 15, "ok": false, "why": "grasp: pitch", "pitch": 28.2}, {"psi": 20, "ok": false, "why": "grasp: IK 337.0 mm", "pitch": 12.1}, {"psi": 25, "ok": false, "why": "grasp: IK 223.9 mm", "pitch": 68.7}, {"psi": 30, "ok": false, "why": "grasp: IK 213.3 mm", "pitch": 49.5}, {"psi": 35, "ok": false, "why": "grasp: IK 177.6 mm", "pitch": 58.9}, {"psi": 40, "ok": false, "why": "grasp: IK 201.3 mm", "pitch": 65.9}, {"psi": 45, "ok": false, "why": "grasp: IK 123.9 mm", "pitch": 54.1}, {"psi": 50, "ok": false, "why": "grasp: IK 97.5 mm", "pitch": 51.0}, {"psi": 55, "ok": false, "why": "grasp: IK 77.3 mm", "pitch": 34.3}, {"psi": 60, "ok": false, "why": "grasp: IK 62.5 mm", "pitch": 36.6}], "tag": "scripted skill", "t": 1792785626.7044978}
+{"ev": "deviation", "key": "model_grasp", "calib": null, "cli": true, "tag": "scripted skill", "t": 1792785626.7067163}
+{"ev": "stage", "stage": "LOCATE", "ms": 1468, "tag": "scripted skill", "t": 1792785626.7077773}
+{"ev": "keepout", "stage": "PICK", "label": "up-low", "below_z": 0.083, "reach_x": 0.293, "edge_x": 0.365, "tag": "scripted skill", "t": 1792785627.7715826}
+{"ev": "keepout", "stage": "PICK", "label": "up", "below_z": 0.083, "reach_x": 0.307, "edge_x": 0.365, "tag": "scripted skill", "t": 1792785627.8167322}
+{"ev": "say", "stage": "PICK", "text": "Raising.", "tag": "scripted skill", "t": 1792785627.817834}
+{"stage": "PICK", "ev": "move", "label": "up-low", "goal": [0.174, 0.25, 0.083], "measured": [0.177, 0.247, 0.075], "err": 0.0087, "arrival": 0.0087, "rounds": 0, "blocked": "", "sag_ff": [0.0, 0.0, 0.0], "psi": "free", "pitch": 15.5, "q_cmd": [0.947, 0.316, 0.135, -0.63, 0.0], "q_meas": [0.917, 0.297, 0.115, -0.598, 0.003], "lag_max": null, "tag": "scripted skill", "t": 1792785634.1401017}
+{"stage": "PICK", "ev": "move", "label": "up", "goal": [0.244, 0.25, 0.22], "measured": [0.244, 0.252, 0.21], "err": 0.0102, "arrival": 0.0102, "rounds": 0, "blocked": "", "sag_ff": [0.0, 0.0, 0.0], "psi": "free", "pitch": -13.9, "q_cmd": [0.565, 0.392, 0.304, -0.738, 0.0], "q_meas": [0.564, 0.357, 0.29, -0.717, 0.003], "lag_max": null, "tag": "scripted skill", "t": 1792785637.7728243}
+{"ev": "sag", "stage": "PICK", "label": "up", "err": 0.0102, "vector": [-0.0, -0.002, 0.01], "tracking": 0.0347, "tag": "sensor gate", "t": 1792785637.7736816}
+{"ev": "safety_check", "stage": "PICK", "where": "high", "blocked": false, "why": "", "tag": "sensor gate", "valid": 0.964, "n_zone": 0, "n_own_arm": 0, "blind": 0.009, "t": 1792785637.7809324}
+{"ev": "say", "stage": "PICK", "text": "Reaching.", "tag": "scripted skill", "t": 1792785637.781184}
+{"stage": "PICK", "ev": "move", "label": "high", "goal": [0.378, 0.25, 0.22], "measured": [0.375, 0.251, 0.192], "err": 0.0286, "arrival": 0.0286, "rounds": 0, "blocked": "", "sag_ff": [0.0, 0.0, 0.0], "psi": -10.0, "pitch": -18.7, "q_cmd": [-0.193, 0.221, 0.245, -0.094, -0.181], "q_meas": [-0.145, 0.207, 0.235, -0.067, -0.184], "lag_max": null, "tag": "scripted skill", "t": 1792785642.6629944}
+{"ev": "sag", "stage": "PICK", "label": "high", "err": 0.0286, "vector": [0.003, -0.001, 0.028], "tracking": 0.0476, "tag": "sensor gate", "t": 1792785642.6635318}
+{"ev": "safety_check", "stage": "PICK", "where": "pre", "blocked": false, "why": "", "tag": "sensor gate", "valid": 0.963, "n_zone": 0, "n_own_arm": 0, "blind": 0.01, "t": 1792785642.6726468}
+{"ev": "say", "stage": "PICK", "text": "Lowering beside the can.", "tag": "scripted skill", "t": 1792785642.6729393}
+{"stage": "PICK", "ev": "move", "label": "pre", "goal": [0.378, 0.25, 0.104], "measured": [0.375, 0.25, 0.104], "err": 0.0028, "arrival": 0.0028, "rounds": 0, "blocked": "", "sag_ff": [0.006, -0.003, 0.024], "psi": -10.0, "pitch": -3.8, "q_cmd": [-0.147, 0.192, 0.198, 0.112, -0.164], "q_meas": [-0.104, 0.177, 0.199, 0.132, -0.171], "lag_max": 0.0031, "tag": "scripted skill", "t": 1792785648.4022932}
+{"ev": "stage", "stage": "PICK", "ms": 25773, "tag": "scripted skill", "t": 1792785652.481152}
+{"ev": "detect", "stage": "SERVO", "n": 3, "ms": 34, "boxes": [[80, 116, 189, 290], [231, 11, 297, 172], [315, 111, 397, 280]], "conf": [0.89, 0.82, 0.89], "tag": "scripted skill", "t": 1792785652.5207326}
+{"ev": "detect", "stage": "SERVO", "n": 3, "ms": 31, "boxes": [[80, 116, 189, 290], [231, 10, 297, 173], [315, 111, 397, 280]], "conf": [0.88, 0.82, 0.89], "tag": "scripted skill", "t": 1792785652.5686975}
+{"ev": "gemma", "t": 1792785653.401191, "stage": "SERVO", "kind": "box", "question": "Detect the robot's hand", "answer": "```json\n[\n  {\"box_2d\": [343, 0, 856, 142", "ms": 813, "tag": "Gemma decision", "media": "head", "prompt_n": 144, "prompt_ms": 337.282, "predicted_n": 17, "predicted_ms": 466.601, "cache_n": 2}
+{"ev": "measure", "stage": "SERVO", "tag": "sensor gate", "label": "servo0", "can": [0.393, 0.154, 0.167], "blob": [0.557, 0.32, 0.126], "model_palm": [0.375, 0.249, 0.103], "n_blob": 777, "bbox": [0, 18, 234, 136], "uv_expect": [45, 211], "edge_px": 0, "win_edge_px": 0, "radius_cut": false, "in_view": false, "frames_in_view": "0 of 2", "model_off": [-0.001, -0.0974, -0.0641], "feat": [0.6, -0.209, 0.126], "off": [0.186, -0.126, -0.041], "scatter": [0.0, 0.0, 0.0], "gemma_box": [0, 164, 90, 410], "gemma_hand": [0.31, 0.214, 0.134], "gemma_vs_blob": 0.268, "gemma_on_blob": 0.0, "t": 1792785653.4082582}
+{"ev": "stage", "stage": "SERVO", "ms": 945, "tag": "scripted skill", "t": 1792785653.4270349}
+{"ev": "say", "stage": "APPROACH", "text": "Thumb first.", "tag": "scripted skill", "t": 1792785653.4290147}
+{"ev": "say", "stage": "APPROACH", "text": "Approaching.", "tag": "scripted skill", "t": 1792785654.629712}
+{"ev": "safety_check", "stage": "APPROACH", "where": "approach step 1", "blocked": false, "why": "", "tag": "sensor gate", "valid": 0.959, "n_zone": 0, "n_own_arm": 0, "blind": 0.009, "t": 1792785654.6383607}
+{"ev": "ap_step", "stage": "APPROACH", "step": 1, "moved": 0.007, "gap": 0.0224, "gap_model": 0.0224, "gap_visual": null, "lag": 0.003, "tracking": 0.0484, "base": 0.0426, "q_cmd": [-0.16, 0.132, 0.208, 0.098, -0.099], "q_meas": [-0.111, 0.128, 0.212, 0.132, -0.115], "tag": "scripted skill", "t": 1792785655.8918166}
+{"ev": "safety_check", "stage": "APPROACH", "where": "approach step 2", "blocked": false, "why": "", "tag": "sensor gate", "valid": 0.952, "n_zone": 0, "n_own_arm": 0, "blind": 0.01, "t": 1792785655.8981748}
+{"ev": "ap_step", "stage": "APPROACH", "step": 2, "moved": 0.0149, "gap": 0.0076, "gap_model": 0.0076, "gap_visual": null, "lag": -0.0019, "tracking": 0.0451, "base": 0.0426, "q_cmd": [-0.175, 0.066, 0.218, 0.088, -0.033], "q_meas": [-0.13, 0.06, 0.221, 0.126, -0.044], "tag": "scripted skill", "t": 1792785656.9219499}
+{"ev": "detect", "stage": "APPROACH", "n": 3, "ms": 35, "boxes": [[88, 114, 196, 288], [241, 10, 306, 171], [322, 111, 405, 280]], "conf": [0.62, 0.87, 0.87], "tag": "scripted skill", "t": 1792785656.962913}
+{"ev": "detect", "stage": "APPROACH", "n": 3, "ms": 32, "boxes": [[88, 114, 196, 288], [240, 10, 306, 171], [322, 111, 405, 280]], "conf": [0.65, 0.86, 0.89], "tag": "scripted skill", "t": 1792785657.0135956}
+{"ev": "measure", "stage": "APPROACH", "tag": "sensor gate", "label": "half", "can": [0.395, 0.149, 0.167], "blob": [0.559, 0.313, 0.133], "model_palm": [0.38, 0.228, 0.103], "n_blob": 1104, "bbox": [0, 0, 306, 144], "uv_expect": [72, 208], "edge_px": 0, "win_edge_px": 0, "radius_cut": false, "in_view": false, "frames_in_view": "0 of 2", "model_off": [-0.0013, -0.081, -0.0644], "feat": [0.605, -0.201, 0.133], "off": [0.189, -0.123, -0.034], "scatter": [0.0, 0.0, 0.001], "t": 1792785657.0330122}
+{"ev": "safety_check", "stage": "APPROACH", "where": "approach step 3", "blocked": false, "why": "", "tag": "sensor gate", "valid": 0.941, "n_zone": 0, "n_own_arm": 0, "blind": 0.01, "t": 1792785657.0679328}
+{"ev": "ap_step", "stage": "APPROACH", "step": 3, "moved": 0.0091, "gap": 0.0038, "gap_model": 0.0038, "gap_visual": null, "lag": -0.001, "tracking": 0.0481, "base": 0.0426, "q_cmd": [-0.179, 0.023, 0.222, 0.079, 0.016], "q_meas": [-0.131, 0.019, 0.222, 0.116, -0.004], "tag": "scripted skill", "t": 1792785657.847386}
+{"ev": "detect", "stage": "APPROACH", "n": 3, "ms": 32, "boxes": [[88, 115, 189, 252], [239, 10, 305, 172], [321, 111, 404, 281]], "conf": [0.62, 0.89, 0.88], "tag": "scripted skill", "t": 1792785657.8825147}
+{"ev": "detect", "stage": "APPROACH", "n": 3, "ms": 29, "boxes": [[88, 115, 189, 251], [239, 10, 305, 171], [322, 111, 404, 280]], "conf": [0.61, 0.89, 0.88], "tag": "scripted skill", "t": 1792785657.930781}
+{"ev": "measure", "stage": "APPROACH", "tag": "sensor gate", "label": "end", "can": [0.397, 0.148, 0.184], "blob": [0.56, 0.312, 0.126], "model_palm": [0.38, 0.219, 0.103], "n_blob": 1161, "bbox": [0, 0, 362, 158], "uv_expect": [82, 207], "edge_px": 0, "win_edge_px": 0, "radius_cut": true, "in_view": false, "frames_in_view": "0 of 2", "model_off": [-0.0036, -0.073, -0.0806], "feat": [0.604, 0.078, 0.126], "off": [0.187, 0.154, -0.058], "near_inside_can": true, "scatter": [0.0, 0.028, 0.0], "t": 1792785657.9450128}
+{"ev": "approach", "stage": "APPROACH", "steps": 3, "result": "ok", "why": "", "gap": 0.0038, "gap_model": 0.0038, "gap_visual": null, "tag": "scripted skill", "t": 1792785657.964532}
+{"ev": "hand", "stage": "APPROACH", "cmd": [0.0, 0.8, 0.9, 0.9, 0.9, 0.9], "state": [0.0, 0.77, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785660.2876642}
+{"ev": "hand", "stage": "APPROACH", "cmd": [0.9, 0.8, 0.9, 0.9, 0.9, 0.9], "state": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785661.2882838}
+{"ev": "stall", "stage": "APPROACH", "pattern": "grasped", "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785662.0812278}
+{"ev": "stage", "stage": "APPROACH", "ms": 8654, "tag": "scripted skill", "t": 1792785662.0814068}
+{"ev": "verify", "stage": "VERIFY", "closure": 0.468, "hand_state": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "grasped": "True", "rule": "signature", "stalled": ["True", "True", "True", "True"], "tag": "sensor gate", "t": 1792785662.0822866}
+{"ev": "stage", "stage": "VERIFY", "ms": 3, "tag": "scripted skill", "t": 1792785662.0846417}
+{"ev": "say", "stage": "LIFT", "text": "Grasped. Lifting.", "tag": "scripted skill", "t": 1792785662.0877912}
+{"ev": "detect", "stage": "LIFT", "n": 3, "ms": 32, "boxes": [[89, 106, 188, 306], [239, 10, 305, 172], [321, 112, 404, 282]], "conf": [0.83, 0.87, 0.82], "tag": "scripted skill", "t": 1792785662.1226823}
+{"stage": "LIFT", "ev": "move", "label": "lift", "goal": [0.38, 0.219, 0.223], "measured": [0.382, 0.219, 0.234], "err": 0.011, "arrival": 0.0487, "rounds": 2, "blocked": "", "sag_ff": [0.0, 0.0, 0.0], "psi": -10.0, "pitch": -20.1, "q_cmd": [-0.302, 0.057, 0.248, -0.189, -0.0], "q_meas": [-0.25, 0.041, 0.252, -0.134, -0.007], "lag_max": null, "tag": "scripted skill", "t": 1792785673.248072}
+{"ev": "detect", "stage": "LIFT", "n": 3, "ms": 32, "boxes": [[21, 0, 164, 205], [239, 10, 305, 172], [321, 112, 404, 282]], "conf": [0.2, 0.88, 0.88], "tag": "scripted skill", "t": 1792785674.0830822}
+{"ev": "lift_check", "stage": "LIFT", "rise": 0.109, "seen": true, "edge_px": 0, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "gate": false, "tag": "sensor gate", "t": 1792785674.1005862}
+{"ev": "stage", "stage": "LIFT", "ms": 12016, "tag": "scripted skill", "t": 1792785674.1011374}
+{"ev": "gemma", "t": 1792785674.772552, "stage": "CHECK", "kind": "yesno", "question": "Is the robot holding the soda can in its hand, off the table?", "answer": "no", "ms": 319, "tag": "Gemma advisory", "media": "/home/unitree/harness/hackathon/brain/runs/20261024T035958/order_01/cam3_lifted.jpg", "prompt_n": 100, "prompt_ms": 274.394, "predicted_n": 2, "predicted_ms": 33.1, "cache_n": 5}
+{"ev": "stage", "stage": "CHECK", "ms": 672, "tag": "scripted skill", "t": 1792785674.7733831}
+{"ev": "offer", "stage": "HANDOVER", "p": [0.442, 0.219, 0.474], "in_view": false, "tag": "scripted skill", "t": 1792785676.8035345}
+{"stage": "HANDOVER", "ev": "move", "label": "offer", "goal": [0.442, 0.219, 0.474], "measured": [0.468, 0.221, 0.398], "err": 0.0807, "arrival": 0.0807, "rounds": 0, "blocked": "", "sag_ff": [0.0, 0.0, 0.0], "psi": "free", "pitch": -43.1, "q_cmd": [-1.159, 0.321, 0.326, 0.437, -0.0], "q_meas": [-1.023, 0.269, 0.328, 0.469, -0.007], "lag_max": null, "tag": "scripted skill", "t": 1792785687.5750597}
+{"ev": "say", "stage": "HANDOVER", "text": "I have the can. Please take it.", "tag": "scripted skill", "t": 1792785687.5756862}
+{"ev": "hold", "stage": "HANDOVER", "it": 1, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785689.4895017}
+{"ev": "cluster", "stage": "HANDOVER", "it": 1, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785689.494872}
+{"ev": "hold", "stage": "HANDOVER", "it": 2, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785689.8987992}
+{"ev": "cluster", "stage": "HANDOVER", "it": 2, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785689.9041672}
+{"ev": "hold", "stage": "HANDOVER", "it": 3, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785690.3079858}
+{"ev": "cluster", "stage": "HANDOVER", "it": 3, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785690.3128986}
+{"ev": "hold", "stage": "HANDOVER", "it": 4, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785690.7168753}
+{"ev": "cluster", "stage": "HANDOVER", "it": 4, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785690.7220163}
+{"ev": "hold", "stage": "HANDOVER", "it": 5, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785691.1279626}
+{"ev": "cluster", "stage": "HANDOVER", "it": 5, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785691.1329045}
+{"ev": "hold", "stage": "HANDOVER", "it": 6, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785691.5369081}
+{"ev": "cluster", "stage": "HANDOVER", "it": 6, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785691.5427632}
+{"ev": "hold", "stage": "HANDOVER", "it": 7, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785691.9480007}
+{"ev": "cluster", "stage": "HANDOVER", "it": 7, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785691.9529283}
+{"ev": "hold", "stage": "HANDOVER", "it": 8, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785692.3570795}
+{"ev": "cluster", "stage": "HANDOVER", "it": 8, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785692.362254}
+{"ev": "gemma", "t": 1792785694.6666257, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 226, "tag": "Gemma decision", "media": "audio", "prompt_n": 64, "prompt_ms": 215.164, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 4}
+{"ev": "hold", "stage": "HANDOVER", "it": 9, "hand": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785695.0690138}
+{"ev": "cluster", "stage": "HANDOVER", "it": 9, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785695.0740678}
+{"ev": "hold", "stage": "HANDOVER", "it": 10, "hand": [0.17, 0.41, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785695.4779937}
+{"ev": "cluster", "stage": "HANDOVER", "it": 10, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785695.4829297}
+{"ev": "gemma", "t": 1792785697.7427394, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 182, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 173.036, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 11, "hand": [0.17, 0.54, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785698.1452117}
+{"ev": "cluster", "stage": "HANDOVER", "it": 11, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785698.1517694}
+{"ev": "hold", "stage": "HANDOVER", "it": 12, "hand": [0.17, 0.74, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785698.5556881}
+{"ev": "cluster", "stage": "HANDOVER", "it": 12, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785698.560523}
+{"ev": "gemma", "t": 1792785700.7965093, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.347, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 13, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785701.1982622}
+{"ev": "cluster", "stage": "HANDOVER", "it": 13, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785701.2031047}
+{"ev": "hold", "stage": "HANDOVER", "it": 14, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785701.607802}
+{"ev": "cluster", "stage": "HANDOVER", "it": 14, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785701.6145263}
+{"ev": "gemma", "t": 1792785703.8024042, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 161, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.036, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 15, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785704.2051132}
+{"ev": "cluster", "stage": "HANDOVER", "it": 15, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785704.211992}
+{"ev": "say", "stage": "HANDOVER", "text": "I am holding the can. Take it, or say take it.", "tag": "scripted skill", "t": 1792785704.2158203}
+{"ev": "hold", "stage": "HANDOVER", "it": 16, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785704.6186047}
+{"ev": "cluster", "stage": "HANDOVER", "it": 16, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785704.6237516}
+{"ev": "hold", "stage": "HANDOVER", "it": 17, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785705.0279088}
+{"ev": "cluster", "stage": "HANDOVER", "it": 17, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785705.0331008}
+{"ev": "hold", "stage": "HANDOVER", "it": 18, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785705.4372363}
+{"ev": "cluster", "stage": "HANDOVER", "it": 18, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785705.4420676}
+{"ev": "hold", "stage": "HANDOVER", "it": 19, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785705.8479426}
+{"ev": "cluster", "stage": "HANDOVER", "it": 19, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785705.8533711}
+{"ev": "hold", "stage": "HANDOVER", "it": 20, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785706.257565}
+{"ev": "cluster", "stage": "HANDOVER", "it": 20, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785706.2623978}
+{"ev": "hold", "stage": "HANDOVER", "it": 21, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785706.6683857}
+{"ev": "cluster", "stage": "HANDOVER", "it": 21, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785706.673214}
+{"ev": "hold", "stage": "HANDOVER", "it": 22, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785707.0770943}
+{"ev": "cluster", "stage": "HANDOVER", "it": 22, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785707.0823302}
+{"ev": "hold", "stage": "HANDOVER", "it": 23, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785707.4879854}
+{"ev": "cluster", "stage": "HANDOVER", "it": 23, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785707.4931204}
+{"ev": "hold", "stage": "HANDOVER", "it": 24, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785707.897327}
+{"ev": "cluster", "stage": "HANDOVER", "it": 24, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785707.902162}
+{"ev": "hold", "stage": "HANDOVER", "it": 25, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785708.3087292}
+{"ev": "cluster", "stage": "HANDOVER", "it": 25, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785708.313903}
+{"ev": "hold", "stage": "HANDOVER", "it": 26, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785708.7178495}
+{"ev": "cluster", "stage": "HANDOVER", "it": 26, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785708.7227108}
+{"ev": "hold", "stage": "HANDOVER", "it": 27, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785709.128685}
+{"ev": "cluster", "stage": "HANDOVER", "it": 27, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785709.133846}
+{"ev": "hold", "stage": "HANDOVER", "it": 28, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785709.5378852}
+{"ev": "cluster", "stage": "HANDOVER", "it": 28, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785709.5429895}
+{"ev": "hold", "stage": "HANDOVER", "it": 29, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785709.9479597}
+{"ev": "cluster", "stage": "HANDOVER", "it": 29, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785709.9528553}
+{"ev": "hold", "stage": "HANDOVER", "it": 30, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785710.3567204}
+{"ev": "cluster", "stage": "HANDOVER", "it": 30, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785710.3615758}
+{"ev": "gemma", "t": 1792785712.6018631, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.287, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 31, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785713.0039585}
+{"ev": "cluster", "stage": "HANDOVER", "it": 31, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785713.0110762}
+{"ev": "hold", "stage": "HANDOVER", "it": 32, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785713.4149833}
+{"ev": "cluster", "stage": "HANDOVER", "it": 32, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785713.420532}
+{"ev": "gemma", "t": 1792785715.6567345, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.777, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 33, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785716.058495}
+{"ev": "cluster", "stage": "HANDOVER", "it": 33, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785716.0638175}
+{"ev": "hold", "stage": "HANDOVER", "it": 34, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785716.4679594}
+{"ev": "cluster", "stage": "HANDOVER", "it": 34, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785716.4728112}
+{"ev": "gemma", "t": 1792785718.7105882, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 163, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.479, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 35, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785719.1119506}
+{"ev": "cluster", "stage": "HANDOVER", "it": 35, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785719.1174004}
+{"ev": "hold", "stage": "HANDOVER", "it": 36, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785719.5213223}
+{"ev": "cluster", "stage": "HANDOVER", "it": 36, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785719.5265188}
+{"ev": "gemma", "t": 1792785721.7641206, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 163, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.847, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "say", "stage": "HANDOVER", "text": "I am holding the can. Take it, or say take it.", "tag": "scripted skill", "t": 1792785721.7671063}
+{"ev": "hold", "stage": "HANDOVER", "it": 37, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785722.168479}
+{"ev": "cluster", "stage": "HANDOVER", "it": 37, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785722.1737342}
+{"ev": "hold", "stage": "HANDOVER", "it": 38, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785722.5779183}
+{"ev": "cluster", "stage": "HANDOVER", "it": 38, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785722.5832074}
+{"ev": "hold", "stage": "HANDOVER", "it": 39, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785722.9874926}
+{"ev": "cluster", "stage": "HANDOVER", "it": 39, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785722.992369}
+{"ev": "hold", "stage": "HANDOVER", "it": 40, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785723.396269}
+{"ev": "cluster", "stage": "HANDOVER", "it": 40, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785723.4011593}
+{"ev": "hold", "stage": "HANDOVER", "it": 41, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785723.806181}
+{"ev": "cluster", "stage": "HANDOVER", "it": 41, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785723.811475}
+{"ev": "hold", "stage": "HANDOVER", "it": 42, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785724.2153578}
+{"ev": "cluster", "stage": "HANDOVER", "it": 42, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785724.2202818}
+{"ev": "hold", "stage": "HANDOVER", "it": 43, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785724.625795}
+{"ev": "cluster", "stage": "HANDOVER", "it": 43, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785724.631328}
+{"ev": "hold", "stage": "HANDOVER", "it": 44, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785725.0360162}
+{"ev": "cluster", "stage": "HANDOVER", "it": 44, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785725.0414984}
+{"ev": "hold", "stage": "HANDOVER", "it": 45, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785725.4475372}
+{"ev": "cluster", "stage": "HANDOVER", "it": 45, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785725.4530587}
+{"ev": "hold", "stage": "HANDOVER", "it": 46, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785725.8572578}
+{"ev": "cluster", "stage": "HANDOVER", "it": 46, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785725.8624184}
+{"ev": "hold", "stage": "HANDOVER", "it": 47, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785726.2679505}
+{"ev": "cluster", "stage": "HANDOVER", "it": 47, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785726.273355}
+{"ev": "hold", "stage": "HANDOVER", "it": 48, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785726.6774676}
+{"ev": "cluster", "stage": "HANDOVER", "it": 48, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785726.682758}
+{"ev": "hold", "stage": "HANDOVER", "it": 49, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785727.0880644}
+{"ev": "cluster", "stage": "HANDOVER", "it": 49, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785727.0933273}
+{"ev": "hold", "stage": "HANDOVER", "it": 50, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785727.4973707}
+{"ev": "cluster", "stage": "HANDOVER", "it": 50, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785727.5024877}
+{"ev": "gemma", "t": 1792785729.7414827, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.904, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 51, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785730.143116}
+{"ev": "cluster", "stage": "HANDOVER", "it": 51, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785730.1505768}
+{"ev": "hold", "stage": "HANDOVER", "it": 52, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785730.5544462}
+{"ev": "cluster", "stage": "HANDOVER", "it": 52, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785730.5600882}
+{"ev": "gemma", "t": 1792785732.7949328, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.326, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 53, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785733.1969328}
+{"ev": "cluster", "stage": "HANDOVER", "it": 53, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785733.2027373}
+{"ev": "hold", "stage": "HANDOVER", "it": 54, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785733.6079865}
+{"ev": "cluster", "stage": "HANDOVER", "it": 54, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785733.612879}
+{"ev": "gemma", "t": 1792785735.8519545, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 153.001, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 55, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785736.2536469}
+{"ev": "cluster", "stage": "HANDOVER", "it": 55, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785736.2589598}
+{"ev": "hold", "stage": "HANDOVER", "it": 56, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785736.6631117}
+{"ev": "cluster", "stage": "HANDOVER", "it": 56, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785736.6711102}
+{"ev": "gemma", "t": 1792785738.9089284, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 163, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.802, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "say", "stage": "HANDOVER", "text": "I am holding the can. Take it, or say take it.", "tag": "scripted skill", "t": 1792785738.9098203}
+{"ev": "hold", "stage": "HANDOVER", "it": 57, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785739.3129761}
+{"ev": "cluster", "stage": "HANDOVER", "it": 57, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785739.317834}
+{"ev": "hold", "stage": "HANDOVER", "it": 58, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785739.7219362}
+{"ev": "cluster", "stage": "HANDOVER", "it": 58, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785739.7269242}
+{"ev": "hold", "stage": "HANDOVER", "it": 59, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785740.1307766}
+{"ev": "cluster", "stage": "HANDOVER", "it": 59, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785740.1355796}
+{"ev": "hold", "stage": "HANDOVER", "it": 60, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785740.5395353}
+{"ev": "cluster", "stage": "HANDOVER", "it": 60, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785740.5453033}
+{"ev": "hold", "stage": "HANDOVER", "it": 61, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785740.9496136}
+{"ev": "cluster", "stage": "HANDOVER", "it": 61, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785740.954793}
+{"ev": "hold", "stage": "HANDOVER", "it": 62, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785741.3586822}
+{"ev": "cluster", "stage": "HANDOVER", "it": 62, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785741.3635137}
+{"ev": "hold", "stage": "HANDOVER", "it": 63, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785741.7679496}
+{"ev": "cluster", "stage": "HANDOVER", "it": 63, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785741.7728848}
+{"ev": "hold", "stage": "HANDOVER", "it": 64, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785742.1772516}
+{"ev": "cluster", "stage": "HANDOVER", "it": 64, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785742.182081}
+{"ev": "hold", "stage": "HANDOVER", "it": 65, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785742.588405}
+{"ev": "cluster", "stage": "HANDOVER", "it": 65, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785742.59349}
+{"ev": "hold", "stage": "HANDOVER", "it": 66, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785742.9975524}
+{"ev": "cluster", "stage": "HANDOVER", "it": 66, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785743.0026994}
+{"ev": "hold", "stage": "HANDOVER", "it": 67, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785743.4088724}
+{"ev": "cluster", "stage": "HANDOVER", "it": 67, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785743.4137022}
+{"ev": "hold", "stage": "HANDOVER", "it": 68, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785743.8178418}
+{"ev": "cluster", "stage": "HANDOVER", "it": 68, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785743.8230214}
+{"ev": "hold", "stage": "HANDOVER", "it": 69, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785744.2279558}
+{"ev": "cluster", "stage": "HANDOVER", "it": 69, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785744.2328374}
+{"ev": "hold", "stage": "HANDOVER", "it": 70, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785744.6363158}
+{"ev": "cluster", "stage": "HANDOVER", "it": 70, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785744.6414623}
+{"ev": "gemma", "t": 1792785746.927878, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "A cake.", "ms": 258, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 151.782, "predicted_n": 4, "predicted_ms": 96.902, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 71, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785747.3315098}
+{"ev": "cluster", "stage": "HANDOVER", "it": 71, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785747.3365748}
+{"ev": "hold", "stage": "HANDOVER", "it": 72, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785747.740642}
+{"ev": "cluster", "stage": "HANDOVER", "it": 72, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785747.7461128}
+{"ev": "gemma", "t": 1792785749.9872932, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 166, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 156.409, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 73, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785750.3889318}
+{"ev": "cluster", "stage": "HANDOVER", "it": 73, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785750.3937697}
+{"ev": "hold", "stage": "HANDOVER", "it": 74, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785750.797525}
+{"ev": "cluster", "stage": "HANDOVER", "it": 74, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785750.8026617}
+{"ev": "gemma", "t": 1792785753.0513866, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 171, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 159.559, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 75, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785753.4531183}
+{"ev": "cluster", "stage": "HANDOVER", "it": 75, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785753.4583814}
+{"ev": "hold", "stage": "HANDOVER", "it": 76, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785753.862435}
+{"ev": "cluster", "stage": "HANDOVER", "it": 76, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785753.8696992}
+{"ev": "gemma", "t": 1792785756.1034675, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 161, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 151.96, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "say", "stage": "HANDOVER", "text": "I am holding the can. Take it, or say take it.", "tag": "scripted skill", "t": 1792785756.1064866}
+{"ev": "hold", "stage": "HANDOVER", "it": 77, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785756.5088348}
+{"ev": "cluster", "stage": "HANDOVER", "it": 77, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785756.5139709}
+{"ev": "hold", "stage": "HANDOVER", "it": 78, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785756.918028}
+{"ev": "cluster", "stage": "HANDOVER", "it": 78, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785756.9230852}
+{"ev": "hold", "stage": "HANDOVER", "it": 79, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785757.3279562}
+{"ev": "cluster", "stage": "HANDOVER", "it": 79, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785757.3335388}
+{"ev": "hold", "stage": "HANDOVER", "it": 80, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785757.7375088}
+{"ev": "cluster", "stage": "HANDOVER", "it": 80, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785757.742634}
+{"ev": "hold", "stage": "HANDOVER", "it": 81, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785758.147749}
+{"ev": "cluster", "stage": "HANDOVER", "it": 81, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785758.152811}
+{"ev": "hold", "stage": "HANDOVER", "it": 82, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785758.5570235}
+{"ev": "cluster", "stage": "HANDOVER", "it": 82, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785758.5622306}
+{"ev": "hold", "stage": "HANDOVER", "it": 83, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785758.9685235}
+{"ev": "cluster", "stage": "HANDOVER", "it": 83, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785758.973875}
+{"ev": "hold", "stage": "HANDOVER", "it": 84, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785759.377737}
+{"ev": "cluster", "stage": "HANDOVER", "it": 84, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785759.3828728}
+{"ev": "hold", "stage": "HANDOVER", "it": 85, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785759.7879584}
+{"ev": "cluster", "stage": "HANDOVER", "it": 85, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785759.7931125}
+{"ev": "hold", "stage": "HANDOVER", "it": 86, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785760.197317}
+{"ev": "cluster", "stage": "HANDOVER", "it": 86, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785760.2021372}
+{"ev": "hold", "stage": "HANDOVER", "it": 87, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785760.6077058}
+{"ev": "cluster", "stage": "HANDOVER", "it": 87, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785760.612537}
+{"ev": "hold", "stage": "HANDOVER", "it": 88, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785761.0163808}
+{"ev": "cluster", "stage": "HANDOVER", "it": 88, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785761.021412}
+{"ev": "hold", "stage": "HANDOVER", "it": 89, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785761.4273775}
+{"ev": "cluster", "stage": "HANDOVER", "it": 89, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785761.4322655}
+{"ev": "hold", "stage": "HANDOVER", "it": 90, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785761.836533}
+{"ev": "cluster", "stage": "HANDOVER", "it": 90, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785761.8414133}
+{"ev": "gemma", "t": 1792785764.0809486, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 162, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 151.876, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 91, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785764.4827669}
+{"ev": "cluster", "stage": "HANDOVER", "it": 91, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785764.490499}
+{"ev": "hold", "stage": "HANDOVER", "it": 92, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785764.8954217}
+{"ev": "cluster", "stage": "HANDOVER", "it": 92, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785764.9017892}
+{"ev": "gemma", "t": 1792785767.1753495, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "Packet", "ms": 195, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 152.728, "predicted_n": 2, "predicted_ms": 32.982, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 93, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785767.5773177}
+{"ev": "cluster", "stage": "HANDOVER", "it": 93, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785767.5830727}
+{"ev": "hold", "stage": "HANDOVER", "it": 94, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785767.987973}
+{"ev": "cluster", "stage": "HANDOVER", "it": 94, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785767.9938989}
+{"ev": "gemma", "t": 1792785770.2362635, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "", "ms": 165, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 156.177, "predicted_n": 1, "predicted_ms": 0.001, "cache_n": 12}
+{"ev": "hold", "stage": "HANDOVER", "it": 95, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785770.6380146}
+{"ev": "cluster", "stage": "HANDOVER", "it": 95, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785770.6430767}
+{"ev": "hold", "stage": "HANDOVER", "it": 96, "hand": [0.17, 0.8, 0.46, 0.53, 0.49, 0.39], "tag": "sensor gate", "t": 1792785771.0479834}
+{"ev": "cluster", "stage": "HANDOVER", "it": 96, "new_points": 0, "run": 0, "tag": "sensor gate", "t": 1792785771.0528903}
+{"ev": "gemma", "t": 1792785773.3902276, "stage": "HANDOVER", "kind": "take_it", "question": "Transcribe this audio in English.", "answer": "Take it.", "ms": 261, "tag": "Gemma decision", "media": "audio", "prompt_n": 56, "prompt_ms": 155.997, "predicted_n": 4, "predicted_ms": 96.308, "cache_n": 12}
+{"ev": "release", "stage": "HANDOVER", "how": "voice", "hold_s": 84.3, "iterations": 96, "tag": "scripted skill", "t": 1792785773.3911}
+{"ev": "say", "stage": "HANDOVER", "text": "Enjoy.", "tag": "scripted skill", "t": 1792785775.192898}
+{"ev": "stage", "stage": "HANDOVER", "ms": 100420, "tag": "scripted skill", "t": 1792785775.1939301}
+{"ev": "held", "stage": "RECOVER", "why": "no way home: the retreat ends 0.254 m from the raise end", "palm": [0.463, 0.22, 0.421], "tag": "scripted skill", "t": 1792785775.8506293}
+{"ev": "way_home", "ok": false, "why": "the retreat ends 0.254 m from the raise end", "tag": "scripted skill", "t": 1792785776.5427558}
+{"ev": "say", "stage": "RECOVER", "text": "I have no safe way home. Hold my arm, press L2 plus B, then type quit with an exclamation mark.", "tag": "scripted skill", "t": 1792785776.5437827}
+{"ev": "say", "stage": "RECOVER", "text": "I have no safe way home. Hold my arm, press L2 plus B, then type quit with an exclamation mark.", "tag": "scripted skill", "t": 1792785806.596457}
+{"ev": "say", "stage": "RECOVER", "text": "I have no safe way home. Hold my arm, press L2 plus B, then type quit with an exclamation mark.", "tag": "scripted skill", "t": 1792785836.6398063}
+{"ev": "say", "stage": "RECOVER", "text": "I have no safe way home. Hold my arm, press L2 plus B, then type quit with an exclamation mark.", "tag": "scripted skill", "t": 1792785866.6922734}
+{"ev": "say", "stage": "RECOVER", "text": "I have no safe way home. Hold my arm, press L2 plus B, then type quit with an exclamation mark.", "tag": "scripted skill", "t": 1792785896.7460186}
+{"ev": "result", "t": "2026-10-24 04:00:14", "result": "held", "assisted": false, "stages": [{"stage": "LOOK", "ms": 1642}, {"stage": "LISTEN", "ms": 7859}, {"stage": "UNDERSTAND", "ms": 377}, {"stage": "CONFIRM", "ms": 1003}, {"stage": "LOCATE", "ms": 1468}, {"stage": "PICK", "ms": 25773}, {"stage": "SERVO", "ms": 945}, {"stage": "APPROACH", "ms": 8654}, {"stage": "VERIFY", "ms": 3}, {"stage": "LIFT", "ms": 12016}, {"stage": "CHECK", "ms": 672}, {"stage": "HANDOVER", "ms": 100420}, {"stage": "RECOVER", "ms": 127264}], "release": "voice", "scene": ["silver sparkling east, standard, on the left", "silver sparkling white peach, slim, in the middle", "silver ero peach, slim, on the right"], "heard": ["1"], "colour": "silver sparkling east", "target": {"p": [0.395, 0.153, 0.167], "diam": 0.066, "box": [81, 115, 190, 289], "z": 0.434, "size_m": [0.078, 0.125], "desc": "silver sparkling east"}, "plan": {"psi": -10, "pitch": -0.1, "checks": {"upper": 0.052, "forearm": 0.06, "hand": 0.108, "pitch": -0.073, "psi": -10.0, "margin": 1.19, "table": 0.002, "right": 0.35, "ik": 0.0}}, "sag": {"up": 0.0102, "high": 0.0286}, "pre_measured": [0.375, 0.25, 0.104], "pre_err": 0.0028, "servo": {"iters": 0, "corrections": 0, "err": null, "off": [0.186, -0.126, -0.041], "model_off": [-0.001, -0.0974, -0.0641], "converged": false}, "slide_steps": 3, "approach": "ok", "approach_why": "", "gap": 0.0038, "gap_model": 0.0038, "gap_visual": null, "slide_measured": [0.38, 0.219, 0.103], "closure": 0.468, "hand_state": [0.17, 0.4, 0.46, 0.53, 0.49, 0.39], "closure_after_lift": 0.468, "lift_rise": 0.109, "lift_seen": true, "gemma_in_hand": "no", "hold_s": 84.3, "held": {"why": "no way home: the retreat ends 0.254 m from the raise end", "palm": [0.463, 0.22, 0.421], "t": 1792785775.8506193}, "autonomous": false, "total_ms": 288096, "tag": "scripted skill"}
