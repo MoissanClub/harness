@@ -164,23 +164,24 @@
    "valid_days": 90
   },
   "lift_m": {
-   "value": 0.06,
+   "value": 0.12,
    "unit": "m",
    "frame": "pelvis z",
-   "method": "6 cm lift with correction reached within 3-7 mm on every grasp",
-   "date": "2026-10-21",
+   "method": "owner 2026-10-23: after the grasp the arm raises the can much higher (was 0.06, the v1 lift: 6 cm with correction reached within 3-7 mm on every grasp). 12 cm clears the table visibly; grasp 5 lifted 6 cm within 4 mm (1 correction round)",
+   "date": "2026-10-23",
    "n": 6,
-   "valid_days": 90
+   "valid_days": 90,
+   "log": "spikes/2026-10-23-v2-grasp/README.md"
   },
   "offer_delta_m": {
    "value": [
-    0.08,
+    0.06,
     0.0,
-    0.22
+    0.24
    ],
    "unit": "m",
    "frame": "pelvis, from the lifted hand",
-   "method": "owner 2026-10-23: after the grasp the arm raises the can higher and extends it forward, more obvious and easier for a person to take (was [-0.12, 0.03, 0.06], the v1 offer; then +0.18 z). From grasp 4's lift (0.392, 0.209, 0.175): palm about (0.47, 0.21, 0.395), 47 cm ahead of the hips, about 1.23 m above the floor; IK at +0.20 z solves at psi 5, pitch -26, clearances 8.7 / 14.4 cm. Above the head camera's view: offer_pose falls back to this base pose; the release comes from the tug, the let-go words or the r key",
+   "method": "owner 2026-10-23: after the grasp the arm raises the can much higher and extends it forward, obvious and easy to take (was [-0.12, 0.03, 0.06], the v1 offer; then [0.08, 0, 0.22] from a 6 cm lift). From grasp 5's closure palm (0.388, 0.206, 0.104) with lift_m 0.12: palm about (0.448, 0.206, 0.464), 45 cm ahead of the hips, 1.30 m above the floor; IK solves at psi 5, pitch -38, clearances 8.4 / 14.7 cm. Above the head camera's view: offer_pose falls back to this base pose; the release comes from the tug, the let-go words or the r key",
    "date": "2026-10-23",
    "n": 0,
    "valid_days": 90,

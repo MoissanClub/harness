@@ -969,17 +969,14 @@ class Brain:
             self.view.frame(f1.color, "after the lift: can rose %s" % (None if rise is None else "%.3f m" % rise))
         except Exception as e: print("  lift check failed:", e)
         seen = None if rise is None else bool(abs(rise - P.lift) <= cv("lift_rise_tol_m"))
-        if seen is False and edge_px is not None and edge_px < 8:          # 2026-10-23 grasp 4: the held can, tilted and cut by the image border, read a
-            hs = self.hand.state(); fingers = list(hs[2:]) if hs is not None else []   # 2 mm rise while the hand held it firmly (owner): the hand decides
-            holds = bool(fingers) and float(hs[0]) < SIG[0] and sum(SIG[1] < f < SIG[2] for f in fingers) >= 3
-            print("  lift check: the held can's box is %d px from the image border (its point is not the can's); the hand %s" % (
-                edge_px, ("still holds it %s: not a miss" % np.round(hs, 2).tolist()) if holds else "does not hold it: a miss"), flush=True)
-            self.log.event(ev="lift_edge", stage=self.state, edge_px=edge_px, rise=round(rise, 3), hand=None if hs is None else np.round(hs, 2).tolist(), holds=holds, tag="sensor gate")
-            if holds: seen = None
+        hs = self.hand.state()                                             # logged next to the camera's reading
         self.o["lift_rise"] = None if rise is None else round(rise, 3); self.o["lift_seen"] = seen
-        self.log.event(ev="lift_check", stage=self.state, rise=self.o["lift_rise"], seen=seen, tag="sensor gate")
-        print("  lift check: can rose %s -> %s" % (self.o["lift_rise"], {True: "seen", False: "NOT with the hand: a miss", None: "not measured"}[seen]), flush=True)
-        return seen is not False
+        self.log.event(ev="lift_check", stage=self.state, rise=self.o["lift_rise"], seen=seen, edge_px=edge_px, hand=None if hs is None else np.round(hs, 2).tolist(), gate=False, tag="sensor gate")
+        print("  lift check (logged only, not a gate): can rose %s (lift %.2f), box %s px from the image border, hand %s" % (
+            self.o["lift_rise"], P.lift, edge_px, None if hs is None else np.round(hs, 2).tolist()), flush=True)
+        return True   # owner 2026-10-23: no camera veto after the grasp. Grasps 4 and 5 held the can firmly while the box-centre point of the
+                      # tilted held can read a 0.2 / -0.2 cm rise (the median depth of its box falls on the table behind it), and the miss
+                      # recovery opened the hand. The hold signature (VERIFY) decides; the rise is kept for the post-mortem.
 
     def check(self):
         """Third-person Gemma yes/no after the lift: advisory only."""
