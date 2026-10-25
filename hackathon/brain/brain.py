@@ -87,6 +87,7 @@ def parse():
     g = ap.add_argument_group("voice and handover")
     g.add_argument("--seconds", type=float, default=4.0); g.add_argument("--mic", default="auto"); g.add_argument("--cam3", default="auto")
     g.add_argument("--retries", type=int, default=3); g.add_argument("--assist-wait", type=float, default=8.0); g.add_argument("--hold-reminder", type=float, default=15.0)
+    g.add_argument("--nearest", action="store_true", help="no spoken order: take the can nearest the robot (pelvis x) in the LOOK scene; for a room too loud for the mic (2026-10-24 venue: the clips were crowd talk). Logged as a deviation: the choice is code's, not Gemma's")
     g.add_argument("--release-after", type=float, default=0.0, help="rehearsal: release after this many seconds (0 = only on the guest)")
     g.add_argument("--hand-q", default=None); g.add_argument("--hand-cam", choices=["head", "cam3"], default="head")
     g.add_argument("--tts-rate", type=float, default=0.07, help="seconds per character the robot speaks; no recording until 2 s after the sentence")
@@ -1272,7 +1273,13 @@ class Brain:
         scene = self.look()
         if not scene: self.say("I do not see any can on the table.", wait=4.0); return "no_can"
         if P.probe: return self.probe(scene)
-        idx, how = self.listen(scene)
+        if P.nearest:                                                        # no listening: the nearest measured can, then the normal path
+            measured = [s for s in scene if s.get("p") is not None]
+            if not measured: self.say("I cannot measure where the cans are.", wait=2.0); return "no_depth"
+            idx, how = min(measured, key=lambda s: s["p"][0])["i"], "nearest"
+            self.log.event(ev="deviation", key="order", calib="spoken order", cli="nearest can %d (%s, x %.2f)" % (idx + 1, scene[idx]["desc"], scene[idx]["p"][0]), tag="scripted skill")
+            self.o.setdefault("heard", []).append("nearest")
+        else: idx, how = self.listen(scene)
         if idx is None:
             if how == "none": self.say("Sorry. Let us try another order.", wait=2.0); return "refused"
             self.say("Sorry, I did not catch which can you want."); return "no_choice"
