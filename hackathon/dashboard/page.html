@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G1 Gemma Live</title>
+<style>
+:root{
+  --bg:#0a0d12;--panel:#111821;--panel2:#16202b;--line:#223042;--fg:#e9eff6;--dim:#93a1b5;--faint:#5e6b7d;
+  --gemma:#7fa6ff;--gemma-bg:rgba(127,166,255,.15);--adv:#f2b84b;--adv-bg:rgba(242,184,75,.15);
+  --sensor:#4fd6c8;--sensor-bg:rgba(79,214,200,.13);--skill:#bda2ff;--skill-bg:rgba(189,162,255,.13);--owner:#9aa7b8;--owner-bg:rgba(154,167,184,.13);
+  --ok:#42c35a;--warn:#e6a42b;--bad:#f85149;--chosen:#45e07a;--box:#ff9f43;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  display:flex;flex-direction:column;height:100vh;overflow:hidden}
+body>*{flex:none}body>main{flex:1 1 auto}
+.num{font-variant-numeric:tabular-nums}
+/* header */
+header{display:flex;align-items:center;gap:20px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand h1{margin:0;font-size:19px;font-weight:650;letter-spacing:.01em}
+.brand p{margin:2px 0 0;color:var(--dim);font-size:13px}
+.tally{margin-left:auto;display:flex;gap:22px;align-items:flex-end}
+.tally div{text-align:right}.tally b{display:block;font-size:26px;line-height:1;font-weight:700}.tally span{color:var(--dim);font-size:12px}
+.tally .auto b{color:var(--ok)}
+.mode{font-size:12px;font-weight:700;letter-spacing:.08em;padding:5px 10px;border-radius:6px;border:1px solid var(--line);white-space:nowrap}
+.mode.live{color:var(--ok);border-color:rgba(66,195,90,.5)}.mode.live::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:7px;animation:pulse 2s infinite}
+.mode.replay{color:#1a1200;background:var(--adv);border-color:var(--adv)}.mode.down{color:var(--bad);border-color:rgba(248,81,73,.5)}
+@keyframes pulse{50%{opacity:.35}}
+#replaybar{display:none;background:var(--adv);color:#1a1200;font-weight:600;padding:5px 18px;font-size:14px}
+/* pipeline */
+#pipe{display:flex;gap:6px;padding:10px 18px 4px;overflow-x:auto}
+.chip{flex:1 1 0;min-width:92px;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:7px;padding:4px 8px 5px;opacity:.45;transition:opacity .3s}
+.chip .n{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chip .w{display:flex;gap:6px;font-size:11px;color:var(--c);white-space:nowrap}
+.chip .ms{margin-left:auto;color:var(--dim);font-family:var(--mono)}.chip .w span:first-child{overflow:hidden;text-overflow:ellipsis}
+.chip.done{opacity:1;background:var(--panel2)}.chip.active{opacity:1;background:var(--cb);box-shadow:0 0 0 1px var(--c) inset;animation:glow 1.6s infinite}
+.chip.rec{--c:var(--bad);--cb:rgba(248,81,73,.15)}
+@keyframes glow{50%{box-shadow:0 0 0 2px var(--c) inset}}
+.c-gemma{--c:var(--gemma);--cb:var(--gemma-bg)}.c-adv{--c:var(--adv);--cb:var(--adv-bg)}.c-sensor{--c:var(--sensor);--cb:var(--sensor-bg)}.c-skill{--c:var(--skill);--cb:var(--skill-bg)}.c-owner{--c:var(--owner);--cb:var(--owner-bg)}
+/* narration */
+#narr{display:flex;align-items:center;gap:18px;padding:6px 18px 10px}
+#nstate{font-size:22px;font-weight:700;white-space:nowrap}#ndesc{color:var(--dim);font-size:15px}
+#say{margin-left:auto;max-width:48%;background:var(--panel2);border:1px solid var(--line);border-radius:18px 18px 18px 4px;padding:7px 14px;font-size:17px;font-style:italic;color:#ffdcae;transition:opacity .5s}
+#say:empty{display:none}#say.old{opacity:.45}#say::before{content:"robot says ";font-style:normal;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-right:6px}
+/* main */
+main{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:0 18px 10px;min-height:0}
+.col{display:flex;flex-direction:column;gap:12px;min-height:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;min-height:0}
+.panel>h2{margin:0 0 8px;font-size:12px;font-weight:650;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);display:flex;align-items:center;gap:8px}
+.panel>h2 .r{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint)}
+.grow{flex:1 1 auto}.scroll{overflow-y:auto;min-height:0}
+/* hero */
+#herobox{position:relative;flex:1 1 auto;min-height:200px;background:#000;border-radius:7px;overflow:hidden}
+#hero{position:absolute;inset:0;width:100%;height:100%}
+#heroempty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:15px}
+#follow{position:absolute;right:8px;top:8px;display:none;background:rgba(10,13,18,.8);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+#cap{color:var(--dim);font-size:13px;margin-top:6px;min-height:18px}
+#strip{display:flex;gap:6px;overflow-x:auto;padding-top:8px;flex:none}
+.tile{position:relative;flex:none;width:84px;height:63px;border-radius:5px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:#000}
+.tile.c3{width:112px}.tile img{width:100%;height:100%;object-fit:cover;display:block}.tile.on{border-color:var(--fg)}
+.tile span{position:absolute;left:0;right:0;bottom:0;font-size:10px;padding:1px 4px;background:rgba(0,0,0,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.live span{color:var(--ok);font-weight:700}
+/* tags */
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:650;white-space:nowrap;color:var(--c);background:var(--cb);vertical-align:1px}
+.ms{font-family:var(--mono);font-size:12px;color:var(--fg);white-space:nowrap}
+/* choice */
+#choice{flex:none;max-height:56%}
+.cans{display:flex;flex-direction:column;gap:6px}
+.can{display:flex;gap:10px;align-items:center;padding:5px 6px;border-radius:7px;border:1px solid transparent}
+.can.chosen{border-color:var(--chosen);background:rgba(69,224,122,.08)}
+.can canvas{flex:none;width:44px;height:60px;border-radius:4px;background:#000}
+.can .i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--box);color:#1a0d00;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}
+.can.chosen .i{background:var(--chosen)}
+.can .d{flex:1 1 auto;min-width:0}.can .d b{font-size:16px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.can .d small{color:var(--dim);font-size:12px}
+.order{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.att{margin-top:4px}.att .ask{color:#ffdcae;font-style:italic;font-size:14px}
+.heard{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.heard audio{height:30px;width:190px}
+.ans{font-size:20px;font-weight:700}.ans.none{color:var(--warn)}
+.pick{margin-top:6px;font-size:18px;font-weight:700;color:var(--chosen)}
+.sub{color:var(--dim);font-size:12px}
+.empty{color:var(--faint);font-size:14px;padding:6px 0}
+/* gemma feed */
+#gfeed{list-style:none;margin:0;padding:0}
+#gfeed li{display:flex;gap:9px;padding:6px 4px 6px 8px;border-left:3px solid var(--c);border-bottom:1px solid var(--line);align-items:flex-start}
+#gfeed li.new{animation:flash 1.2s}
+@keyframes flash{from{background:var(--cb)}}
+.thumb{flex:none;width:40px;height:40px;border-radius:4px;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:18px}
+.thumb img{width:100%;height:100%;object-fit:cover}.thumb canvas{width:100%;height:100%}
+button.thumb{border:1px solid var(--line);cursor:pointer;font:inherit;font-size:16px;color:var(--fg)}
+.g{flex:1 1 auto;min-width:0}.g .top{display:flex;gap:6px;align-items:baseline}.g .top .k{font-size:13px;font-weight:600}
+.g .top .st{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}.g .top .ms{margin-left:auto}
+.g .q{color:var(--dim);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g .a{font-size:15px;font-weight:650;word-break:break-word}.g .a.empty{color:var(--faint);font-weight:400;font-style:italic;padding:0}
+.g .tok{font-size:11px;color:var(--faint);font-family:var(--mono)}
+.bar{height:3px;background:var(--c);border-radius:2px;margin-top:3px;opacity:.7}
+.x{font-size:11px;font-weight:700;color:var(--bg);background:var(--dim);border-radius:4px;padding:0 5px;margin-left:4px}
+/* steps */
+#steps{list-style:none;margin:0;padding:0}
+#steps li{display:flex;gap:10px;padding:7px 2px;border-bottom:1px solid var(--line)}
+.ic{flex:none;width:20px;height:20px;border-radius:50%;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--bg)}
+li.ok .ic{background:var(--ok)}li.ok .ic::after{content:"\2713"}
+li.warn .ic{background:var(--warn)}li.warn .ic::after{content:"!"}
+li.fail .ic{background:var(--bad)}li.fail .ic::after{content:"\2715"}
+li.active .ic{background:transparent;border:2px solid var(--fg);border-top-color:transparent;animation:spin 1s linear infinite}li.active .ic::after{content:""}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sb{flex:1 1 auto;min-width:0}.sb .tt{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.sb .tt b{font-size:15px;font-weight:650}
+.sb .tt .dur{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.sb .dt{color:var(--dim);font-size:12.5px;margin-top:1px}
+li.active .sb .tt b{color:#fff}
+.gaps{display:flex;gap:4px;align-items:flex-end;margin-top:4px;height:34px}
+.gaps div{width:26px;background:var(--skill);border-radius:3px 3px 0 0;position:relative;min-height:2px}
+.gaps div span{position:absolute;top:-15px;left:-4px;right:-4px;text-align:center;font-size:10px;color:var(--dim);font-family:var(--mono)}
+#result{display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;font-weight:650;font-size:15px}
+#result.good{display:block;background:rgba(66,195,90,.14);color:var(--ok);border:1px solid rgba(66,195,90,.45)}
+#result.meh{display:block;background:rgba(230,164,43,.13);color:var(--warn);border:1px solid rgba(230,164,43,.45)}
+#result small{display:block;font-weight:400;color:var(--dim);font-size:12px}
+/* footer */
+footer{display:flex;gap:16px;align-items:center;padding:6px 18px;border-top:1px solid var(--line);background:var(--panel);font-size:12px;color:var(--dim);flex-wrap:wrap;position:relative}
+footer details{position:relative}footer summary{cursor:pointer;list-style:none}footer summary::-webkit-details-marker{display:none}
+footer details pre{position:absolute;bottom:26px;left:0;z-index:5;margin:0;max-width:640px;max-height:60vh;overflow:auto;background:#05080c;border:1px solid var(--line);border-radius:8px;padding:10px;font:12px/1.35 var(--mono);color:#c9d4e0;white-space:pre-wrap}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;background:var(--faint);vertical-align:0}.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}.dot.warn{background:var(--warn)}
+.legend{margin-left:auto;display:flex;gap:6px}
+/* narrower screens: scroll the page instead of the panels */
+@media (max-width:1200px){
+  body{height:auto;overflow-x:hidden;overflow-y:auto;display:block}
+  main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.col.a{grid-column:1/3}#herobox{height:58vw;max-height:520px;flex:none}
+  .scroll{max-height:480px}#choice{max-height:none}
+}
+@media (max-width:760px){main{grid-template-columns:minmax(0,1fr);padding:0 12px 10px}.col.a{grid-column:auto}#herobox{height:72vw}header{flex-wrap:wrap}.tally{margin-left:0}#say{max-width:100%}#narr{flex-wrap:wrap}}
+</style></head><body>
+<header>
+  <div class="brand"><h1>Unitree G1 &middot; Gemma 4 E2B running on the robot</h1>
+    <p>Every decision on screen as it happens: what Gemma decided, what the sensors checked, what the scripted arm skills did</p></div>
+  <div class="tally">
+    <div class="auto"><b id="tAuto" class="num">0</b><span>handed over on its own</span></div>
+    <div><b id="tOrders" class="num">0</b><span id="tOrdersL">orders today</span></div>
+    <div><b id="tGemma" class="num">0</b><span id="tGemmaL">Gemma calls</span></div>
+  </div>
+  <div id="mode" class="mode">&hellip;</div>
+</header>
+<div id="replaybar"></div>
+<div id="pipe"></div>
+<div id="narr"><div id="nstate">&mdash;</div><div id="ndesc"></div><div id="say"></div></div>
+<main>
+  <div class="col a">
+    <div class="panel grow">
+      <h2>What the robot sees <span class="r" id="camwho"></span></h2>
+      <div id="herobox"><canvas id="hero"></canvas><div id="heroempty">waiting for the first frame</div><button id="follow">&#8635; follow the robot</button></div>
+      <div id="cap"></div>
+      <div id="strip"></div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="panel" id="choice"><h2>The guest's choice <span class="tag c-gemma">Gemma decision</span></h2><div class="scroll" id="choicebody"><div class="empty">No order yet.</div></div></div>
+    <div class="panel grow"><h2>Gemma inference <span class="r" id="ghead"></span></h2><ul class="scroll" id="gfeed"></ul></div>
+  </div>
+  <div class="col">
+    <div class="panel grow"><h2>Movement steps <span class="r" id="shead"></span></h2>
+      <div id="result"></div>
+      <ul class="scroll" id="steps"></ul></div>
+  </div>
+</main>
+<footer>
+  <details id="nc"><summary id="ncsum"><span class="dot"></span>no-cloud evidence</summary><pre id="ncpre"></pre></details>
+  <details id="pf"><summary id="pfsum"><span class="dot"></span>preflight</summary><pre id="pfpre"></pre></details>
+  <span id="srv"></span>
+  <span id="ident"></span>
+  <span class="legend"><span class="tag c-gemma">Gemma decision</span><span class="tag c-adv">Gemma advisory</span><span class="tag c-sensor">sensor gate</span><span class="tag c-skill">scripted skill</span></span>
+</footer>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S = {snap:null, recv:0, pinned:null, memo:{}, imgs:new Map(), shown:null, gcount:0, gkey:null, stick:true};
+const STAGES = [
+  ['LOOK','Look','gemma','Gemma','Gemma describes every can it sees, one camera crop per can'],
+  ['LISTEN','Listen','skill','robot','The robot asks, then records 4 seconds of the guest'],
+  ['UNDERSTAND','Understand','gemma','Gemma','Gemma hears the audio itself (no speech recognizer) and names the can'],
+  ['CONFIRM','Confirm','skill','robot','The robot says which can it will bring'],
+  ['LOCATE','Locate','sensor','depth + code','The depth camera measures the can; code plans a reach the arm can make safely'],
+  ['PICK','Reach','skill','arm skill','Raise, reach forward over the table, lower beside the can'],
+  ['SERVO','Hand check','sensor','camera','The head camera checks the hand against the can'],
+  ['APPROACH','Approach','skill','arm skill','The hand moves in on the can in 1 cm steps, then closes thumb first'],
+  ['VERIFY','Grasp check','sensor','fingers','The finger stall pattern confirms the can is held'],
+  ['LIFT','Lift','skill','arm skill','Lift the can off the table'],
+  ['CHECK','Double-check','adv','Gemma','Gemma looks at the hand from the side camera (advisory)'],
+  ['HANDOVER','Hand over','sensor','sensors','Offer the can; let go when the guest takes it or says so'],
+];
+const SDESC = Object.fromEntries(STAGES.map(s => [s[0], s]));
+const EXTRA = {IDLE:['Ready','Waiting for the next guest'], BOOT:['Starting','Robot, cameras, detector and Gemma warming up'], OFF:['Stopped','The brain program is not running'],
+  RECOVER:['Recover','The arm holds still until it has a safe way home'], ASSIST:['Assist','']};
+const TAGC = t => { t = String(t || ''); return t.includes('advisory') ? 'c-adv' : t.includes('Gemma') ? 'c-gemma' : t.includes('sensor') ? 'c-sensor' : t.includes('owner') ? 'c-owner' : 'c-skill'; };
+const KIND = {describe:'describe a can', hear_choice:"hear the guest's order", box:"find the robot's hand", yesno:'yes / no about an image', take_it:'did the guest say "take it"?',
+  crop_colour:'colour of a can', hear_colour:'hear a colour', warmup:'warm-up'};
+const RESULT = {success:'Handed over', refused:'Honest no: that can is not on the table', assisted:'Handed over with help', held:'Arm holding: waiting for the operator',
+  stopped:'Stopped by the operator', failed:'Did not complete', unclear:'Did not understand the order', none:'No matching can', at_edge:'Can at the edge of the view: asked to move it',
+  no_can:'No can in view', lost:'Lost sight of the can', blocked:'Something in the way: no motion', probe:'Measurement run done', dry:'Dry run done (no motion)', air:'Air test done',
+  no_choice:'Did not catch which can', no_grasp:'Stopped before the grasp (no-grasp run)', no_K:'Stopped before the grasp (no hand constant)', no_depth:'Could not measure the can in depth',
+  table_mismatch:'Table not where expected: no motion', air_table_mismatch:'Table not where expected: no motion', pushed:'The can moved: stopped'};
+const resultText = r => RESULT[r] || (String(r).startsWith('no_plan_') ? 'No safe reach (' + String(r).slice(8) + '): asked to move the can' : r);
+function memo(k, data, fn){ const s = JSON.stringify(data); if (S.memo[k] === s) return false; S.memo[k] = s; fn(data); return true; }
+function clock(){ const s = S.snap; if (!s) return 0; const sp = s.mode === 'replay' ? ((s.replay || {}).speed || 1) : 1; return s.now + (performance.now() - S.recv) / 1000 * sp; }
+const fmtS = s => s == null || isNaN(s) ? '' : s < 10 ? s.toFixed(1) + ' s' : s < 120 ? Math.round(s) + ' s' : Math.floor(s / 60) + ' min ' + String(Math.round(s % 60)).padStart(2, '0');
+const fmtMs = ms => ms == null ? '' : ms < 1000 ? ms + ' ms' : (ms / 1000).toFixed(ms < 10000 ? 1 : 0) + ' s';
+const hhmm = t => t ? new Date(t * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'}) : '';
+const hm = t => t ? new Date(t * 1000).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) : '';
+function img(url, onload){
+  let im = S.imgs.get(url);
+  if (!im){ im = new Image(); im.decoding = 'async'; im.onload = () => { (im._cb || []).forEach(f => f()); im._cb = []; }; im._cb = []; im.src = url; S.imgs.set(url, im);
+    if (S.imgs.size > 80){ const k = S.imgs.keys().next().value; S.imgs.delete(k); } }
+  if (onload && !(im.complete && im.naturalWidth)) im._cb.push(onload);
+  return im;
+}
+function state(){ const s = S.snap; if (!s) return 'OFF'; const b = s.brain || {}; if (s.mode === 'replay') return b.state || 'IDLE';
+  if (b.alive === false) return 'OFF'; return s.current ? (b.state || 'IDLE') : (b.state && ['IDLE','BOOT','OFF'].includes(b.state) ? b.state : 'IDLE'); }
+
+/* --- header, pipeline, narration ------------------------------------------------------------------------------------- */
+function header(){
+  const s = S.snap, t = s.tally || {};
+  $('tAuto').textContent = t.autonomous || 0; $('tOrders').textContent = t.orders || 0;
+  $('tOrdersL').textContent = s.mode === 'replay' ? 'orders in the replay' : 'orders since ' + hm(s.tally_since);
+  $('tGemma').textContent = t.gemma_calls || 0; $('tGemmaL').textContent = t.gemma_median_ms ? 'Gemma calls, median ' + t.gemma_median_ms + ' ms' : 'Gemma calls';
+  const m = $('mode'), b = s.brain || {};
+  if (s.mode === 'replay'){ m.className = 'mode replay'; m.textContent = 'REPLAY'; }
+  else if (b.alive === false || !S.open){ m.className = 'mode down'; m.textContent = S.open ? 'BRAIN NOT RUNNING' : 'RECONNECTING'; }
+  else { m.className = 'mode live'; m.textContent = 'LIVE'; }
+  const rb = $('replaybar');
+  if (s.mode === 'replay'){ const o = s.order; rb.style.display = 'block';
+    rb.textContent = 'Replay of a recorded robot run, not live' + (o ? ': session ' + o.session + ', order ' + o.n + ', recorded ' + new Date(o.t0 * 1000).toLocaleString() : '') + ((s.replay || {}).speed !== 1 ? ' (x' + s.replay.speed + ')' : ''); }
+  else rb.style.display = 'none';
+}
+function pipeline(){
+  const o = S.snap.order, st = state(), cur = S.snap.current || S.snap.mode === 'replay' && st !== 'IDLE';
+  const done = {}; (o && o.stages || []).forEach(x => { done[x.stage] = (done[x.stage] || 0) + (x.ms || 0); });
+  const rec = 'RECOVER' in done || (cur && st === 'RECOVER');
+  memo('pipe', {done, st: cur ? st : '', rec}, () => {
+    $('pipe').innerHTML = STAGES.map(([k, n, c, who]) => '<div class="chip c-' + c + (cur && st === k ? ' active' : k in done ? ' done' : '') + '" data-k="' + k + '"><div class="n">' + n +
+      '</div><div class="w"><span>' + who + '</span><span class="ms">' + (k in done ? fmtMs(done[k]) : '') + '</span></div></div>').join('') +
+      (rec ? '<div class="chip rec' + (cur && st === 'RECOVER' ? ' active' : ' done') + '"><div class="n">Recover</div><div class="w"><span>safety</span><span class="ms">' + ('RECOVER' in done ? fmtMs(done.RECOVER) : '') + '</span></div></div>' : '');
+  });
+}
+function narration(){
+  const s = S.snap, st = state(), d = SDESC[st], e = EXTRA[st] || [st, ''];
+  $('nstate').textContent = d ? d[1] : e[0];
+  let desc = d ? d[4] : e[1];
+  if (st === 'IDLE' && s.order && s.order.result) desc = 'Waiting for the next guest. Last order: ' + resultText(s.order.result.result);
+  $('ndesc').textContent = desc;
+  const o = s.order; let msg = s.mode === 'replay' ? (o && o.say) : (s.brain || {}).message; const sayT = o && o.say === msg ? o.say_t : null;
+  const sy = $('say'); if (sy.textContent !== (msg || '')) sy.textContent = msg || '';
+  sy.classList.toggle('old', !!sayT && clock() - sayT > 20 || st === 'IDLE' || st === 'OFF');
+}
+
+/* --- camera ------------------------------------------------------------------------------------------------------- */
+function frames(){
+  const s = S.snap, o = s.order, b = s.brain || {}, out = [];
+  if (b.frame) out.push({url: b.frame, label: 'live head camera' + (b.frame_label && b.frame_label !== 'live' ? ': ' + b.frame_label : ''), live: true, cam: 'head'});
+  (o && o.frames || []).forEach(f => out.push(f));
+  return out;
+}
+function wanted(fs){
+  if (S.pinned){ const p = fs.find(f => f.url === S.pinned || (S.pinned === 'live' && f.live)); if (p) return p; }
+  const st = state(), live = fs.find(f => f.live), ord = fs.filter(f => !f.live);
+  if ((st === 'IDLE' || st === 'BOOT' || !S.snap.current) && live && S.snap.mode !== 'replay' && (S.snap.brain || {}).alive !== false) return live;   // a stopped brain's frame is stale
+  return ord.length ? ord[ord.length - 1] : live;
+}
+function camera(){
+  const fs = frames(), w = wanted(fs);
+  $('follow').style.display = S.pinned ? 'block' : 'none';
+  memo('strip', fs.map(f => [f.url, f.label, w && f.url === w.url]), () => {
+    $('strip').innerHTML = fs.map(f => '<div class="tile' + (f.live ? ' live' : '') + (f.cam === 'cam3' ? ' c3' : '') + (w && f.url === w.url ? ' on' : '') + '" data-u="' + esc(f.live ? 'live' : f.url) + '" title="' + esc(f.label) + '"><img src="' +
+      esc(f.url) + '"><span>' + esc(f.live ? 'LIVE' : (f.label || '').split(':')[0]) + '</span></div>').join('');
+    const on = $('strip').querySelector('.on'); if (on && !S.pinned) on.scrollIntoView({block: 'nearest', inline: 'end'});
+  });
+  $('cap').textContent = w ? w.label || '' : '';
+  $('camwho').textContent = w ? (w.cam === 'cam3' ? 'side camera (C922)' : 'head camera (RealSense D435i)') + (w.t ? ' · ' + hhmm(w.t) : '') : '';
+  S.want = w; drawHero();
+}
+function drawHero(){
+  const w = S.want, cv = $('hero'), box = $('herobox').getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  if (!w){ $('heroempty').style.display = 'flex'; return; }
+  const im = img(w.url, drawHero), ready = im.complete && im.naturalWidth;
+  const show = ready ? {f: w, im} : S.shown;                     // keep the previous frame until the next one has loaded
+  if (!show) return;
+  if (ready) S.shown = show;
+  $('heroempty').style.display = 'none';
+  const W = Math.round(box.width * dpr), H = Math.round(box.height * dpr);
+  if (cv.width !== W || cv.height !== H){ cv.width = W; cv.height = H; }
+  const c = cv.getContext('2d'), iw = show.im.naturalWidth, ih = show.im.naturalHeight, k = Math.min(W / iw, H / ih), dw = iw * k, dh = ih * k, ox = (W - dw) / 2, oy = (H - dh) / 2;
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H); c.drawImage(show.im, ox, oy, dw, dh);
+  const ov = show.f.overlay; if (!ov) return;
+  const fs = Math.max(12, Math.round(15 * dpr * Math.min(1.4, dw / (640 * dpr) * 1.25)));
+  c.font = '700 ' + fs + 'px -apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif'; c.textBaseline = 'middle';
+  // labels: above the box, else below, else inside it; never over another label or off the image; else the number alone
+  const placed = [], hit = r => r[0] < ox || r[1] < oy || r[0] + r[2] > ox + dw || r[1] + r[3] > oy + dh || placed.some(q => r[0] < q[0] + q[2] && q[0] < r[0] + r[2] && r[1] < q[1] + q[3] && q[1] < r[1] + r[3]);
+  const boxes = ov.boxes.filter(b => b.box).map(b => ({b, x: ox + b.box[0] * k, y: oy + b.box[1] * k, w: (b.box[2] - b.box[0]) * k, h: (b.box[3] - b.box[1]) * k}));
+  boxes.forEach(({b, x, y, w, h}) => { c.lineWidth = (b.chosen ? 4 : 2.5) * dpr; c.strokeStyle = b.chosen ? '#45e07a' : '#ff9f43'; c.strokeRect(x, y, w, h); });
+  boxes.sort((p, q) => (q.b.chosen ? 1 : 0) - (p.b.chosen ? 1 : 0)).forEach(({b, x, y, w, h}) => {
+    const full = (b.chosen && ov.kind === 'look' ? '✓ ' : '') + (b.label || ''); if (!full.trim()) return;
+    const ph = fs * 1.5, g = 3 * dpr; let pick = null;
+    for (const text of [full, full.split('  ')[0]]){                          // the full label, else the number alone (the list beside names it)
+      const tw = c.measureText(text).width + fs, px = Math.min(Math.max(ox, x), ox + dw - tw);
+      const spots = [[px, y - ph - g], [px, y + h + g], [px, y + g], [px, y + h - ph - g]];
+      if (text !== full) spots.push([x - tw - g, y + g], [x + w + g, y + g], [x + g, y + h / 2 - ph / 2]);
+      for (const [sx, sy] of spots){ const r = [sx, sy, tw, ph]; if (!hit(r)){ pick = {text, r}; break; } }
+      if (pick) break;
+    }
+    if (!pick) return;                                                         // no free spot: the box alone, never a label over a label
+    placed.push(pick.r); const [px, py, tw] = pick.r;
+    c.fillStyle = b.chosen ? '#45e07a' : '#ff9f43'; c.beginPath(); (c.roundRect ? c.roundRect(px, py, tw, ph, 5 * dpr) : c.rect(px, py, tw, ph)); c.fill();
+    c.fillStyle = '#0b0f14'; c.fillText(pick.text, px + fs / 2, py + ph / 2 + 1);
+  });
+}
+function paintCrop(cv, lookUrl, box){
+  if (!lookUrl || !box) return;
+  const im = img(lookUrl, () => paintCrop(cv, lookUrl, box)); if (!(im.complete && im.naturalWidth)) return;
+  const m = 10, x1 = Math.max(0, box[0] - m), y1 = Math.max(0, box[1] - m), x2 = Math.min(im.naturalWidth, box[2] + m), y2 = Math.min(im.naturalHeight, box[3] + m);
+  const dpr = window.devicePixelRatio || 1, r = cv.getBoundingClientRect(); cv.width = Math.max(1, r.width * dpr); cv.height = Math.max(1, r.height * dpr);
+  const c = cv.getContext('2d'), k = Math.min(cv.width / (x2 - x1), cv.height / (y2 - y1)), dw = (x2 - x1) * k, dh = (y2 - y1) * k;
+  c.fillStyle = '#000'; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(im, x1, y1, x2 - x1, y2 - y1, (cv.width - dw) / 2, (cv.height - dh) / 2, dw, dh);
+}
+
+/* --- choice ------------------------------------------------------------------------------------------------------- */
+function choice(){
+  const o = S.snap.order;
+  memo('choice', o ? [o.session, o.n, o.scene, o.attempts, o.chosen, o.confirm, o.look, (o.result || {}).result] : null, () => {
+    const el = $('choicebody');
+    if (!o){ el.innerHTML = '<div class="empty">No order yet.</div>'; return; }
+    let h = '';
+    if (o.scene.length){
+      h += '<div class="sub" style="margin-bottom:6px">Gemma described ' + o.scene.length + ' can' + (o.scene.length > 1 ? 's' : '') + ', one call per camera crop:</div><div class="cans">';
+      o.scene.forEach(c => { const ch = o.chosen === c.i;
+        h += '<div class="can' + (ch ? ' chosen' : '') + '"><canvas data-crop="' + c.i + '"></canvas><div class="i">' + (c.i + 1) + '</div><div class="d"><b>' + esc(c.desc) + '</b><small>' +
+          esc([c.size, (c.words || '').split(', ').slice(-1)[0] !== c.size ? (c.words || '').split(', ').slice(-1)[0] : ''].filter(Boolean).join(' · ')) + (c.raw ? ' · Gemma: &ldquo;' + esc(c.raw) + '&rdquo;' : '') +
+          '</small></div><span class="ms">' + fmtMs(c.ms) + '</span></div>'; });
+      h += '</div>';
+    } else if (o.stage === 'LOOK' || !o.stage) h += '<div class="empty">Looking at the table&hellip;</div>';
+    else h += '<div class="empty">No cans described in this order.</div>';
+    if (o.attempts.length){
+      h += '<div class="order"><div class="sub">The guest&rsquo;s order, heard by Gemma straight from the microphone (any language):</div>';
+      o.attempts.forEach((a, j) => {
+        h += '<div class="att">' + (a.asked ? '<div class="ask">robot: &ldquo;' + esc(a.asked) + '&rdquo;</div>' : '') + '<div class="heard">' +
+          (a.audio ? '<audio controls preload="none" src="' + esc(a.audio) + '"></audio>' : a.seconds ? '<span class="sub">recording ' + a.seconds + ' s&hellip;</span>' : '');
+        if (a.answer != null){
+          const none = a.idx == null;
+          h += '<span>&rarr; Gemma:</span><span class="ans' + (none ? ' none' : '') + '">' + esc(none ? (a.answer || 'none') : 'can ' + (a.idx + 1)) + '</span><span class="ms">' + fmtMs(a.ms) + '</span>' +
+            (a.tokens && a.tokens[0] ? '<span class="sub">' + a.tokens[0] + ' tokens in (audio + the numbered list), ' + (a.tokens[1] || 0) + ' out</span>' : '');
+        } else if (a.audio || a.seconds) h += '<span class="sub">Gemma is listening&hellip;</span>';
+        h += '</div></div>';
+      });
+      if (o.chosen != null && o.scene[o.chosen]) h += '<div class="pick">&#10003; ' + esc(o.scene[o.chosen].desc) + '</div>';
+      if (o.confirm) h += '<div class="ask">robot: &ldquo;' + esc(o.confirm) + '&rdquo;</div>';
+      h += '</div>';
+    } else if (o.scene.length) h += '<div class="order"><div class="empty">Waiting for the guest&rsquo;s order&hellip;</div></div>';
+    el.innerHTML = h;
+    el.querySelectorAll('canvas[data-crop]').forEach(cv => { const c = o.scene.find(x => String(x.i) === cv.dataset.crop); paintCrop(cv, o.look, c && c.box); });
+  });
+}
+
+/* --- Gemma feed ---------------------------------------------------------------------------------------------------- */
+function gemma(){
+  const o = S.snap.order, g = o ? o.gemma : [];
+  const n = g.length, ms = g.map(x => x.ms_med).filter(x => x != null).sort((a, b) => a - b), calls = g.reduce((a, x) => a + x.n, 0);
+  $('ghead').textContent = n ? 'this order: ' + calls + ' call' + (calls > 1 ? 's' : '') + (ms.length ? ', median ' + ms[Math.floor(ms.length / 2)] + ' ms' : '') : 'on the robot’s Jetson, llama.cpp';
+  const key = o ? o.session + '/' + o.n : '';
+  if (key !== S.gkey){ S.gkey = key; S.gcount = n; }
+  memo('gemma', g, () => {
+    const old = S.gcount; S.gcount = n;
+    $('gfeed').innerHTML = n ? g.map((x, i) => [x, i]).reverse().map(([x, i]) => {
+      const m = x.media || {}; let th = '<div class="thumb">&#9679;</div>';
+      if ('crop' in m) th = '<div class="thumb"><canvas data-crop="' + m.crop + '"></canvas></div>';
+      else if (m.img) th = '<div class="thumb"><img loading="lazy" src="' + esc(m.img) + '"></div>';
+      else if ('audio' in m) th = m.audio ? '<button class="thumb" data-play="' + esc(m.audio) + '" title="play the clip Gemma heard">&#9654;</button>' : '<div class="thumb" title="audio">&#127908;</div>';
+      const a = x.err ? 'error: ' + x.err : x.a;
+      return '<li class="' + TAGC(x.tag) + (i >= old ? ' new' : '') + '">' + th + '<div class="g"><div class="top"><span class="st">' + esc(x.stage) + '</span><span class="k">' + esc(KIND[x.kind] || x.kind) + '</span>' +
+        (x.n > 1 ? '<span class="x">&times;' + x.n + '</span>' : '') + '<span class="ms">' + (x.n > 1 ? 'median ' : '') + fmtMs(x.ms_med) + '</span></div>' +
+        '<div class="q" title="' + esc(x.q) + '">' + esc(x.q) + '</div><div class="a' + (a ? '' : ' empty') + '">' + (a ? '&rarr; ' + esc(a) : '(nothing heard)') + '</div>' +
+        (x.pn ? '<div class="tok">' + x.pn + ' tokens in' + (x.cache ? ' (' + x.cache + ' cached)' : '') + ' · ' + (x.on || 0) + ' out</div>' : '') +
+        '<div class="bar" style="width:' + Math.min(100, (x.ms_med || 0) / 10) + '%"></div></div></li>';
+    }).join('') : '<li class="c-gemma"><div class="g"><div class="a empty">No Gemma calls in this order yet.</div></div></li>';
+    $('gfeed').querySelectorAll('canvas[data-crop]').forEach(cv => { const c = (o.scene || []).find(x => String(x.i) === cv.dataset.crop); paintCrop(cv, o.look, c && c.box); });
+  });
+}
+
+/* --- movement steps ------------------------------------------------------------------------------------------------ */
+function steps(){
+  const s = S.snap, o = s.order, st = o ? o.steps : [], live = s.current || (s.mode === 'replay' && state() !== 'IDLE');
+  const r = o && o.result, re = $('result');
+  memo('result', r, () => {
+    if (!r){ re.className = ''; re.innerHTML = ''; return; }
+    const good = r.result === 'success' || r.result === 'refused' || r.result === 'assisted';
+    re.className = good ? 'good' : 'meh';
+    re.innerHTML = esc(resultText(r.result)) + (r.autonomous ? ' &middot; on its own' : '') + '<small>' + [r.release ? 'released: ' + r.release : '', r.total_ms ? 'order took ' + fmtS(r.total_ms / 1000) : ''].filter(Boolean).join(' · ') + '</small>';
+  });
+  $('shead').textContent = o ? 'session ' + o.session + ' · order ' + o.n : '';
+  const changed = memo('steps', [st, live], () => {
+    const el = $('steps');
+    if (!st.length){ el.innerHTML = '<li><div class="sb"><div class="dt">' + (o && o.result ? 'The arm did not move in this order.' : 'No movement yet: the arm moves after Gemma has the order and the reach is planned.') + '</div></div></li>'; return; }
+    el.innerHTML = st.map((x, i) => {
+      const last = i === st.length - 1, cls = x.kind !== 'ok' ? x.kind : (last && live ? 'active' : 'ok');
+      const det = (x.det || []).slice(); const extra = [];
+      if (x.checks && x.key !== 'hold') extra.push('path re-checked clear' + (x.checks > 1 ? ' ×' + x.checks : ''));
+      if (x.key === 'hold'){ extra.push((x.checks || 0) + ' hand checks'); if (x.reminders) extra.push(x.reminders + ' reminders'); if ((x.heard || []).length) extra.push('Gemma heard: ' + x.heard.map(h => '“' + h + '”').join(', '));
+        if (x.asked) extra.push('Gemma asked ' + x.asked + '× if the guest’s hand is on the can, last answer: ' + x.asked_last); }
+      if (x.n > 1) extra.push('said ' + x.n + ' times');
+      let gaps = '';
+      if (x.sub && x.sub.length){ const mx = Math.max(10, ...x.sub.map(y => y.gap || 0));
+        gaps = '<div class="dt">gap to the can after each step (mm):</div><div class="gaps">' + x.sub.map(y => '<div style="height:' + Math.max(2, (y.gap || 0) / mx * 30) + 'px"><span>' + (y.gap == null ? '?' : y.gap) + '</span></div>').join('') + '</div>'; }
+      return '<li class="' + cls + '" data-i="' + i + '"><div class="ic"></div><div class="sb"><div class="tt"><b>' + esc(x.title) + '</b>' + (x.tag ? '<span class="tag ' + TAGC(x.tag) + '">' + esc(x.tag) + '</span>' : '') +
+        '<span class="dur" data-t="' + x.t + '" data-next="' + (last ? '' : st[i + 1].t) + '"></span></div>' + det.concat(extra).map(d => '<div class="dt">' + esc(d) + '</div>').join('') + gaps + '</div></li>';
+    }).join('');
+  });
+  durations();
+  if (changed && S.stick){ const el = $('steps'); el.scrollTop = el.scrollHeight; }
+}
+function durations(){
+  const live = S.snap && (S.snap.current || (S.snap.mode === 'replay' && state() !== 'IDLE')), now = clock();
+  document.querySelectorAll('#steps .dur').forEach(d => { const t = +d.dataset.t, n = d.dataset.next ? +d.dataset.next : (live ? now : null); d.textContent = n != null && n - t >= 0.1 ? fmtS(n - t) : ''; });
+  const st = state(), a = document.querySelector('#pipe .chip.active .ms'), o = S.snap && S.snap.order;
+  if (a && o){ const t0 = o.stage_t0 || o.t0; if (t0) a.textContent = fmtS(Math.max(0, now - t0)); }
+}
+
+/* --- footer ------------------------------------------------------------------------------------------------------- */
+function footer(){
+  const s = S.snap, sys = s.system || {}, nc = sys.nocloud, pf = sys.preflight, sv = sys.server, o = s.order;
+  memo('foot', [nc, pf, sv, o && o.calib, o && o.deviations, s.mode], () => {
+    if (s.mode === 'replay'){ $('nc').style.display = 'none'; $('pf').style.display = 'none'; $('srv').textContent = 'recorded on the robot'; }
+    else {
+      $('nc').style.display = ''; $('pf').style.display = '';
+      if (!nc) $('ncsum').innerHTML = '<span class="dot"></span>no-cloud evidence: checking';
+      else if (nc.na) { $('ncsum').innerHTML = '<span class="dot warn"></span>' + esc(nc.na); $('ncpre').textContent = nc.na; }
+      else { $('ncsum').innerHTML = '<span class="dot ' + (nc.ok ? 'ok' : 'bad') + '"></span>' + (nc.ok ? 'No cloud: no route out, Wi-Fi off, Tailscale stopped' :
+          'Network: default route ' + (nc.default_route ? 'YES' : 'no') + ' · Wi-Fi ' + esc(nc.wifi) + ' · Tailscale ' + esc(nc.tailscaled)); $('ncpre').textContent = nc.text || ''; }
+      if (pf){ $('pfsum').innerHTML = '<span class="dot ' + (pf.ok ? 'ok' : 'bad') + '"></span>preflight ' + (pf.ok ? 'PASS' : 'FAIL') + (pf.when ? ' at ' + esc(pf.when) : '');
+        $('pfpre').textContent = (pf.checks || []).map(c => String(c.name).padEnd(17) + String(c.status).padEnd(5) + ' ' + c.detail).join('\n'); }
+      else { $('pfsum').innerHTML = '<span class="dot"></span>preflight: not run'; $('pfpre').textContent = 'runs/live/preflight.json not found: run python preflight.py on PC2'; }
+      $('srv').innerHTML = sv ? '<span class="dot ' + (sv.ok ? 'ok' : 'bad') + '"></span>llama-server ' + (sv.ok ? 'healthy' : 'not answering') + (sv.model ? ' · ' + esc(sv.model) : '') : '';
+    }
+    const c = o && o.calib || {};
+    $('ident').textContent = c.git ? 'brain ' + c.git + (c.dirty ? ' (dirty)' : '') + ' · calib ' + (c.sha || '').slice(0, 8) + ((o.deviations || []).length ? ' · overrides: ' + o.deviations.join(', ') : '') : '';
+  });
+}
+
+function render(){ if (!S.snap) return; try { header(); pipeline(); narration(); camera(); choice(); gemma(); steps(); footer(); } catch (e) { console.error(e); } }
+function connect(){
+  const es = new EventSource('events');
+  es.onopen = () => { S.open = true; if (S.snap) header(); };
+  es.onmessage = e => { S.snap = JSON.parse(e.data); S.recv = performance.now(); render(); };
+  es.onerror = () => { S.open = false; if (S.snap) header(); };
+}
+$('strip').addEventListener('click', e => { const t = e.target.closest('.tile'); if (!t) return; S.pinned = t.dataset.u; S.memo.strip = null; camera(); });
+$('follow').addEventListener('click', () => { S.pinned = null; S.memo.strip = null; camera(); });
+$('steps').addEventListener('scroll', e => { const el = e.target; S.stick = el.scrollHeight - el.scrollTop - el.clientHeight < 40; });
+const player = new Audio();
+$('gfeed').addEventListener('click', e => { const b = e.target.closest('[data-play]'); if (!b) return; if (player.src.endsWith(b.dataset.play) && !player.paused) { player.pause(); return; } player.src = b.dataset.play; player.play().catch(() => {}); });
+new ResizeObserver(() => drawHero()).observe($('herobox'));
+setInterval(() => { if (S.snap){ durations(); narration(); } }, 500);
+connect();
+</script>
+</body></html>
